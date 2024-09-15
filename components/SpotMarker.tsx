@@ -90,12 +90,16 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
   };
 
   const getCategoryIcon = () => {
-    if (typeof spot.category === "object" && spot.category.icon) {
-      return spot.category.icon;
-    } else if (spot.expand?.category?.icon) {
-      return spot.expand.category.icon;
-    }
-    return "📍"; // Default icon
+    // This is a simple example. You might want to create a more comprehensive mapping
+    const categoryIcons: { [key: string]: string } = {
+      "Mat och Dryck": "🍽️",
+      "Boende": "🏠",
+      "Aktiviteter": "🎭",
+      // Add more categories and icons as needed
+    };
+
+    const categoryName = getCategoryName();
+    return categoryIcons[categoryName] || "📍"; // Default icon if not found
   };
 
   const getCategoryName = () => {
