@@ -14,8 +14,12 @@ function MapControls({
 }: MapControlsProps) {
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
-      <ZoomButtons showListView={showListView} />
+      <div className="absolute top-4 left-4 z-[1000]">
+        <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
+      </div>
+      <div className="absolute bottom-4 right-4 z-[1000]">
+        <ZoomButtons showListView={showListView} />
+      </div>
     </div>
   );
 }

@@ -18,7 +18,7 @@ function ZoomButtons({ showListView }: ZoomButtonsProps) {
   };
 
   return (
-    <div className="absolute bottom-4 right-4 z-[1000] pointer-events-auto flex flex-col gap-2 sm:right-4 right-2">
+    <div className="flex flex-col gap-2 pointer-events-auto">
       <Button
         onClick={handleZoomIn}
         variant="outline"
