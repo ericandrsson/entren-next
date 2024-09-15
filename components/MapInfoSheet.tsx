@@ -118,17 +118,19 @@ function MapInfoSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
-        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white"
+        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white text-gray-800"
       >
         <SheetHeader>
-          <SheetTitle>Add New Place</SheetTitle>
-          <SheetDescription>
+          <SheetTitle className="text-2xl font-bold text-gray-900">
+            Add New Placegi
+          </SheetTitle>
+          <SheetDescription className="text-gray-600">
             Enter details about this location.
           </SheetDescription>
         </SheetHeader>
         <div className="py-4 space-y-4">
           {markerPosition && (
-            <p>
+            <p className="text-gray-700">
               Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
               {markerPosition.lng.toFixed(6)}
             </p>
@@ -137,12 +139,16 @@ function MapInfoSheet({
             placeholder="Enter title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
           {renderCategorySelection()}
         </div>
         <SheetFooter>
-          <Button onClick={() => onOpenChange(false)}>Close</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Close
+          </Button>
           <Button
+            variant="default"
             onClick={() => {
               // TODO: Implement save functionality
               console.log("Save", { title, selectedCategory, markerPosition });
