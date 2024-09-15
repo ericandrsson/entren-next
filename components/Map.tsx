@@ -9,7 +9,7 @@ import {
   ZoomControl,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import MapInfoDrawer from "./MapInfoDrawer";
+import MapInfoSheet from "./MapInfoSheet";
 import MapControls from "./MapControls";
 import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
@@ -90,7 +90,7 @@ function Map() {
             <MapControls showListView={isSheetOpen} />
           </div>
         </MapContainer>
-        <MapInfoDrawer
+        <MapInfoSheet
           isOpen={isSheetOpen}
           onOpenChange={setIsSheetOpen}
           markerPosition={markerPosition}

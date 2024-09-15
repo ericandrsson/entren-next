@@ -3,49 +3,47 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
+  SheetFooter,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { LatLng } from "leaflet";
 
-interface MapInfoDrawerProps {
+interface MapInfoSheetProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  markerPosition: L.LatLng | null;
+  markerPosition: LatLng | null;
 }
 
-export default function MapInfoDrawer({
+function MapInfoSheet({
   isOpen,
   onOpenChange,
   markerPosition,
-}: MapInfoDrawerProps) {
+}: MapInfoSheetProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="left"
-        className="w-[400px] sm:w-[540px] border-r p-0 bg-white dark:bg-gray-800"
-      >
-        <div className="h-full flex flex-col">
-          <SheetHeader className="flex justify-between items-center p-4 border-b">
-            <SheetTitle>Location Information</SheetTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </SheetHeader>
-          <div className="flex-1 overflow-auto p-4">
-            {markerPosition && (
-              <p className="mb-4">
-                Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
-                {markerPosition.lng.toFixed(6)}
-              </p>
-            )}
-          </div>
+      <SheetContent side="right" className="w-[400px] sm:w-[540px] z-[1000]">
+        <SheetHeader>
+          <SheetTitle>Add Information</SheetTitle>
+          <SheetDescription>
+            Enter details about this location.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-4">
+          {markerPosition && (
+            <p>
+              Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
+              {markerPosition.lng.toFixed(6)}
+            </p>
+          )}
+          {/* Add more input fields here as needed */}
         </div>
+        <SheetFooter>
+          <Button onClick={() => onOpenChange(false)}>Close</Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
 }
+
+export default MapInfoSheet;
