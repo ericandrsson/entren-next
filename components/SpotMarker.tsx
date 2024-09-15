@@ -1,6 +1,8 @@
 import React from "react";
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
+import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
+import { sv } from "date-fns/locale";
 
 interface Category {
   id: string;
@@ -47,6 +49,8 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
     const size = 40;
     const fontSize = 24;
 
+    const formattedTime = getFormattedTime(spot.created);
+
     return L.divIcon({
       html: `
         <div class="spot-marker" style="font-size: ${fontSize}px;">
@@ -56,13 +60,7 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
               ? `
             <div class="spot-text">
               <span class="spot-title">${spot.name}</span>
-              ${
-                spot.created
-                  ? `<span class="spot-time">${new Date(
-                      spot.created
-                    ).toLocaleString()}</span>`
-                  : ""
-              }
+              ${formattedTime ? `<span class="spot-time">${formattedTime}</span>` : ""}
             </div>
             ${!spot.isVerified ? '<span class="unverified-indicator">!</span>' : ""}
           `
@@ -74,6 +72,19 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
       iconSize: L.point(size, size),
       iconAnchor: L.point(size / 2, size),
     });
+  };
+
+  const getFormattedTime = (createdTime?: string) => {
+    if (!createdTime) return null;
+
+    const createdDate = parseISO(createdTime);
+    const threeDaysAgo = subDays(new Date(), 3);
+
+    if (isAfter(createdDate, threeDaysAgo)) {
+      return formatDistanceToNow(createdDate, { addSuffix: true, locale: sv });
+    }
+
+    return null;
   };
 
   return (
@@ -88,15 +99,15 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
         <Popup>
           <h3>{spot.name}</h3>
           <p>
-            Category:{" "}
+            Kategori:{" "}
             {(typeof spot.category === "object"
               ? spot.category.name
-              : spot.expand?.category?.name) || "Uncategorized"}
+              : spot.expand?.category?.name) || "Okategoriserad"}
           </p>
           {spot.created && (
-            <p>Created: {new Date(spot.created).toLocaleString()}</p>
+            <p>Skapad: {new Date(spot.created).toLocaleString("sv-SE")}</p>
           )}
-          <p>Status: {spot.isVerified ? "Verified" : "Unverified"}</p>
+          <p>Status: {spot.isVerified ? "Verifierad" : "Ej verifierad"}</p>
         </Popup>
       )}
     </Marker>
