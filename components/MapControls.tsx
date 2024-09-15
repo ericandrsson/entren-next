@@ -12,7 +12,7 @@ function MapControls({ showListView }: MapControlsProps) {
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div
-        className="absolute bottom-4 right-4 z-[1000] pointer-events-auto"
+        className="absolute bottom-12 right-12 z-[1000] pointer-events-auto"
         onClick={handleControlClick}
       >
         <ZoomButtons showListView={showListView} />
