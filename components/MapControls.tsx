@@ -5,16 +5,9 @@ interface MapControlsProps {
 }
 
 function MapControls({ showListView }: MapControlsProps) {
-  const handleControlClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <div
-        className="absolute bottom-12 right-12 z-[1000] pointer-events-auto"
-        onClick={handleControlClick}
-      >
+      <div className="absolute bottom-12 right-12 z-[1000] pointer-events-auto">
         <ZoomButtons showListView={showListView} />
         {/* Add other control components here as needed */}
       </div>

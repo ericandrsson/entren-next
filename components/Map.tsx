@@ -18,8 +18,14 @@ function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
+    // Check if the click event originated from the controls
+    if (controlsRef.current && controlsRef.current.contains(e.originalEvent.target as Node)) {
+      return; // Don't process the click if it's on the controls
+    }
+
     if (mapRef.current) {
       const map = mapRef.current;
       
@@ -58,7 +64,9 @@ function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <MapClickHandler onMapClick={handleMapClick} />
-        <MapControls showListView={isSheetOpen} />
+        <div ref={controlsRef}>
+          <MapControls showListView={isSheetOpen} />
+        </div>
       </MapContainer>
       <MapInfoDrawer
         isOpen={isSheetOpen}
