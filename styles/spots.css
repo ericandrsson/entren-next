@@ -1,0 +1,48 @@
+.spot-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.spot-marker:hover {
+  transform: scale(1.05);
+}
+.spot-icon {
+  font-size: 48px;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.4));
+}
+.spot-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -5px;
+  width: 150px;
+}
+.spot-title {
+  font-family: "Nunito", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #3b82f6;
+  text-align: center;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff,
+    1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+.spot-time {
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: center;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 150px;
+  line-height: 1.2;
+  margin-top: 2px;
+  text-shadow: 1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff,
+    0.5px 0.5px 0 #fff, -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff,
+    -0.5px 0.5px 0 #fff;
+}

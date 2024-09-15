@@ -14,6 +14,7 @@ import MapControls from "./MapControls";
 import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import ZoomButtons from "./ZoomButtons";
+import SpotLayer from './SpotLayer';
 
 function MapClickHandler({
   onMapClick,
@@ -67,6 +68,11 @@ function Map() {
     }
   }, []);
 
+  const handleSpotClick = (spot: Spot) => {
+    console.log('Spot clicked:', spot);
+    // You can add more functionality here, like opening a details panel
+  };
+
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
@@ -85,7 +91,12 @@ function Map() {
           <div ref={controlsRef}>
             <MapControls showListView={isSheetOpen} />
           </div>
-          <ZoomButtons /> {/* Add ZoomButtons here */}
+          <ZoomButtons />
+          <SpotLayer
+            isAdmin={false} // Replace with actual admin status
+            user={null} // Replace with actual user object
+            onSpotClick={handleSpotClick}
+          />
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">
