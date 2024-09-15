@@ -29,32 +29,37 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     useDropzone({
       onDrop,
       maxFiles: 1,
-      maxSize: 1000000,
-      accept: { "image/png": [], "image/jpg": [], "image/jpeg": [] },
+      accept: {
+        "image/png": [],
+        "image/jpg": [],
+        "image/jpeg": [],
+        "image/heic": [],
+        "image/heif": [],
+      },
     });
 
   return (
     <div
       {...getRootProps()}
-      className="mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-foreground p-8 shadow-sm shadow-foreground"
+      className="flex items-center justify-between border border-input bg-background px-3 py-2 text-sm ring-offset-background rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
+      <div className="flex items-center gap-2">
+        <ImagePlus className="h-5 w-5 text-muted-foreground" />
+        <span className="text-muted-foreground">
+          {preview ? "Image selected" : "Upload image"}
+        </span>
+      </div>
+      <input {...getInputProps()} className="sr-only" />
       {preview && (
         <img
           src={preview as string}
-          alt="Uploaded image"
-          className="max-h-[400px] rounded-lg"
+          alt="Preview"
+          className="h-8 w-8 object-cover rounded"
         />
       )}
-      <ImagePlus className={`size-40 ${preview ? "hidden" : "block"}`} />
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the image!</p>
-      ) : (
-        <p>Click here or drag an image to upload it</p>
-      )}
       {fileRejections.length !== 0 && (
-        <p className="text-red-500">
-          Image must be less than 1MB and of type png, jpg, or jpeg
+        <p className="text-xs text-destructive">
+          Please upload a valid image file (png, jpg, jpeg, heic, or heif)
         </p>
       )}
     </div>

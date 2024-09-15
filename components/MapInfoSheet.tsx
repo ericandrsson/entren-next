@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Sheet,
   SheetContent,
@@ -60,23 +60,33 @@ function MapInfoSheet({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      category: "",
+      mainCategory: "",
+      subCategory: "",
     },
   });
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await pb
+        .collection("spot_categories")
+        .getFullList<Category>({ sort: 'name' });
+      console.log("Fetched categories:", result);
+      setCategories(result);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load categories. Please try again.",
+      });
+    }
+  }, [toast]);
+
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await pb
-          .collection("spot_categories")
-          .getFullList<Category>();
-        setCategories(result);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen, fetchCategories]);
 
   const getChildCategories = (parentId: string | null) => {
     return categories.filter(
@@ -233,7 +243,11 @@ function MapInfoSheet({
                   </FormItem>
                 )}
               />
-              {renderCategorySelection()}
+              {categories.length === 0 ? (
+                <p>Loading categories...</p>
+              ) : (
+                renderCategorySelection()
+              )}
               <FormField
                 control={form.control}
                 name="image"
