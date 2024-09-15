@@ -4,26 +4,25 @@ import { useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { Marker, Popup } from "react-leaflet";
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface Spot {
   id: string;
   name: string;
   lat: number;
   lng: number;
-  category: {
-    id: string;
-    name: string;
-    icon: string;
-  };
+  category: string;
   created: string;
   description?: string;
   user: string;
   isPublic: boolean;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
+  expand?: {
+    category: Category;
+  };
 }
 
 interface DynamicMarkersProps {
@@ -63,7 +62,7 @@ const DynamicMarkers: React.FC<DynamicMarkersProps> = ({
 
   const getSpotIcon = useCallback(
     (spot: Spot) => {
-      const icon = spot.category?.icon || "📍"; // Default icon if category is undefined
+      const icon = spot.expand?.category?.icon || "📍"; // Default icon if category is undefined
       const timeAgo = new Date(spot.created).toLocaleString();
 
       const baseSize = 24;
@@ -114,7 +113,7 @@ const DynamicMarkers: React.FC<DynamicMarkersProps> = ({
         >
           <Popup>
             <h3>{spot.name}</h3>
-            <p>Category: {spot.category?.name || "Uncategorized"}</p>
+            <p>Category: {spot.expand?.category?.name || "Uncategorized"}</p>
             <p>Created: {new Date(spot.created).toLocaleString()}</p>
           </Popup>
         </Marker>
