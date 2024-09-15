@@ -104,7 +104,7 @@ function Map() {
   };
 
   const refreshSpots = () => {
-    setRefreshKey(prevKey => prevKey + 1);
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
   return (
@@ -126,7 +126,6 @@ function Map() {
           <div ref={controlsRef}>
             <MapControls showListView={isSheetOpen} />
           </div>
-          <ZoomButtons />
           <SpotLayer
             key={refreshKey}
             isAdmin={false} // Replace with actual admin status
