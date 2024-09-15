@@ -10,18 +10,18 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-20 h-screen transition-[width] ease-in-out duration-300",
+        "fixed top-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 text-black dark:text-white transition-[width] ease-in-out duration-300 shadow-lg",
         isOpen ? "w-72" : "w-[90px]"
       )}
     >
       <SidebarToggle />
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
+      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto">
         <Button
           className={cn(
-            "transition-transform ease-in-out duration-300 mb-1",
+            "transition-transform ease-in-out duration-300 mb-1 justify-start",
             isOpen ? "translate-x-0" : "translate-x-1"
           )}
-          variant="link"
+          variant="ghost"
         >
           <PanelsTopLeft className="w-6 h-6 mr-1" />
           <h1
