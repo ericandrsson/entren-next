@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoDrawer from "./MapInfoDrawer";
 import MapControls from "./MapControls";
@@ -74,6 +74,7 @@ function Map() {
           zoom={5}
           className="w-full h-full"
           ref={mapRef}
+          zoomControl={false} // Remove default zoom control
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
