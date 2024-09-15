@@ -13,6 +13,7 @@ import MapInfoSheet from "./MapInfoSheet";
 import MapControls from "./MapControls";
 import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
+import ZoomButtons from "./ZoomButtons";
 
 function MapClickHandler({
   onMapClick,
@@ -67,24 +68,14 @@ function Map() {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <MapInfoSheet
-        isOpen={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-        markerPosition={markerPosition}
-      />
-      <Sidebar />
-      <div
-        className={`flex-1 relative transition-[margin-left] ease-in-out duration-300 ${
-          isSidebarOpen ? "ml-72" : "ml-[90px]"
-        }`}
-      >
+    <div className="flex h-screen relative isolate">
+      <div className="absolute inset-0 z-0">
         <MapContainer
           center={[62.0, 15.0]}
           zoom={5}
-          className="w-full h-full z-[0]"
+          className="w-full h-full"
           ref={mapRef}
-          zoomControl={false} // Remove default zoom control
+          zoomControl={false}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -94,8 +85,22 @@ function Map() {
           <div ref={controlsRef}>
             <MapControls showListView={isSheetOpen} />
           </div>
+          <ZoomButtons /> {/* Add ZoomButtons here */}
         </MapContainer>
       </div>
+      <div className="relative z-10 flex w-full h-full pointer-events-none">
+        <Sidebar />
+        <div className={`flex-1 ${isSidebarOpen ? "ml-72" : "ml-[90px]"}`}>
+          <div className="pointer-events-auto">
+            {/* Remove MapControls from here if it's not needed outside the map */}
+          </div>
+        </div>
+      </div>
+      <MapInfoSheet
+        isOpen={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        markerPosition={markerPosition}
+      />
     </div>
   );
 }

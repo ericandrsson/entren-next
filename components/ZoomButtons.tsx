@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useMapEvents } from "react-leaflet";
+import { useMapEvents } from 'react-leaflet';
 
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 18;

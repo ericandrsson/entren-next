@@ -118,7 +118,7 @@ function MapInfoSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
-        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white z-[9999]"
+        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white"
       >
         <SheetHeader>
           <SheetTitle>Add New Place</SheetTitle>
