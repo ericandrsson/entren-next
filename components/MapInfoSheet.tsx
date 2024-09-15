@@ -22,7 +22,10 @@ function MapInfoSheet({
 }: MapInfoSheetProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[400px] sm:w-[540px] z-[1001]">
+      <SheetContent 
+        side="left" 
+        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white z-[9999]"
+      >
         <SheetHeader>
           <SheetTitle>Add Information</SheetTitle>
           <SheetDescription>
