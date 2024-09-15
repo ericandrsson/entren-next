@@ -68,6 +68,11 @@ function Map() {
 
   return (
     <div className="flex h-screen">
+      <MapInfoSheet
+        isOpen={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        markerPosition={markerPosition}
+      />
       <Sidebar />
       <div
         className={`flex-1 relative transition-[margin-left] ease-in-out duration-300 ${
@@ -77,7 +82,7 @@ function Map() {
         <MapContainer
           center={[62.0, 15.0]}
           zoom={5}
-          className="w-full h-full"
+          className="w-full h-full z-[0]"
           ref={mapRef}
           zoomControl={false} // Remove default zoom control
         >
@@ -90,11 +95,6 @@ function Map() {
             <MapControls showListView={isSheetOpen} />
           </div>
         </MapContainer>
-        <MapInfoSheet
-          isOpen={isSheetOpen}
-          onOpenChange={setIsSheetOpen}
-          markerPosition={markerPosition}
-        />
       </div>
     </div>
   );
