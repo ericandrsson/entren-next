@@ -6,7 +6,6 @@ import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoSheet from "./MapInfoSheet";
 import MapControls from "./MapControls";
-import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import ZoomButtons from "./ZoomButtons";
 import SpotLayer from "./SpotLayer";
@@ -45,46 +44,49 @@ function Map() {
   const [tempSpot, setTempSpot] = useState<Spot | null>(null);
   const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
 
-  const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
-    if (
-      controlsRef.current &&
-      controlsRef.current.contains(e.originalEvent.target as Node)
-    ) {
-      return;
-    }
+  const handleMapClick = useCallback(
+    (e: L.LeafletMouseEvent) => {
+      if (
+        controlsRef.current &&
+        controlsRef.current.contains(e.originalEvent.target as Node)
+      ) {
+        return;
+      }
 
-    if (previewedSpot) {
-      // If a spot is being previewed, close the preview
-      setPreviewedSpot(null);
-      return;
-    }
+      if (previewedSpot) {
+        // If a spot is being previewed, close the preview
+        setPreviewedSpot(null);
+        return;
+      }
 
-    if (mapRef.current) {
-      const map = mapRef.current;
+      if (mapRef.current) {
+        const map = mapRef.current;
 
-      const newTempSpot = {
-        id: "temp",
-        lat: e.latlng.lat,
-        lng: e.latlng.lng,
-        name: "New Spot",
-        category: "",
-        created: new Date().toISOString(),
-        isVerified: false,
-        user: "",
-      };
+        const newTempSpot = {
+          id: "temp",
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+          name: "New Spot",
+          category: "",
+          created: new Date().toISOString(),
+          isVerified: false,
+          user: "",
+        };
 
-      setTempSpot(newTempSpot);
-      setMarkerPosition(e.latlng);
+        setTempSpot(newTempSpot);
+        setMarkerPosition(e.latlng);
 
-      // Zoom in to the clicked location
-      map.setView(e.latlng, 15);
+        // Zoom in to the clicked location
+        map.setView(e.latlng, 15);
 
-      // Add a slight delay before opening the drawer
-      setTimeout(() => {
-        setIsSheetOpen(true);
-      }, 800);
-    }
-  }, [previewedSpot]);
+        // Add a slight delay before opening the drawer
+        setTimeout(() => {
+          setIsSheetOpen(true);
+        }, 800);
+      }
+    },
+    [previewedSpot]
+  );
 
   const handleSpotClick = (spot: Spot) => {
     console.log("Spot clicked:", spot);
@@ -122,11 +124,13 @@ function Map() {
             user={null} // Replace with actual user object
             onSpotClick={handleSpotClick}
           />
-          {tempSpot && <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />}
+          {tempSpot && (
+            <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />
+          )}
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">
-        <Sidebar />
+        {/*<Sidebar /> */}
         <div className={`flex-1 ${isSidebarOpen ? "ml-72" : "ml-[90px]"}`}>
           <div className="pointer-events-auto">
             {/* Remove MapControls from here if it's not needed outside the map */}
