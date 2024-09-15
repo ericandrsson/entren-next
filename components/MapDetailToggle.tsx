@@ -8,15 +8,15 @@ interface MapDetailToggleProps {
 
 function MapDetailToggle({ isDetailed, onToggle }: MapDetailToggleProps) {
   return (
-    <div className="absolute top-4 right-4 z-[1000] pointer-events-auto">
+    <div className="absolute top-4 right-4 z-[1000] pointer-events-auto sm:right-4 right-2">
       <Button
         onClick={onToggle}
         variant="outline"
         size="sm"
-        className="bg-white text-black backdrop-blur-sm h-10 px-4 hover:bg-white/80 transition-colors duration-200"
+        className="bg-white text-black backdrop-blur-sm h-8 px-2 sm:h-10 sm:px-4 hover:bg-white/80 transition-colors duration-200"
       >
-        <MapIcon className="mr-2 h-4 w-4" />
-        {isDetailed ? "Simple" : "Detailed"}
+        <MapIcon className="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
+        <span className="text-xs sm:text-sm">{isDetailed ? "Simple" : "Detailed"}</span>
       </Button>
     </div>
   );
