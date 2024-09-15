@@ -9,7 +9,11 @@ interface Spot {
   name: string;
   lat: number;
   lng: number;
-  category: string;
+  category: {
+    id: string;
+    name: string;
+    icon: string;
+  };
   created: string;
   description?: string;
   user: string;
