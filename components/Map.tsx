@@ -6,6 +6,8 @@ import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoDrawer from "./MapInfoDrawer";
 import MapControls from "./MapControls";
+import { Sidebar } from "./Sidebar";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 function MapClickHandler({
   onMapClick,
@@ -23,6 +25,7 @@ function Map() {
   const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
+  const { isOpen: isSidebarOpen } = useSidebarToggle();
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
     // Check if the click event originated from the controls
@@ -59,28 +62,35 @@ function Map() {
   }, []);
 
   return (
-    <>
-      <MapContainer
-        center={[62.0, 15.0]}
-        zoom={5}
-        className="w-full h-screen"
-        ref={mapRef}
+    <div className="flex h-screen">
+      <Sidebar />
+      <div 
+        className={`flex-1 relative transition-[margin-left] ease-in-out duration-300 ${
+          isSidebarOpen ? "ml-72" : "ml-[90px]"
+        }`}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        <MapContainer
+          center={[62.0, 15.0]}
+          zoom={5}
+          className="w-full h-full"
+          ref={mapRef}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <MapClickHandler onMapClick={handleMapClick} />
+          <div ref={controlsRef}>
+            <MapControls showListView={isSheetOpen} />
+          </div>
+        </MapContainer>
+        <MapInfoDrawer
+          isOpen={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          markerPosition={markerPosition}
         />
-        <MapClickHandler onMapClick={handleMapClick} />
-        <div ref={controlsRef}>
-          <MapControls showListView={isSheetOpen} />
-        </div>
-      </MapContainer>
-      <MapInfoDrawer
-        isOpen={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-        markerPosition={markerPosition}
-      />
-    </>
+      </div>
+    </div>
   );
 }
 

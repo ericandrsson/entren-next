@@ -7,7 +7,7 @@ interface MapControlsProps {
 function MapControls({ showListView }: MapControlsProps) {
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute bottom-12 right-12 z-[1000] pointer-events-auto">
+      <div className="absolute bottom-12 left-12 z-[1000] pointer-events-auto">
         <ZoomButtons showListView={showListView} />
         {/* Add other control components here as needed */}
       </div>
