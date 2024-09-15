@@ -65,9 +65,17 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
               ? `
             <div class="spot-text">
               <span class="spot-title">${spot.name}</span>
-              ${formattedTime ? `<span class="spot-time">${formattedTime}</span>` : ""}
+              ${
+                formattedTime
+                  ? `<span class="spot-time">${formattedTime}</span>`
+                  : ""
+              }
             </div>
-            ${!spot.isVerified ? '<span class="unverified-indicator">!</span>' : ""}
+            ${
+              !spot.isVerified
+                ? '<span class="unverified-indicator">!</span>'
+                : ""
+            }
           `
               : ""
           }
@@ -105,7 +113,9 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
 
       // Check for subcategory
       if (spot.expand.category.parent_spot_category) {
-        const parentCategory = categories.find(c => c.id === spot.expand.category.parent_spot_category);
+        const parentCategory = categories.find(
+          (c) => c.id === spot.expand.category.parent_spot_category
+        );
         if (parentCategory) {
           name = `${parentCategory.name} - ${name}`;
         }

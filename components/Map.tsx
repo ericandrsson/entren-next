@@ -76,13 +76,16 @@ function Map() {
         setTempSpot(newTempSpot);
         setMarkerPosition(e.latlng);
 
-        // Zoom in to the clicked location
-        map.setView(e.latlng, 15);
-
-        // Add a slight delay before opening the drawer
+        // Add a slight delay before zooming and opening the drawer
         setTimeout(() => {
-          setIsSheetOpen(true);
-        }, 800);
+          // Zoom in to the clicked location
+          map.setView(e.latlng, 15);
+
+          // Add another slight delay before opening the drawer
+          setTimeout(() => {
+            setIsSheetOpen(true);
+          }, 400);
+        }, 400);
       }
     },
     [previewedSpot]
@@ -118,7 +121,6 @@ function Map() {
           <div ref={controlsRef}>
             <MapControls showListView={isSheetOpen} />
           </div>
-          <ZoomButtons />
           <SpotLayer
             isAdmin={false} // Replace with actual admin status
             user={null} // Replace with actual user object

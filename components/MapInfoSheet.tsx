@@ -23,7 +23,14 @@ import ImageUploader from "./ui/ImageUploader";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 
 interface Category {
   id: string;
@@ -69,7 +76,7 @@ function MapInfoSheet({
     try {
       const result = await pb
         .collection("spot_categories")
-        .getFullList<Category>({ sort: 'name' });
+        .getFullList<Category>({ sort: "name" });
       console.log("Fetched categories:", result);
       setCategories(result);
     } catch (error) {
@@ -147,12 +154,14 @@ function MapInfoSheet({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {getChildCategories(selectedMainCategory).map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        <span className="mr-2">{category.icon}</span>
-                        {category.name}
-                      </SelectItem>
-                    ))}
+                    {getChildCategories(selectedMainCategory).map(
+                      (category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          <span className="mr-2">{category.icon}</span>
+                          {category.name}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -256,7 +265,9 @@ function MapInfoSheet({
                     <FormLabel>Image</FormLabel>
                     <FormControl>
                       <ImageUploader
-                        onImageSelected={(file: File) => form.setValue("image", file)}
+                        onImageSelected={(file: File) =>
+                          form.setValue("image", file)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
