@@ -221,20 +221,23 @@ function MapInfoSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
-        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white text-gray-800"
+        className="w-[400px] sm:w-[540px] max-w-[100vw] bg-white text-gray-800 flex flex-col h-full p-0 overflow-hidden"
       >
-        <SheetHeader>
+        <SheetHeader className="p-6 flex-shrink-0">
           <SheetTitle className="text-2xl font-bold text-gray-900">
             Lägg till ny plats
           </SheetTitle>
           <SheetDescription className="text-gray-600">
             Hjälp andra att hitta och förstå tillgängligheten genom att fylla i
-            informationen nedan.{" "}
+            informationen nedan.
           </SheetDescription>
         </SheetHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="py-4 space-y-6">
+        <Form {...form} className="flex flex-col flex-grow overflow-hidden">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col flex-grow overflow-hidden"
+          >
+            <div className="flex-grow overflow-y-auto px-6 pb-6">
               <FormField
                 control={form.control}
                 name="title"
@@ -289,10 +292,7 @@ function MapInfoSheet({
                             <strong>Fokusera på entrén:</strong> Visa tydligt
                             dörren, ramper eller trappor.
                           </li>
-                          <li>
-                            <strong>God belysning:</strong> Ta bilden i bra ljus
-                            för att få med alla detaljer.
-                          </li>
+
                           <li>
                             <strong>Rakt framifrån:</strong> Placera entrén i
                             mitten av bilden.
@@ -313,7 +313,7 @@ function MapInfoSheet({
                 )}
               />
             </div>
-            <SheetFooter>
+            <SheetFooter className="p-6 bg-white border-t flex-shrink-0">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Avbryt
               </Button>
