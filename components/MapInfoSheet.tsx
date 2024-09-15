@@ -19,6 +19,11 @@ import {
 import { LatLng } from "leaflet";
 import { pb } from "@/lib/db";
 import { useToast } from "@/hooks/use-toast";
+import ImageUploader from "./ui/ImageUploader";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 interface Category {
   id: string;
@@ -34,6 +39,12 @@ interface MapInfoSheetProps {
   onSpotCreated: () => void;
 }
 
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  category: z.string().min(1, "Category is required"),
+  image: z.instanceof(File).optional(),
+});
+
 function MapInfoSheet({
   isOpen,
   onOpenChange,
@@ -41,9 +52,15 @@ function MapInfoSheet({
   onSpotCreated,
 }: MapInfoSheetProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [title, setTitle] = useState("");
   const { toast } = useToast();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      category: "",
+    },
+  });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,77 +82,63 @@ function MapInfoSheet({
     );
   };
 
-  const handleCategorySelect = (categoryId: string, level: number) => {
-    setSelectedCategory((prev) => {
-      const newSelection = [...prev.slice(0, level), categoryId];
-      return newSelection.length > 2 ? newSelection.slice(-2) : newSelection;
-    });
-  };
-
   const renderCategorySelection = () => {
     const rootCategories = categories.filter(
       (category) => !category.parent_spot_category
     );
 
     return (
-      <div className="space-y-4">
-        <Select
-          onValueChange={(value) => handleCategorySelect(value, 0)}
-          value={selectedCategory[0] || ""}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select main category" />
-          </SelectTrigger>
-          <SelectContent>
-            {rootCategories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                <span className="mr-2">{category.icon}</span>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {selectedCategory[0] && (
-          <Select
-            onValueChange={(value) => handleCategorySelect(value, 1)}
-            value={selectedCategory[1] || ""}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select sub-category" />
-            </SelectTrigger>
-            <SelectContent>
-              {getChildCategories(selectedCategory[0]).map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  <span className="mr-2">{category.icon}</span>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <FormField
+        control={form.control}
+        name="category"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Category</FormLabel>
+            <Select onValueChange={field.onChange} value={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {rootCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    <span className="mr-2">{category.icon}</span>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
         )}
-      </div>
+      />
     );
   };
 
-  const handleSave = async () => {
-    if (!markerPosition || !title || selectedCategory.length === 0) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!markerPosition) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Marker position is missing",
       });
       return;
     }
 
     try {
-      const newSpot = await pb.collection("spots").create({
-        name: title,
-        lat: markerPosition.lat,
-        lng: markerPosition.lng,
-        category: selectedCategory[selectedCategory.length - 1],
-        isVerified: false, // Set new spots as unverified by default
-      });
+      const formData = new FormData();
+      formData.append("name", values.title);
+      formData.append("lat", markerPosition.lat.toString());
+      formData.append("lng", markerPosition.lng.toString());
+      formData.append("category", values.category);
+      formData.append("isVerified", "false");
+
+      if (values.image) {
+        formData.append("image", values.image);
+      }
+
+      const newSpot = await pb.collection("spots").create(formData);
 
       console.log("New spot created:", newSpot);
       toast({
@@ -143,9 +146,7 @@ function MapInfoSheet({
         description: "Spot created successfully! It will be verified soon.",
       });
 
-      // Reset form, close sheet, and notify parent component
-      setTitle("");
-      setSelectedCategory([]);
+      form.reset();
       onOpenChange(false);
       onSpotCreated();
     } catch (error) {
@@ -172,29 +173,53 @@ function MapInfoSheet({
             Enter details about this location.
           </SheetDescription>
         </SheetHeader>
-        <div className="py-4 space-y-4">
-          {markerPosition && (
-            <p className="text-gray-700">
-              Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
-              {markerPosition.lng.toFixed(6)}
-            </p>
-          )}
-          <Input
-            placeholder="Enter title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-          />
-          {renderCategorySelection()}
-        </div>
-        <SheetFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
-          </Button>
-          <Button variant="default" onClick={handleSave}>
-            Save
-          </Button>
-        </SheetFooter>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="py-4 space-y-4">
+              {markerPosition && (
+                <p className="text-gray-700">
+                  Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
+                  {markerPosition.lng.toFixed(6)}
+                </p>
+              )}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {renderCategorySelection()}
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        onImageSelected={(file: File) => form.setValue("image", file)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <SheetFooter>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Close
+              </Button>
+              <Button type="submit">Save</Button>
+            </SheetFooter>
+          </form>
+        </Form>
       </SheetContent>
     </Sheet>
   );
