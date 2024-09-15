@@ -30,7 +30,9 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
+import { Camera } from "lucide-react";
 
 interface Category {
   id: string;
@@ -47,10 +49,10 @@ interface MapInfoSheetProps {
 }
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  mainCategory: z.string().min(1, "Main category is required"),
+  title: z.string().min(1, "Titel är obligatorisk"),
+  mainCategory: z.string().min(1, "Huvudkategori är obligatorisk"),
   subCategory: z.string().optional(),
-  image: z.instanceof(File).optional(),
+  image: z.instanceof(File, { message: "En bild är obligatorisk" }),
 });
 
 function MapInfoSheet({
@@ -77,14 +79,13 @@ function MapInfoSheet({
       const result = await pb
         .collection("spot_categories")
         .getFullList<Category>({ sort: "name" });
-      console.log("Fetched categories:", result);
       setCategories(result);
     } catch (error) {
       console.error("Error fetching categories:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to load categories. Please try again.",
+        title: "Fel",
+        description: "Kunde inte ladda kategorier. Försök igen.",
       });
     }
   }, [toast]);
@@ -113,7 +114,7 @@ function MapInfoSheet({
           name="mainCategory"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Main Category</FormLabel>
+              <FormLabel>Huvudkategori</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -124,7 +125,7 @@ function MapInfoSheet({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a main category" />
+                    <SelectValue placeholder="Välj en huvudkategori" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -146,11 +147,11 @@ function MapInfoSheet({
             name="subCategory"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sub Category</FormLabel>
+                <FormLabel>Underkategori</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a sub-category" />
+                      <SelectValue placeholder="Välj en underkategori" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -177,8 +178,8 @@ function MapInfoSheet({
     if (!markerPosition) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Marker position is missing",
+        title: "Fel",
+        description: "Markeringsposition saknas",
       });
       return;
     }
@@ -199,8 +200,8 @@ function MapInfoSheet({
 
       console.log("New spot created:", newSpot);
       toast({
-        title: "Success",
-        description: "Spot created successfully! It will be verified soon.",
+        title: "Framgång",
+        description: "Platsen har skapats! Den kommer att verifieras snart.",
       });
 
       form.reset();
@@ -210,8 +211,8 @@ function MapInfoSheet({
       console.error("Error creating spot:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to create spot. Please try again.",
+        title: "Fel",
+        description: "Kunde inte skapa platsen. Försök igen.",
       });
     }
   };
@@ -224,36 +225,41 @@ function MapInfoSheet({
       >
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold text-gray-900">
-            Add New Place
+            Lägg till ny plats
           </SheetTitle>
           <SheetDescription className="text-gray-600">
-            Enter details about this location.
+            Hjälp andra att hitta och förstå tillgängligheten genom att fylla i
+            informationen nedan.{" "}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="py-4 space-y-4">
-              {markerPosition && (
-                <p className="text-gray-700">
-                  Latitude: {markerPosition.lat.toFixed(6)}, Longitude:{" "}
-                  {markerPosition.lng.toFixed(6)}
-                </p>
-              )}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="py-4 space-y-6">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-lg font-semibold">
+                      Titel på platsen
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter title" />
+                      <Input
+                        {...field}
+                        placeholder="Exempel: Café ABC eller Museet XYZ"
+                        className="text-lg"
+                      />
                     </FormControl>
+                    <FormDescription>
+                      Skriv vad platsen heter så att andra lätt kan känna igen
+                      den.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               {categories.length === 0 ? (
-                <p>Loading categories...</p>
+                <p>Laddar kategorier...</p>
               ) : (
                 renderCategorySelection()
               )}
@@ -262,7 +268,10 @@ function MapInfoSheet({
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image</FormLabel>
+                    <FormLabel className="text-lg font-semibold">
+                      <Camera className="inline-block mr-2" size={20} />
+                      Ladda upp en bild på entrén
+                    </FormLabel>
                     <FormControl>
                       <ImageUploader
                         onImageSelected={(file: File) =>
@@ -270,6 +279,35 @@ function MapInfoSheet({
                         }
                       />
                     </FormControl>
+                    <FormDescription>
+                      <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                        <strong className="text-sm mb-2 block">
+                          Riktlinjer för Bilden:
+                        </strong>
+                        <ul className="pl-5 m-0 list-disc">
+                          <li>
+                            <strong>Fokusera på entrén:</strong> Visa tydligt
+                            dörren, ramper eller trappor.
+                          </li>
+                          <li>
+                            <strong>God belysning:</strong> Ta bilden i bra ljus
+                            för att få med alla detaljer.
+                          </li>
+                          <li>
+                            <strong>Rakt framifrån:</strong> Placera entrén i
+                            mitten av bilden.
+                          </li>
+                          <li>
+                            <strong>Inga personer:</strong> Undvik att få med
+                            människor på bilden.
+                          </li>
+                          <li>
+                            <strong>Aktuell bild:</strong> Se till att bilden
+                            visar hur entrén ser ut idag.
+                          </li>
+                        </ul>
+                      </div>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -277,9 +315,14 @@ function MapInfoSheet({
             </div>
             <SheetFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Close
+                Avbryt
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Lägg till plats
+              </Button>
             </SheetFooter>
           </form>
         </Form>
