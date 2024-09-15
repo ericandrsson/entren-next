@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 
 interface Spot {
   id: string;
@@ -19,7 +20,17 @@ interface DynamicMarkersProps {
   onSpotClick: (spot: Spot) => void;
 }
 
-const DynamicMarkers: React.FC<DynamicMarkersProps> = ({ spots, onSpotClick }) => {
+const DynamicMarkers: React.FC<DynamicMarkersProps> = ({
+  spots,
+  categories,
+  handleSpotDelete,
+  handleSpotUpdate,
+  user,
+  isAdmin,
+  onSpotClick,
+}) => {
+  console.log("DynamicMarkers received spots:", spots); // Add this line
+
   const map = useMap();
 
   useEffect(() => {

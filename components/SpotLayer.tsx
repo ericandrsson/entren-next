@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useMap } from 'react-leaflet';
-import { LatLngBounds } from 'leaflet';
-import DynamicMarkers from './DynamicMarkers';
-import { pb } from '@/lib/db';
+import React, { useEffect, useState, useCallback } from "react";
+import { useMap } from "react-leaflet";
+import { LatLngBounds } from "leaflet";
+import DynamicMarkers from "./DynamicMarkers";
+import { pb } from "@/lib/db";
 
 interface Spot {
   id: string;
@@ -28,40 +28,47 @@ interface SpotLayerProps {
   onSpotClick: (spot: Spot) => void;
 }
 
-const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => {
+const SpotLayer: React.FC<SpotLayerProps> = ({
+  isAdmin,
+  user,
+  onSpotClick,
+}) => {
   const [spots, setSpots] = useState<Spot[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const map = useMap();
 
-  const fetchSpots = useCallback(async (bounds: LatLngBounds) => {
-    try {
-      const ne = bounds.getNorthEast();
-      const sw = bounds.getSouthWest();
+  const fetchSpots = useCallback(
+    async (bounds: LatLngBounds) => {
+      try {
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
 
-      let filter = `lat >= ${sw.lat} && lat <= ${ne.lat} && lng >= ${sw.lng} && lng <= ${ne.lng}`;
+        let filter = `lat >= ${sw.lat} && lat <= ${ne.lat} && lng >= ${sw.lng} && lng <= ${ne.lng}`;
 
-      if (!isAdmin) {
-        filter += ` && (isPublic = true || user = "${user?.id}")`;
+        const currentZoom = map.getZoom();
+        const limit = currentZoom < 5 ? 100 : 1000;
+
+        const result = await pb.collection("spots").getList<Spot>(1, limit, {
+          filter: filter,
+          sort: "-created",
+          expand: "category",
+        });
+
+        console.log("Fetched spots:", result.items); // Add this line
+
+        setSpots(result.items);
+      } catch (error) {
+        console.error("Error fetching spots:", error);
       }
-
-      const currentZoom = map.getZoom();
-      const limit = currentZoom < 5 ? 100 : 1000;
-
-      const result = await pb.collection("spots").getList<Spot>(1, limit, {
-        filter: filter,
-        sort: "-created",
-        expand: "category",
-      });
-
-      setSpots(result.items);
-    } catch (error) {
-      console.error("Error fetching spots:", error);
-    }
-  }, [map, isAdmin, user]);
+    },
+    [map, isAdmin, user]
+  );
 
   const fetchCategories = useCallback(async () => {
     try {
-      const result = await pb.collection("spot_categories").getFullList<Category>();
+      const result = await pb
+        .collection("spot_categories")
+        .getFullList<Category>();
       setCategories(result);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -73,12 +80,12 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
       fetchSpots(map.getBounds());
     };
 
-    map.on('moveend', handleMoveEnd);
+    map.on("moveend", handleMoveEnd);
     fetchSpots(map.getBounds());
     fetchCategories();
 
     return () => {
-      map.off('moveend', handleMoveEnd);
+      map.off("moveend", handleMoveEnd);
     };
   }, [map, fetchSpots, fetchCategories]);
 
@@ -94,7 +101,9 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
   const handleSpotUpdate = async (id: string, isPublic: boolean) => {
     try {
       await pb.collection("spots").update(id, { isPublic });
-      setSpots(spots.map((spot) => (spot.id === id ? { ...spot, isPublic } : spot)));
+      setSpots(
+        spots.map((spot) => (spot.id === id ? { ...spot, isPublic } : spot))
+      );
     } catch (error) {
       console.error("Error updating spot:", error);
     }
