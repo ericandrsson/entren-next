@@ -1,20 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import L from "leaflet";
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  ZoomControl,
-} from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoSheet from "./MapInfoSheet";
 import MapControls from "./MapControls";
 import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import ZoomButtons from "./ZoomButtons";
-import SpotLayer from './SpotLayer';
+import SpotLayer from "./SpotLayer";
+
+interface Spot {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  category: string;
+  created: string;
+  description?: string;
+  tags?: string[];
+  user: string;
+  isPublic: boolean;
+}
 
 function MapClickHandler({
   onMapClick,
@@ -35,25 +43,22 @@ function Map() {
   const { isOpen: isSidebarOpen } = useSidebarToggle();
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
-    // Check if the click event originated from the controls
     if (
       controlsRef.current &&
       controlsRef.current.contains(e.originalEvent.target as Node)
     ) {
-      return; // Don't process the click if it's on the controls
+      return;
     }
 
     if (mapRef.current) {
       const map = mapRef.current;
 
-      // Remove existing marker if any
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
           map.removeLayer(layer);
         }
       });
 
-      // Add new marker
       const marker = L.marker(e.latlng, {
         icon: L.divIcon({
           html: "📍",
@@ -69,7 +74,7 @@ function Map() {
   }, []);
 
   const handleSpotClick = (spot: Spot) => {
-    console.log('Spot clicked:', spot);
+    console.log("Spot clicked:", spot);
     // You can add more functionality here, like opening a details panel
   };
 
@@ -86,6 +91,7 @@ function Map() {
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
           <div ref={controlsRef}>

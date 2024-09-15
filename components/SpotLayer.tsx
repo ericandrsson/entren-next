@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
-import SpotMarker from './SpotMarker';
+import DynamicMarkers from './DynamicMarkers';
 import { pb } from '@/lib/db';
 
 interface Spot {
@@ -9,11 +9,24 @@ interface Spot {
   name: string;
   lat: number;
   lng: number;
-  category: {
-    icon: string;
-    name: string;
-  };
+  category: string;
   created: string;
+  description?: string;
+  tags?: string[];
+  user: string;
+  isPublic: boolean;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+interface Tag {
+  id: string;
+  name: string;
+  icon: string;
 }
 
 interface SpotLayerProps {
@@ -24,9 +37,11 @@ interface SpotLayerProps {
 
 const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => {
   const [spots, setSpots] = useState<Spot[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const map = useMap();
 
-  const fetchSpots = async (bounds: LatLngBounds) => {
+  const fetchSpots = useCallback(async (bounds: LatLngBounds) => {
     try {
       const ne = bounds.getNorthEast();
       const sw = bounds.getSouthWest();
@@ -50,7 +65,25 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
     } catch (error) {
       console.error("Error fetching spots:", error);
     }
-  };
+  }, [map, isAdmin, user]);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await pb.collection("spot_categories").getFullList<Category>();
+      setCategories(result);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  }, []);
+
+  const fetchTags = useCallback(async () => {
+    try {
+      const result = await pb.collection("spot_tags").getFullList<Tag>();
+      setTags(result);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  }, []);
 
   useEffect(() => {
     const handleMoveEnd = () => {
@@ -59,18 +92,43 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
 
     map.on('moveend', handleMoveEnd);
     fetchSpots(map.getBounds());
+    fetchCategories();
+    fetchTags();
 
     return () => {
       map.off('moveend', handleMoveEnd);
     };
-  }, [map, isAdmin, user]);
+  }, [map, fetchSpots, fetchCategories, fetchTags]);
+
+  const handleSpotDelete = async (id: string) => {
+    try {
+      await pb.collection("spots").delete(id);
+      setSpots(spots.filter((spot) => spot.id !== id));
+    } catch (error) {
+      console.error("Error deleting spot:", error);
+    }
+  };
+
+  const handleSpotUpdate = async (id: string, isPublic: boolean) => {
+    try {
+      await pb.collection("spots").update(id, { isPublic });
+      setSpots(spots.map((spot) => (spot.id === id ? { ...spot, isPublic } : spot)));
+    } catch (error) {
+      console.error("Error updating spot:", error);
+    }
+  };
 
   return (
-    <>
-      {spots.map((spot) => (
-        <SpotMarker key={spot.id} spot={spot} onClick={onSpotClick} />
-      ))}
-    </>
+    <DynamicMarkers
+      spots={spots}
+      categories={categories}
+      tags={tags}
+      handleSpotDelete={handleSpotDelete}
+      handleSpotUpdate={handleSpotUpdate}
+      user={user}
+      isAdmin={isAdmin}
+      onSpotClick={onSpotClick}
+    />
   );
 };
 
