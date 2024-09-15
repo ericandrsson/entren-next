@@ -26,8 +26,6 @@ body {
   }
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -85,7 +83,6 @@ body {
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -96,6 +93,10 @@ body {
 }
 
 /* Add this at the end of the file */
+.cursor-pointer-map {
+  cursor: pointer;
+}
+
 .leaflet-pane {
   z-index: 1;
 }
@@ -251,4 +252,29 @@ body {
   font-size: 0.9rem;
   color: #888;
   font-style: italic;
+}
+
+/* Add this new class */
+.leaflet-grab {
+  cursor: pointer;
+}
+
+/* Add this new class */
+.leaflet-dragging .leaflet-grab {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/* Cursor styles for Leaflet map */
+.leaflet-container {
+  cursor: default !important;
+}
+
+.leaflet-dragging .leaflet-container {
+  cursor: grabbing !important;
+}
+
+.leaflet-clickable {
+  cursor: pointer !important;
 }

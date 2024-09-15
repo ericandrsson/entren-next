@@ -118,7 +118,7 @@ function Map() {
         <MapContainer
           center={[62.0, 15.0]}
           zoom={5}
-          className="w-full h-full"
+          className="w-full h-full cursor-pointer-map leaflet-grab" // Updated class
           ref={mapRef}
           zoomControl={false}
         >
