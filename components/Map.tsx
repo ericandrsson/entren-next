@@ -45,6 +45,7 @@ function Map() {
   const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isDetailed, setIsDetailed] = useState(false);
+  const [prevMapState, setPrevMapState] = useState<{ center: L.LatLng; zoom: number } | null>(null);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -56,13 +57,18 @@ function Map() {
       }
 
       if (previewedSpot) {
-        // If a spot is being previewed, close the preview
         setPreviewedSpot(null);
         return;
       }
 
       if (mapRef.current) {
         const map = mapRef.current;
+
+        // Store the current map state before zooming in
+        setPrevMapState({
+          center: map.getCenter(),
+          zoom: map.getZoom()
+        });
 
         const newTempSpot = {
           id: "temp",
@@ -78,12 +84,8 @@ function Map() {
         setTempSpot(newTempSpot);
         setMarkerPosition(e.latlng);
 
-        // Add a slight delay before zooming and opening the drawer
         setTimeout(() => {
-          // Zoom in to the clicked location
           map.setView(e.latlng, 15);
-
-          // Add another slight delay before opening the drawer
           setTimeout(() => {
             setIsSheetOpen(true);
           }, 400);
@@ -102,6 +104,15 @@ function Map() {
   const handleSheetClose = () => {
     setTempSpot(null);
     setIsSheetOpen(false);
+
+    // Revert to the previous map state when canceling
+    if (prevMapState && mapRef.current) {
+      mapRef.current.setView(prevMapState.center, prevMapState.zoom, {
+        animate: true,
+        duration: 0.5
+      });
+    }
+    setPrevMapState(null);
   };
 
   const refreshSpots = () => {
