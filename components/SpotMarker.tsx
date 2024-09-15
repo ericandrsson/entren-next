@@ -9,6 +9,7 @@ interface Category {
   id: string;
   name: string;
   icon: string;
+  parent_spot_category?: string | null;
 }
 
 interface Spot {
@@ -29,12 +30,14 @@ interface Spot {
 
 interface SpotMarkerProps {
   spot: Spot;
+  categories: Category[];
   isTemporary?: boolean;
   onClick?: (spot: Spot) => void;
 }
 
 const SpotMarker: React.FC<SpotMarkerProps> = ({
   spot,
+  categories,
   isTemporary = false,
   onClick,
 }) => {

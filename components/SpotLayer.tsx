@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useMap } from "react-leaflet";
 import { LatLngBounds } from "leaflet";
-import DynamicMarkers from "./DynamicMarkers";
 import { pb } from "@/lib/db";
 import SpotMarker from "./SpotMarker";
 import MarkerClusterGroup from "react-leaflet-cluster";
@@ -26,6 +25,7 @@ interface Category {
   id: string;
   name: string;
   icon: string;
+  parent_spot_category?: string | null;
 }
 
 interface SpotLayerProps {
@@ -127,8 +127,8 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
         <SpotMarker 
           key={spot.id} 
           spot={spot} 
-          onClick={onSpotClick} 
           categories={categories}
+          onClick={onSpotClick} 
         />
       ))}
     </MarkerClusterGroup>
