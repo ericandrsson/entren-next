@@ -134,12 +134,13 @@ function MapInfoSheet({
         lat: markerPosition.lat,
         lng: markerPosition.lng,
         category: selectedCategory[selectedCategory.length - 1],
+        isVerified: false, // Set new spots as unverified by default
       });
 
       console.log("New spot created:", newSpot);
       toast({
         title: "Success",
-        description: "Spot created successfully!",
+        description: "Spot created successfully! It will be verified soon.",
       });
 
       // Reset form, close sheet, and notify parent component

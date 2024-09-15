@@ -153,3 +153,24 @@ body {
     0.5px 0.5px 0 #fff, -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff,
     -0.5px 0.5px 0 #fff;
 }
+
+.spot-marker {
+  position: relative;
+}
+
+.unverified-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  background-color: #f44336; /* Red background */
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #ff9800;
+}

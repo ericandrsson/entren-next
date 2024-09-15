@@ -22,7 +22,7 @@ interface Spot {
   description?: string;
   tags?: string[];
   user: string;
-  isPublic: boolean;
+  isVerified: boolean;
 }
 
 function MapClickHandler({
@@ -56,13 +56,13 @@ function Map() {
       const map = mapRef.current;
 
       const newTempSpot = {
-        id: "temp", // Add a temporary id
+        id: "temp",
         lat: e.latlng.lat,
         lng: e.latlng.lng,
         name: "New Spot",
-        category: "", // Empty string for temporary spot
+        category: "",
         created: new Date().toISOString(),
-        isPublic: true,
+        isVerified: false,
         user: "",
       };
 

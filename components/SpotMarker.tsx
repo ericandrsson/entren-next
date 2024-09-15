@@ -17,7 +17,7 @@ interface Spot {
   created?: string;
   description?: string;
   user?: string;
-  isPublic?: boolean;
+  isVerified?: boolean;
   expand?: {
     category: Category;
   };
@@ -49,9 +49,7 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
 
     return L.divIcon({
       html: `
-        <div class="spot-marker" style="font-size: ${fontSize}px; opacity: ${
-        spot.isPublic ? 1 : 0.6
-      };">
+        <div class="spot-marker" style="font-size: ${fontSize}px;">
           <span class="spot-icon" style="font-size: ${size}px;">${icon}</span>
           ${
             !isTemporary
@@ -66,7 +64,7 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
                   : ""
               }
             </div>
-            ${!spot.isPublic ? '<span class="private-indicator">🔒</span>' : ""}
+            ${!spot.isVerified ? '<span class="unverified-indicator">!</span>' : ""}
           `
               : ""
           }
@@ -98,6 +96,7 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
           {spot.created && (
             <p>Created: {new Date(spot.created).toLocaleString()}</p>
           )}
+          <p>Status: {spot.isVerified ? "Verified" : "Unverified"}</p>
         </Popup>
       )}
     </Marker>

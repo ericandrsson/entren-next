@@ -19,7 +19,7 @@ interface Spot {
   created: string;
   description?: string;
   user: string;
-  isPublic: boolean;
+  isVerified: boolean;
 }
 
 interface Category {
@@ -104,11 +104,11 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
     }
   };
 
-  const handleSpotUpdate = async (id: string, isPublic: boolean) => {
+  const handleSpotUpdate = async (id: string, isVerified: boolean) => {
     try {
-      await pb.collection("spots").update(id, { isPublic });
+      await pb.collection("spots").update(id, { isVerified });
       setSpots(
-        spots.map((spot) => (spot.id === id ? { ...spot, isPublic } : spot))
+        spots.map((spot) => (spot.id === id ? { ...spot, isVerified } : spot))
       );
     } catch (error) {
       console.error("Error updating spot:", error);
