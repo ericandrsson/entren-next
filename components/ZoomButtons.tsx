@@ -23,17 +23,17 @@ function ZoomButtons({ showListView }: ZoomButtonsProps) {
         onClick={handleZoomIn}
         variant="outline"
         size="icon"
-        className="bg-white text-black backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/80 transition-colors duration-200"
+        className="bg-white text-black backdrop-blur-sm h-10 w-10 hover:bg-white/80 transition-colors duration-200"
       >
-        <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Plus className="h-4 w-4" />
       </Button>
       <Button
         onClick={handleZoomOut}
         variant="outline"
         size="icon"
-        className="bg-white text-black backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/80 transition-colors duration-200"
+        className="bg-white text-black backdrop-blur-sm h-10 w-10 hover:bg-white/80 transition-colors duration-200"
       >
-        <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Minus className="h-4 w-4" />
       </Button>
     </div>
   );
