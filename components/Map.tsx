@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMapEvents, ZoomControl } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  useMapEvents,
+  ZoomControl,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoDrawer from "./MapInfoDrawer";
 import MapControls from "./MapControls";
@@ -64,7 +69,7 @@ function Map() {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div 
+      <div
         className={`flex-1 relative transition-[margin-left] ease-in-out duration-300 ${
           isSidebarOpen ? "ml-72" : "ml-[90px]"
         }`}
