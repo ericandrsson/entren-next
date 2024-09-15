@@ -43,12 +43,19 @@ function Map() {
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
   const [tempSpot, setTempSpot] = useState<Spot | null>(null);
+  const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
     if (
       controlsRef.current &&
       controlsRef.current.contains(e.originalEvent.target as Node)
     ) {
+      return;
+    }
+
+    if (previewedSpot) {
+      // If a spot is being previewed, close the preview
+      setPreviewedSpot(null);
       return;
     }
 
@@ -75,13 +82,14 @@ function Map() {
       // Add a slight delay before opening the drawer
       setTimeout(() => {
         setIsSheetOpen(true);
-      }, 800); // 300ms delay, adjust as needed
+      }, 800);
     }
-  }, []);
+  }, [previewedSpot]);
 
   const handleSpotClick = (spot: Spot) => {
     console.log("Spot clicked:", spot);
-    // You can add more functionality here, like opening a details panel
+    setPreviewedSpot(spot);
+    // You can add more functionality here if needed
   };
 
   const handleSheetClose = () => {
@@ -114,7 +122,7 @@ function Map() {
             user={null} // Replace with actual user object
             onSpotClick={handleSpotClick}
           />
-          {tempSpot && <SpotMarker spot={tempSpot} isTemporary={true} />}
+          {tempSpot && <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />}
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">
