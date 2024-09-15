@@ -1,0 +1,7 @@
+.unverified-indicator {
+  /* ... existing styles ... */
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  background-color: #f44336; /* Red background */
+}
