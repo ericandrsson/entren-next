@@ -12,18 +12,11 @@ interface Spot {
   category: string;
   created: string;
   description?: string;
-  tags?: string[];
   user: string;
   isPublic: boolean;
 }
 
 interface Category {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-interface Tag {
   id: string;
   name: string;
   icon: string;
@@ -38,7 +31,6 @@ interface SpotLayerProps {
 const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => {
   const [spots, setSpots] = useState<Spot[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
   const map = useMap();
 
   const fetchSpots = useCallback(async (bounds: LatLngBounds) => {
@@ -76,15 +68,6 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
     }
   }, []);
 
-  const fetchTags = useCallback(async () => {
-    try {
-      const result = await pb.collection("spot_tags").getFullList<Tag>();
-      setTags(result);
-    } catch (error) {
-      console.error("Error fetching tags:", error);
-    }
-  }, []);
-
   useEffect(() => {
     const handleMoveEnd = () => {
       fetchSpots(map.getBounds());
@@ -93,12 +76,11 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
     map.on('moveend', handleMoveEnd);
     fetchSpots(map.getBounds());
     fetchCategories();
-    fetchTags();
 
     return () => {
       map.off('moveend', handleMoveEnd);
     };
-  }, [map, fetchSpots, fetchCategories, fetchTags]);
+  }, [map, fetchSpots, fetchCategories]);
 
   const handleSpotDelete = async (id: string) => {
     try {
@@ -122,7 +104,6 @@ const SpotLayer: React.FC<SpotLayerProps> = ({ isAdmin, user, onSpotClick }) => 
     <DynamicMarkers
       spots={spots}
       categories={categories}
-      tags={tags}
       handleSpotDelete={handleSpotDelete}
       handleSpotUpdate={handleSpotUpdate}
       user={user}
