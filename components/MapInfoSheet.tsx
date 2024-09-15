@@ -41,7 +41,8 @@ interface MapInfoSheetProps {
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  category: z.string().min(1, "Category is required"),
+  mainCategory: z.string().min(1, "Main category is required"),
+  subCategory: z.string().optional(),
   image: z.instanceof(File).optional(),
 });
 
@@ -53,6 +54,7 @@ function MapInfoSheet({
 }: MapInfoSheetProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const { toast } = useToast();
+  const [selectedMainCategory, setSelectedMainCategory] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,31 +90,67 @@ function MapInfoSheet({
     );
 
     return (
-      <FormField
-        control={form.control}
-        name="category"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Category</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {rootCategories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    <span className="mr-2">{category.icon}</span>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
+      <>
+        <FormField
+          control={form.control}
+          name="mainCategory"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Main Category</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  setSelectedMainCategory(value);
+                  form.setValue("subCategory", "");
+                }}
+                value={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a main category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {rootCategories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      <span className="mr-2">{category.icon}</span>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {selectedMainCategory && (
+          <FormField
+            control={form.control}
+            name="subCategory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sub Category</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a sub-category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {getChildCategories(selectedMainCategory).map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        <span className="mr-2">{category.icon}</span>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
-      />
+      </>
     );
   };
 
@@ -131,7 +169,7 @@ function MapInfoSheet({
       formData.append("name", values.title);
       formData.append("lat", markerPosition.lat.toString());
       formData.append("lng", markerPosition.lng.toString());
-      formData.append("category", values.category);
+      formData.append("category", values.subCategory || values.mainCategory);
       formData.append("isVerified", "false");
 
       if (values.image) {

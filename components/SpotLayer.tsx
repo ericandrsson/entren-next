@@ -124,7 +124,12 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
       disableClusteringAtZoom={15}
     >
       {spots.map((spot) => (
-        <SpotMarker key={spot.id} spot={spot} onClick={onSpotClick} />
+        <SpotMarker 
+          key={spot.id} 
+          spot={spot} 
+          onClick={onSpotClick} 
+          categories={categories}
+        />
       ))}
     </MarkerClusterGroup>
   );

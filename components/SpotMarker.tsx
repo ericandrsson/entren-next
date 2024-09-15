@@ -89,27 +89,30 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
     return null;
   };
 
-  const getCategoryIcon = () => {
-    // This is a simple example. You might want to create a more comprehensive mapping
-    const categoryIcons: { [key: string]: string } = {
-      "Mat och Dryck": "🍽️",
-      "Boende": "🏠",
-      "Aktiviteter": "🎭",
-      // Add more categories and icons as needed
-    };
+  const getCategoryInfo = () => {
+    let icon = "📍";
+    let name = "Uncategorized";
 
-    const categoryName = getCategoryName();
-    return categoryIcons[categoryName] || "📍"; // Default icon if not found
-  };
+    if (typeof spot.category === "object" && spot.category.icon) {
+      icon = spot.category.icon;
+      name = spot.category.name;
+    } else if (spot.expand?.category) {
+      icon = spot.expand.category.icon;
+      name = spot.expand.category.name;
 
-  const getCategoryName = () => {
-    if (typeof spot.category === "object" && spot.category.name) {
-      return spot.category.name;
-    } else if (spot.expand?.category?.name) {
-      return spot.expand.category.name;
+      // Check for subcategory
+      if (spot.expand.category.parent_spot_category) {
+        const parentCategory = categories.find(c => c.id === spot.expand.category.parent_spot_category);
+        if (parentCategory) {
+          name = `${parentCategory.name} - ${name}`;
+        }
+      }
     }
-    return "Okategoriserad";
+
+    return { icon, name };
   };
+
+  const { icon: categoryIcon, name: categoryName } = getCategoryInfo();
 
   return (
     <Marker
@@ -124,8 +127,8 @@ const SpotMarker: React.FC<SpotMarkerProps> = ({
           <div className="popup-content">
             <h2 className="popup-title">{spot.name}</h2>
             <div className="popup-category">
-              <span className="category-icon">{getCategoryIcon()}</span>
-              <span className="category-name">{getCategoryName()}</span>
+              <span className="category-icon">{categoryIcon}</span>
+              <span className="category-name">{categoryName}</span>
             </div>
             {spot.image && (
               <img
