@@ -2,12 +2,16 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoDrawer from "./MapInfoDrawer";
 import MapControls from "./MapControls";
 
-function MapClickHandler({ onMapClick }: { onMapClick: (e: L.LeafletMouseEvent) => void }) {
+function MapClickHandler({
+  onMapClick,
+}: {
+  onMapClick: (e: L.LeafletMouseEvent) => void;
+}) {
   useMapEvents({
     click: onMapClick,
   });
@@ -22,13 +26,16 @@ function Map() {
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
     // Check if the click event originated from the controls
-    if (controlsRef.current && controlsRef.current.contains(e.originalEvent.target as Node)) {
+    if (
+      controlsRef.current &&
+      controlsRef.current.contains(e.originalEvent.target as Node)
+    ) {
       return; // Don't process the click if it's on the controls
     }
 
     if (mapRef.current) {
       const map = mapRef.current;
-      
+
       // Remove existing marker if any
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
