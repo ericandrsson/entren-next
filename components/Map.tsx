@@ -56,6 +56,7 @@ function Map() {
       const map = mapRef.current;
 
       const newTempSpot = {
+        id: "temp", // Add a temporary id
         lat: e.latlng.lat,
         lng: e.latlng.lng,
         name: "New Spot",
@@ -67,10 +68,14 @@ function Map() {
 
       setTempSpot(newTempSpot);
       setMarkerPosition(e.latlng);
-      setIsSheetOpen(true);
 
       // Zoom in to the clicked location
       map.setView(e.latlng, 15);
+
+      // Add a slight delay before opening the drawer
+      setTimeout(() => {
+        setIsSheetOpen(true);
+      }, 800); // 300ms delay, adjust as needed
     }
   }, []);
 
@@ -109,12 +114,7 @@ function Map() {
             user={null} // Replace with actual user object
             onSpotClick={handleSpotClick}
           />
-          {tempSpot && (
-            <SpotMarker
-              spot={tempSpot}
-              isTemporary={true}
-            />
-          )}
+          {tempSpot && <SpotMarker spot={tempSpot} isTemporary={true} />}
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">
@@ -132,9 +132,10 @@ function Map() {
         onSpotCreated={() => {
           handleSheetClose();
           if (mapRef.current) {
-            const spotLayer = mapRef.current.getPane('overlayPane')?.firstChild as HTMLElement;
+            const spotLayer = mapRef.current.getPane("overlayPane")
+              ?.firstChild as HTMLElement;
             if (spotLayer) {
-              spotLayer.innerHTML = ''; // Clear existing spots
+              spotLayer.innerHTML = ""; // Clear existing spots
             }
           }
         }}
