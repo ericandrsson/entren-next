@@ -43,6 +43,7 @@ function Map() {
   const { isOpen: isSidebarOpen } = useSidebarToggle();
   const [tempSpot, setTempSpot] = useState<Spot | null>(null);
   const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -102,6 +103,10 @@ function Map() {
     setIsSheetOpen(false);
   };
 
+  const refreshSpots = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
@@ -121,7 +126,9 @@ function Map() {
           <div ref={controlsRef}>
             <MapControls showListView={isSheetOpen} />
           </div>
+          <ZoomButtons />
           <SpotLayer
+            key={refreshKey}
             isAdmin={false} // Replace with actual admin status
             user={null} // Replace with actual user object
             onSpotClick={handleSpotClick}
@@ -145,13 +152,7 @@ function Map() {
         markerPosition={markerPosition}
         onSpotCreated={() => {
           handleSheetClose();
-          if (mapRef.current) {
-            const spotLayer = mapRef.current.getPane("overlayPane")
-              ?.firstChild as HTMLElement;
-            if (spotLayer) {
-              spotLayer.innerHTML = ""; // Clear existing spots
-            }
-          }
+          refreshSpots();
         }}
       />
     </div>
