@@ -19,6 +19,7 @@ import {
 import { LatLng } from "leaflet";
 import { pb } from "@/lib/db";
 import { useToast } from "@/hooks/use-toast";
+
 interface Category {
   id: string;
   name: string;
@@ -30,12 +31,14 @@ interface MapInfoSheetProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   markerPosition: LatLng | null;
+  onSpotCreated: () => void;
 }
 
 function MapInfoSheet({
   isOpen,
   onOpenChange,
   markerPosition,
+  onSpotCreated,
 }: MapInfoSheetProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -130,7 +133,7 @@ function MapInfoSheet({
         name: title,
         lat: markerPosition.lat,
         lng: markerPosition.lng,
-        category: selectedCategory[selectedCategory.length - 1], // Use the last selected category (sub-category if available)
+        category: selectedCategory[selectedCategory.length - 1],
       });
 
       console.log("New spot created:", newSpot);
@@ -139,10 +142,11 @@ function MapInfoSheet({
         description: "Spot created successfully!",
       });
 
-      // Reset form and close sheet
+      // Reset form, close sheet, and notify parent component
       setTitle("");
       setSelectedCategory([]);
       onOpenChange(false);
+      onSpotCreated();
     } catch (error) {
       console.error("Error creating spot:", error);
       toast({

@@ -41,6 +41,7 @@ function Map() {
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
+  const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
     if (
@@ -53,13 +54,13 @@ function Map() {
     if (mapRef.current) {
       const map = mapRef.current;
 
-      map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-          map.removeLayer(layer);
-        }
-      });
+      // Remove existing temporary marker
+      if (tempMarker) {
+        map.removeLayer(tempMarker);
+      }
 
-      const marker = L.marker(e.latlng, {
+      // Create new temporary marker
+      const newTempMarker = L.marker(e.latlng, {
         icon: L.divIcon({
           html: "📍",
           iconSize: [40, 40],
@@ -68,14 +69,26 @@ function Map() {
         }),
       }).addTo(map);
 
+      setTempMarker(newTempMarker);
       setMarkerPosition(e.latlng);
       setIsSheetOpen(true);
+
+      // Zoom in to the clicked location
+      map.setView(e.latlng, 15);
     }
-  }, []);
+  }, [tempMarker]);
 
   const handleSpotClick = (spot: Spot) => {
     console.log("Spot clicked:", spot);
     // You can add more functionality here, like opening a details panel
+  };
+
+  const handleSheetClose = () => {
+    if (mapRef.current && tempMarker) {
+      mapRef.current.removeLayer(tempMarker);
+      setTempMarker(null);
+    }
+    setIsSheetOpen(false);
   };
 
   return (
@@ -115,8 +128,17 @@ function Map() {
       </div>
       <MapInfoSheet
         isOpen={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
+        onOpenChange={handleSheetClose}
         markerPosition={markerPosition}
+        onSpotCreated={() => {
+          handleSheetClose();
+          if (mapRef.current) {
+            const spotLayer = mapRef.current.getPane('overlayPane')?.firstChild as HTMLElement;
+            if (spotLayer) {
+              spotLayer.innerHTML = ''; // Clear existing spots
+            }
+          }
+        }}
       />
     </div>
   );

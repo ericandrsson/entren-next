@@ -58,7 +58,7 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
           expand: "category",
         });
 
-        console.log("Fetched spots:", result.items); // Add this line
+        console.log("Fetched spots:", result.items);
 
         setSpots(result.items);
       } catch (error) {
@@ -115,6 +115,7 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
 
   return (
     <DynamicMarkers
+      key={spots.length} // Force re-render when spots change
       spots={spots}
       categories={categories}
       handleSpotDelete={handleSpotDelete}
