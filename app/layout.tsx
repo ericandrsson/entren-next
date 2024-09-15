@@ -28,13 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-      </Head>
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         {children}
         <Toaster />
       </body>

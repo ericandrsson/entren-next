@@ -180,6 +180,7 @@ function MapInfoSheet({
         variant: "destructive",
         title: "Fel",
         description: "Markeringsposition saknas",
+        className: "bg-white border border-gray-200 text-gray-900",
       });
       return;
     }
@@ -200,8 +201,11 @@ function MapInfoSheet({
 
       console.log("New spot created:", newSpot);
       toast({
-        title: "Framgång",
-        description: "Platsen har skapats! Den kommer att verifieras snart.",
+        title: "✨ Tack!",
+        description:
+          "Entrén har lagts till och skickats in för granskning. Den behöver verifieras innan den syns på kartan.",
+        duration: 5000,
+        className: "bg-white border border-gray-200 text-gray-900",
       });
 
       form.reset();
@@ -213,6 +217,7 @@ function MapInfoSheet({
         variant: "destructive",
         title: "Fel",
         description: "Kunde inte skapa platsen. Försök igen.",
+        className: "bg-white border border-gray-200 text-gray-900",
       });
     }
   };
@@ -225,107 +230,104 @@ function MapInfoSheet({
       >
         <SheetHeader className="p-6 flex-shrink-0">
           <SheetTitle className="text-2xl font-bold text-gray-900">
-            Lägg till ny plats
+            Lägg till ny Entré
           </SheetTitle>
           <SheetDescription className="text-gray-600">
             Hjälp andra att hitta och förstå tillgängligheten genom att fylla i
             informationen nedan.
           </SheetDescription>
         </SheetHeader>
-        <Form {...form} className="flex flex-col flex-grow overflow-hidden">
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col flex-grow overflow-hidden"
-          >
-            <div className="flex-grow overflow-y-auto px-6 pb-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-semibold">
-                      Titel på platsen
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Exempel: Café ABC eller Museet XYZ"
-                        className="text-lg"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Skriv vad platsen heter så att andra lätt kan känna igen
-                      den.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
+        <div className="flex flex-col flex-grow overflow-hidden">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col flex-grow overflow-hidden"
+            >
+              <div className="flex-grow overflow-y-auto px-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="pb-6">
+                      <FormLabel className="text-lg font-semibold">
+                        Titel på platsen
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Exempel: Café ABC eller Museet XYZ"
+                          className="text-lg"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Skriv vad platsen heter så att andra lätt kan känna igen
+                        den.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {categories.length === 0 ? (
+                  <p>Laddar kategorier...</p>
+                ) : (
+                  renderCategorySelection()
                 )}
-              />
-              {categories.length === 0 ? (
-                <p>Laddar kategorier...</p>
-              ) : (
-                renderCategorySelection()
-              )}
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-semibold">
-                      <Camera className="inline-block mr-2" size={20} />
-                      Ladda upp en bild på entrén
-                    </FormLabel>
-                    <FormControl>
-                      <ImageUploader
-                        onImageSelected={(file: File) =>
-                          form.setValue("image", file)
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                        <strong className="text-sm mb-2 block">
-                          Riktlinjer för Bilden:
-                        </strong>
-                        <ul className="pl-5 m-0 list-disc">
-                          <li>
-                            <strong>Fokusera på entrén:</strong> Visa tydligt
-                            dörren, ramper eller trappor.
-                          </li>
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem className="mt-6">
+                      <FormLabel className="text-lg font-semibold">
+                        <Camera className="inline-block mr-2" size={20} />
+                        Ladda upp en bild på entrén
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUploader
+                          onImageSelected={(file: File) =>
+                            form.setValue("image", file)
+                          }
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                          <strong className="text-sm mb-2 block">
+                            Riktlinjer för Bilden:
+                          </strong>
+                          <ul className="pl-5 m-0 list-disc">
+                            <li>
+                              <strong>Fokusera på entrén:</strong> Visa tydligt
+                              dörren, ramper eller trappor.
+                            </li>
 
-                          <li>
-                            <strong>Rakt framifrån:</strong> Placera entrén i
-                            mitten av bilden.
-                          </li>
-                          <li>
-                            <strong>Inga personer:</strong> Undvik att få med
-                            människor på bilden.
-                          </li>
-                          <li>
-                            <strong>Aktuell bild:</strong> Se till att bilden
-                            visar hur entrén ser ut idag.
-                          </li>
-                        </ul>
-                      </div>
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <SheetFooter className="p-6 bg-white border-t flex-shrink-0">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Avbryt
-              </Button>
-              <Button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Lägg till plats
-              </Button>
-            </SheetFooter>
-          </form>
-        </Form>
+                            <li>
+                              <strong>Rakt framifrån:</strong> Placera entrén i
+                              mitten av bilden.
+                            </li>
+                            <li>
+                              <strong>Inga personer:</strong> Undvik att få med
+                              människor på bilden.
+                            </li>
+                            <li>
+                              <strong>Aktuell bild:</strong> Se till att bilden
+                              visar hur entrén ser ut idag.
+                            </li>
+                          </ul>
+                        </div>
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <SheetFooter className="p-6 bg-white border-t flex-shrink-0 gap-2">
+                <Button variant="outline" onClick={() => onOpenChange(false)}>
+                  Avbryt
+                </Button>
+                <Button type="submit">Lägg till plats</Button>
+              </SheetFooter>
+            </form>
+          </Form>
+        </div>
       </SheetContent>
     </Sheet>
   );
