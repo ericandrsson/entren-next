@@ -10,6 +10,7 @@ import { Sidebar } from "./Sidebar";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import ZoomButtons from "./ZoomButtons";
 import SpotLayer from "./SpotLayer";
+import SpotMarker from "./SpotMarker";
 
 interface Spot {
   id: string;
@@ -41,7 +42,7 @@ function Map() {
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
-  const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
+  const [tempSpot, setTempSpot] = useState<Spot | null>(null);
 
   const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
     if (
@@ -54,29 +55,24 @@ function Map() {
     if (mapRef.current) {
       const map = mapRef.current;
 
-      // Remove existing temporary marker
-      if (tempMarker) {
-        map.removeLayer(tempMarker);
-      }
+      const newTempSpot = {
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+        name: "New Spot",
+        category: "", // Empty string for temporary spot
+        created: new Date().toISOString(),
+        isPublic: true,
+        user: "",
+      };
 
-      // Create new temporary marker
-      const newTempMarker = L.marker(e.latlng, {
-        icon: L.divIcon({
-          html: "📍",
-          iconSize: [40, 40],
-          iconAnchor: [20, 40],
-          className: "map-pin",
-        }),
-      }).addTo(map);
-
-      setTempMarker(newTempMarker);
+      setTempSpot(newTempSpot);
       setMarkerPosition(e.latlng);
       setIsSheetOpen(true);
 
       // Zoom in to the clicked location
       map.setView(e.latlng, 15);
     }
-  }, [tempMarker]);
+  }, []);
 
   const handleSpotClick = (spot: Spot) => {
     console.log("Spot clicked:", spot);
@@ -84,10 +80,7 @@ function Map() {
   };
 
   const handleSheetClose = () => {
-    if (mapRef.current && tempMarker) {
-      mapRef.current.removeLayer(tempMarker);
-      setTempMarker(null);
-    }
+    setTempSpot(null);
     setIsSheetOpen(false);
   };
 
@@ -116,6 +109,12 @@ function Map() {
             user={null} // Replace with actual user object
             onSpotClick={handleSpotClick}
           />
+          {tempSpot && (
+            <SpotMarker
+              spot={tempSpot}
+              isTemporary={true}
+            />
+          )}
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">

@@ -3,6 +3,8 @@ import { useMap } from "react-leaflet";
 import { LatLngBounds } from "leaflet";
 import DynamicMarkers from "./DynamicMarkers";
 import { pb } from "@/lib/db";
+import SpotMarker from "./SpotMarker";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 interface Spot {
   id: string;
@@ -114,16 +116,17 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
   };
 
   return (
-    <DynamicMarkers
-      key={spots.length} // Force re-render when spots change
-      spots={spots}
-      categories={categories}
-      handleSpotDelete={handleSpotDelete}
-      handleSpotUpdate={handleSpotUpdate}
-      user={user}
-      isAdmin={isAdmin}
-      onSpotClick={onSpotClick}
-    />
+    <MarkerClusterGroup
+      chunkedLoading
+      spiderfyOnMaxZoom={true}
+      showCoverageOnHover={false}
+      maxClusterRadius={50}
+      disableClusteringAtZoom={15}
+    >
+      {spots.map((spot) => (
+        <SpotMarker key={spot.id} spot={spot} onClick={onSpotClick} />
+      ))}
+    </MarkerClusterGroup>
   );
 };
 
