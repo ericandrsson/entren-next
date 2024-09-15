@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { LatLng } from "leaflet";
 import { pb } from "@/lib/db";
-
+import { useToast } from "@/hooks/use-toast";
 interface Category {
   id: string;
   name: string;
@@ -40,6 +40,7 @@ function MapInfoSheet({
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [title, setTitle] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -114,6 +115,44 @@ function MapInfoSheet({
     );
   };
 
+  const handleSave = async () => {
+    if (!markerPosition || !title || selectedCategory.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please fill in all required fields",
+      });
+      return;
+    }
+
+    try {
+      const newSpot = await pb.collection("spots").create({
+        name: title,
+        lat: markerPosition.lat,
+        lng: markerPosition.lng,
+        category: selectedCategory[selectedCategory.length - 1], // Use the last selected category (sub-category if available)
+      });
+
+      console.log("New spot created:", newSpot);
+      toast({
+        title: "Success",
+        description: "Spot created successfully!",
+      });
+
+      // Reset form and close sheet
+      setTitle("");
+      setSelectedCategory([]);
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error creating spot:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create spot. Please try again.",
+      });
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent
@@ -122,7 +161,7 @@ function MapInfoSheet({
       >
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold text-gray-900">
-            Add New Placegi
+            Add New Place
           </SheetTitle>
           <SheetDescription className="text-gray-600">
             Enter details about this location.
@@ -147,13 +186,7 @@ function MapInfoSheet({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          <Button
-            variant="default"
-            onClick={() => {
-              // TODO: Implement save functionality
-              console.log("Save", { title, selectedCategory, markerPosition });
-            }}
-          >
+          <Button variant="default" onClick={handleSave}>
             Save
           </Button>
         </SheetFooter>
