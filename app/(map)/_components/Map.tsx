@@ -18,6 +18,7 @@ import SpotMarker from "./SpotMarker";
 import SearchBar, { SearchResult } from "./SearchBar"; // Add this import
 import { pb } from "@/lib/db";
 import SpotDetailsSheet from "./SpotDetailsSheet";
+import { useMapZoom } from "@/hooks/useMapZoom";
 
 interface Spot {
   id: string;
@@ -62,6 +63,7 @@ function Map() {
   const [zoom, setZoom] = useState(5);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
+  const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -77,59 +79,45 @@ function Map() {
         return;
       }
 
-      if (mapRef.current) {
-        const map = mapRef.current;
+      const newTempSpot = {
+        id: "temp",
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+        name: "New Spot",
+        category: "",
+        created: new Date().toISOString(),
+        isVerified: false,
+        user: "",
+      };
 
-        // Store the current map state before zooming in
-        setPrevMapState({
-          center: map.getCenter(),
-          zoom: map.getZoom(),
-        });
-
-        const newTempSpot = {
-          id: "temp",
-          lat: e.latlng.lat,
-          lng: e.latlng.lng,
-          name: "New Spot",
-          category: "",
-          created: new Date().toISOString(),
-          isVerified: false,
-          user: "",
-        };
-
-        setTempSpot(newTempSpot);
-        setMarkerPosition(e.latlng);
-
-        setTimeout(() => {
-          map.setView(e.latlng, 15);
-          setTimeout(() => {
-            setIsSheetOpen(true);
-          }, 400);
-        }, 400);
-      }
+      setTempSpot(newTempSpot);
+      setMarkerPosition(e.latlng);
+      zoomToSpot(e.latlng);
+      setIsSheetOpen(true);
     },
-    [previewedSpot]
+    [previewedSpot, zoomToSpot]
   );
 
-  const handleSpotClick = (spot: Spot) => {
-    console.log("Spot clicked:", spot);
-    setSelectedSpot(spot);
-    setIsSpotDetailsOpen(true);
-  };
+  const handleSpotClick = useCallback(
+    (spot: Spot) => {
+      console.log("Spot clicked:", spot);
+      setSelectedSpot(spot);
+      zoomToSpot(L.latLng(spot.lat, spot.lng));
+      setIsSpotDetailsOpen(true);
+    },
+    [zoomToSpot]
+  );
 
-  const handleSheetClose = () => {
+  const handleSheetClose = useCallback(() => {
     setTempSpot(null);
     setIsSheetOpen(false);
+    resetZoom();
+  }, [resetZoom]);
 
-    // Revert to the previous map state when canceling
-    if (prevMapState && mapRef.current) {
-      mapRef.current.setView(prevMapState.center, prevMapState.zoom, {
-        animate: true,
-        duration: 0.5,
-      });
-    }
-    setPrevMapState(null);
-  };
+  const handleSpotDetailsClose = useCallback(() => {
+    setIsSpotDetailsOpen(false);
+    resetZoom();
+  }, [resetZoom]);
 
   const refreshSpots = () => {
     setRefreshKey((prevKey) => prevKey + 1);
@@ -231,7 +219,7 @@ function Map() {
       />
       <SpotDetailsSheet
         isOpen={isSpotDetailsOpen}
-        onOpenChange={setIsSpotDetailsOpen}
+        onOpenChange={handleSpotDetailsClose}
         spot={selectedSpot}
       />
     </div>
