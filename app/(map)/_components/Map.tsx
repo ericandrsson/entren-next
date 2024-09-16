@@ -10,6 +10,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
 import SearchBar from "./SearchBar";
+import { SearchResult } from "./SearchBar"; // Add this import
 
 interface Spot {
   id: string;
@@ -38,14 +39,7 @@ function MapClickHandler({
 function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
-  const [selectedPlace, setSelectedPlace] = useState<{
-    name: string;
-    lat: number;
-    lon: number;
-    osmId: number;
-    osmType: string;
-    rawData: any;
-  } | undefined>(undefined);
+  const [selectedPlace, setSelectedPlace] = useState<SearchResult | undefined>(undefined);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
@@ -135,9 +129,9 @@ function Map() {
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
 
   const handleSelectPlace = useCallback(
-    (lat: number, lon: number, name: string, osmId: number, osmType: string, rawData: any) => {
-      setMarkerPosition(new L.LatLng(lat, lon));
-      setSelectedPlace({ name, lat, lon, osmId, osmType, rawData });
+    (result: SearchResult) => {
+      setMarkerPosition(new L.LatLng(parseFloat(result.lat), parseFloat(result.lon)));
+      setSelectedPlace(result);
       setIsSheetOpen(true);
     },
     []
@@ -146,11 +140,7 @@ function Map() {
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
-        <SearchBar
-          onSelectPlace={(lat, lon, name, osmId, osmType, rawData) =>
-            handleSelectPlace(lat, lon, name, osmId, osmType, rawData)
-          }
-        />
+        <SearchBar onSelectPlace={handleSelectPlace} />
 
         <MapContainer
           center={[62.0, 15.0]}

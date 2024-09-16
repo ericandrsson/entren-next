@@ -33,6 +33,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Camera } from "lucide-react";
+import { SearchResult } from "./SearchBar"; // Add this import
 
 interface Category {
   id: string;
@@ -46,14 +47,7 @@ interface MapInfoSheetProps {
   onOpenChange: (open: boolean) => void;
   markerPosition: LatLng | null;
   onSpotCreated: () => void;
-  selectedPlace?: {
-    name: string;
-    lat: number;
-    lon: number;
-    osmId: number;
-    osmType: string;
-    rawData: any;
-  };
+  selectedPlace?: SearchResult;
 }
 
 const formSchema = z.object({
@@ -61,8 +55,6 @@ const formSchema = z.object({
   mainCategory: z.string().min(1, "Huvudkategori är obligatorisk"),
   subCategory: z.string().optional(),
   image: z.instanceof(File, { message: "En bild är obligatorisk" }),
-  osmId: z.number().optional(),
-  osmType: z.string().optional(),
   source: z.string(),
   data: z.any().optional(),
 });
@@ -244,13 +236,13 @@ function MapInfoSheet({
 
   useEffect(() => {
     if (isOpen && selectedPlace) {
-      form.setValue('title', selectedPlace.name);
-      form.setValue('osmId', selectedPlace.osmId);
-      form.setValue('osmType', selectedPlace.osmType);
-      form.setValue('source', 'nominatim');
-      form.setValue('data', selectedPlace.rawData);
+      form.setValue("title", selectedPlace.name);
+      form.setValue("osmId", selectedPlace.osm_id);
+      form.setValue("osmType", selectedPlace.osm_type);
+      form.setValue("source", "nominatim");
+      form.setValue("data", selectedPlace);
     } else if (isOpen) {
-      form.setValue('source', 'user');
+      form.setValue("source", "user");
     }
   }, [isOpen, selectedPlace, form]);
 
