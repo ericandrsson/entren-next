@@ -16,7 +16,14 @@ interface SearchResult {
 }
 
 interface SearchBarProps {
-  onSelectPlace: (lat: number, lon: number, name: string, osmId: number, osmType: string, rawData: any) => void;
+  onSelectPlace: (
+    lat: number,
+    lon: number,
+    name: string,
+    osmId: number,
+    osmType: string,
+    rawData: any
+  ) => void;
 }
 
 function SearchBar({ onSelectPlace }: SearchBarProps) {
@@ -36,11 +43,11 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     try {
       const encodedQuery = encodeURIComponent(searchQuery.trim());
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&countrycodes=se&limit=10`
+        `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&countrycodes=se&limit=10&accept-language=sv`
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP-fel! status: ${response.status}`);
       }
 
       const data: SearchResult[] = await response.json();
@@ -58,7 +65,6 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     }
   }, []);
 
-  // Debounce the search function
   const debouncedSearch = useCallback(
     debounce((searchQuery: string) => handleSearch(searchQuery), 300),
     [handleSearch]
@@ -66,20 +72,19 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
 
   useEffect(() => {
     debouncedSearch(query);
-    // Cancel the debounce on useEffect cleanup
     return () => debouncedSearch.cancel();
   }, [query, debouncedSearch]);
 
   const handleSelectPlace = (result: SearchResult) => {
-    const placeName = result.display_name.split(',')[0].trim();
-    
+    const placeName = result.display_name.split(",")[0].trim();
+
     onSelectPlace(
       parseFloat(result.lat),
       parseFloat(result.lon),
       placeName,
       result.osm_id,
       result.osm_type,
-      result // Pass the entire result object as rawData
+      result
     );
     setResults([]);
     setQuery("");
@@ -93,15 +98,15 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
           placeholder="Search for places in Sweden..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="pr-10"
+          className="pr-10 text-base text-gray-900 placeholder-gray-500"
         />
         {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin absolute right-5 top-1/2 transform -translate-y-1/2" />
+          <Loader2 className="h-5 w-5 animate-spin absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
         ) : (
-          <Search className="h-4 w-4 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Search className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
         )}
       </div>
-      {error && <p className="text-red-500 text-sm p-2">{error}</p>}
+      {error && <p className="text-red-600 text-sm p-2 font-medium">{error}</p>}
       {results.length > 0 && (
         <ul className="mt-2 border-t divide-y divide-gray-200 max-h-80 overflow-y-auto">
           {results.map((result) => (
@@ -111,11 +116,14 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
               onClick={() => handleSelectPlace(result)}
             >
               <div className="flex items-start">
-                <MapPin className="h-5 w-5 text-gray-400 mt-1 mr-2 flex-shrink-0" />
+                <MapPin className="h-5 w-5 text-gray-600 mt-1 mr-2 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-sm">
-                    {result.display_name}
+                  <h3 className="font-semibold text-base text-gray-900">
+                    {result.display_name.split(",")[0]}
                   </h3>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {result.display_name.split(",").slice(1).join(",")}
+                  </p>
                   <p className="text-xs text-gray-600 mt-1">{result.type}</p>
                 </div>
               </div>
