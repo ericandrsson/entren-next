@@ -9,6 +9,7 @@ import MapControls from "./controls/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
+import SearchBar from "./SearchBar";
 
 interface Spot {
   id: string;
@@ -125,13 +126,44 @@ function Map() {
     ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
 
+  const handleSelectPlace = useCallback((lat: number, lon: number) => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+
+      // Store the current map state before zooming in
+      setPrevMapState({
+        center: map.getCenter(),
+        zoom: map.getZoom(),
+      });
+
+      const newTempSpot = {
+        id: "temp",
+        lat: lat,
+        lng: lon,
+        name: "New Spot",
+        category: "",
+        created: new Date().toISOString(),
+        isVerified: false,
+        user: "",
+      };
+
+      setTempSpot(newTempSpot);
+      setMarkerPosition(new L.LatLng(lat, lon));
+
+      map.setView([lat, lon], 15);
+      setIsSheetOpen(true);
+    }
+  }, []);
+
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
+        <SearchBar onSelectPlace={handleSelectPlace} />
+
         <MapContainer
           center={[62.0, 15.0]}
           zoom={5}
-          className="w-full h-full cursor-pointer-map leaflet-grab" // Updated class
+          className="w-full h-full cursor-pointer-map leaflet-grab"
           ref={mapRef}
           zoomControl={false}
         >
@@ -148,12 +180,12 @@ function Map() {
               onDetailToggle={() => setIsDetailed(!isDetailed)}
             />
           </div>
-          <SpotLayer
+          {/* <SpotLayer
             key={refreshKey}
-            isAdmin={false} // Replace with actual admin status
-            user={null} // Replace with actual user object
+            isAdmin={false}
+            user={null}
             onSpotClick={handleSpotClick}
-          />
+          /> */}
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />
           )}
