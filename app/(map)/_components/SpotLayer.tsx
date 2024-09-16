@@ -116,22 +116,16 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
   };
 
   return (
-    <MarkerClusterGroup
-      chunkedLoading
-      spiderfyOnMaxZoom={true}
-      showCoverageOnHover={false}
-      maxClusterRadius={50}
-      disableClusteringAtZoom={15}
-    >
+    <>
       {spots.map((spot) => (
-        <SpotMarker 
-          key={spot.id} 
-          spot={spot} 
+        <SpotMarker
+          key={spot.id}
+          spot={spot}
           categories={categories}
-          onClick={onSpotClick} 
+          onClick={() => onSpotClick(spot)}
         />
       ))}
-    </MarkerClusterGroup>
+    </>
   );
 };
 

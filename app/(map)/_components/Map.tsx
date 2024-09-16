@@ -17,6 +17,7 @@ import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
 import SearchBar, { SearchResult } from "./SearchBar"; // Add this import
 import { pb } from "@/lib/db";
+import SpotDetailsSheet from "./SpotDetailsSheet";
 
 interface Spot {
   id: string;
@@ -59,6 +60,8 @@ function Map() {
   } | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([62.0, 15.0]);
   const [zoom, setZoom] = useState(5);
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -110,8 +113,8 @@ function Map() {
 
   const handleSpotClick = (spot: Spot) => {
     console.log("Spot clicked:", spot);
-    setPreviewedSpot(spot);
-    // You can add more functionality here if needed
+    setSelectedSpot(spot);
+    setIsSpotDetailsOpen(true);
   };
 
   const handleSheetClose = () => {
@@ -225,6 +228,11 @@ function Map() {
           refreshSpots();
         }}
         selectedPlace={selectedPlace}
+      />
+      <SpotDetailsSheet
+        isOpen={isSpotDetailsOpen}
+        onOpenChange={setIsSpotDetailsOpen}
+        spot={selectedSpot}
       />
     </div>
   );
