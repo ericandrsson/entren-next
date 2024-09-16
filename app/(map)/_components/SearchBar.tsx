@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import debounce from "lodash/debounce";
 
 interface SearchResult {
   place_id: number;
@@ -21,15 +21,18 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = useCallback(async () => {
-    if (!query.trim()) return;
+  const handleSearch = useCallback(async (searchQuery: string) => {
+    if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
+          searchQuery
         )}&limit=5`
       );
       if (!response.ok) {
@@ -47,7 +50,19 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [query]);
+  }, []);
+
+  // Debounce the search function
+  const debouncedSearch = useCallback(
+    debounce((searchQuery: string) => handleSearch(searchQuery), 300),
+    [handleSearch]
+  );
+
+  useEffect(() => {
+    debouncedSearch(query);
+    // Cancel the debounce on useEffect cleanup
+    return () => debouncedSearch.cancel();
+  }, [query, debouncedSearch]);
 
   const handleSelectPlace = (result: SearchResult) => {
     onSelectPlace(parseFloat(result.lat), parseFloat(result.lon));
@@ -55,34 +70,19 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     setQuery("");
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   return (
     <div className="absolute top-4 left-4 z-[1000] w-64 sm:w-80">
-      <div className="flex">
+      <div className="flex relative">
         <Input
           type="text"
           placeholder="Search for a place..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="rounded-r-none"
+          className="pr-10"
         />
-        <Button
-          onClick={handleSearch}
-          disabled={isLoading}
-          className="rounded-l-none"
-        >
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Search className="h-4 w-4" />
-          )}
-        </Button>
+        {isLoading && (
+          <Loader2 className="h-4 w-4 animate-spin absolute right-3 top-1/2 transform -translate-y-1/2" />
+        )}
       </div>
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       {results.length > 0 && (
