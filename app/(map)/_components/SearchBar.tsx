@@ -5,25 +5,12 @@ import { Loader2 } from "lucide-react";
 import debounce from "lodash/debounce";
 
 interface SearchResult {
-  id: number;
+  place_id: number;
+  lat: string;
+  lon: string;
+  display_name: string;
   type: string;
-  lat: number;
-  lon: number;
-  tags: {
-    name?: string;
-    amenity?: string;
-    shop?: string;
-    'addr:street'?: string;
-    'addr:housenumber'?: string;
-    'addr:postcode'?: string;
-    'addr:city'?: string;
-  };
-}
-
-interface ProcessedSearchResult extends SearchResult {
-  category: string;
-  displayName: string;
-  address: string;
+  importance: number;
 }
 
 interface SearchBarProps {
@@ -32,7 +19,7 @@ interface SearchBarProps {
 
 function SearchBar({ onSelectPlace }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ProcessedSearchResult[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,46 +32,20 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const overpassQuery = `
-        [out:json];
-        area["ISO3166-1"="SE"][admin_level=2];
-        (
-          node["name"~"${searchQuery}", i](area)["amenity"~"cafe|restaurant|bar|pub|fast_food"];
-          node["name"~"${searchQuery}", i](area)["shop"];
-          way["name"~"${searchQuery}", i](area)["amenity"~"cafe|restaurant|bar|pub|fast_food"];
-          way["name"~"${searchQuery}", i](area)["shop"];
-        );
-        out center;
-      `;
-
-      const response = await fetch("https://overpass-api.de/api/interpreter", {
-        method: "POST",
-        body: overpassQuery,
-      });
+      const encodedQuery = encodeURIComponent(searchQuery.trim());
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&countrycodes=se&limit=10`
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: SearchResult[] = await response.json();
       console.log("Search results:", data);
 
-      const processedData: ProcessedSearchResult[] = data.elements.map(
-        (item: SearchResult) => ({
-          ...item,
-          category: item.tags.amenity || item.tags.shop || "Unknown",
-          displayName: item.tags.name || "Unnamed",
-          address: [
-            item.tags['addr:housenumber'],
-            item.tags['addr:street'],
-            item.tags['addr:postcode'],
-            item.tags['addr:city']
-          ].filter(Boolean).join(", ") || "Address unknown"
-        })
-      );
-
-      setResults(processedData);
-      if (processedData.length === 0) {
+      setResults(data);
+      if (data.length === 0) {
         setError("No results found");
       }
     } catch (error) {
@@ -107,8 +68,8 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
     return () => debouncedSearch.cancel();
   }, [query, debouncedSearch]);
 
-  const handleSelectPlace = (result: ProcessedSearchResult) => {
-    onSelectPlace(result.lat, result.lon);
+  const handleSelectPlace = (result: SearchResult) => {
+    onSelectPlace(parseFloat(result.lat), parseFloat(result.lon));
     setResults([]);
     setQuery("");
   };
@@ -118,7 +79,7 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
       <div className="flex relative p-2">
         <Input
           type="text"
-          placeholder="Search for cafes, restaurants, shops in Sweden..."
+          placeholder="Search for places in Sweden..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="pr-10"
@@ -134,16 +95,17 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
         <ul className="mt-2 border-t divide-y divide-gray-200 max-h-80 overflow-y-auto">
           {results.map((result) => (
             <li
-              key={result.id}
+              key={result.place_id}
               className="p-3 hover:bg-gray-100 cursor-pointer transition duration-150 ease-in-out"
               onClick={() => handleSelectPlace(result)}
             >
               <div className="flex items-start">
                 <MapPin className="h-5 w-5 text-gray-400 mt-1 mr-2 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-sm">{result.displayName}</h3>
-                  <p className="text-xs text-gray-600 mt-1">{result.category}</p>
-                  <p className="text-xs text-gray-500 mt-1">{result.address}</p>
+                  <h3 className="font-semibold text-sm">
+                    {result.display_name}
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-1">{result.type}</p>
                 </div>
               </div>
             </li>

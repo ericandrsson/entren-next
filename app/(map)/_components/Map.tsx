@@ -180,12 +180,12 @@ function Map() {
               onDetailToggle={() => setIsDetailed(!isDetailed)}
             />
           </div>
-          {/* <SpotLayer
+          <SpotLayer
             key={refreshKey}
             isAdmin={false}
             user={null}
             onSpotClick={handleSpotClick}
-          /> */}
+          />
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />
           )}
