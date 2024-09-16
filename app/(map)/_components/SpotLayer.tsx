@@ -95,28 +95,13 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
     };
   }, [map, fetchSpots, fetchCategories]);
 
-  const handleSpotDelete = async (id: string) => {
-    try {
-      await pb.collection("spots").delete(id);
-      setSpots(spots.filter((spot) => spot.id !== id));
-    } catch (error) {
-      console.error("Error deleting spot:", error);
-    }
-  };
-
-  const handleSpotUpdate = async (id: string, isVerified: boolean) => {
-    try {
-      await pb.collection("spots").update(id, { isVerified });
-      setSpots(
-        spots.map((spot) => (spot.id === id ? { ...spot, isVerified } : spot))
-      );
-    } catch (error) {
-      console.error("Error updating spot:", error);
-    }
-  };
-
   return (
-    <>
+    <MarkerClusterGroup
+      chunkedLoading
+      maxClusterRadius={60}
+      spiderfyOnMaxZoom={false}
+      disableClusteringAtZoom={16}
+    >
       {spots.map((spot) => (
         <SpotMarker
           key={spot.id}
@@ -125,7 +110,7 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
           onClick={() => onSpotClick(spot)}
         />
       ))}
-    </>
+    </MarkerClusterGroup>
   );
 };
 
