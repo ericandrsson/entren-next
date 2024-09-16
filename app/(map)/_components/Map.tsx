@@ -5,9 +5,8 @@ import L from "leaflet";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoSheet from "./MapInfoSheet";
-import MapControls from "./MapControls";
+import MapControls from "./controls/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import ZoomButtons from "./ZoomButtons";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
 
@@ -45,7 +44,10 @@ function Map() {
   const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isDetailed, setIsDetailed] = useState(false);
-  const [prevMapState, setPrevMapState] = useState<{ center: L.LatLng; zoom: number } | null>(null);
+  const [prevMapState, setPrevMapState] = useState<{
+    center: L.LatLng;
+    zoom: number;
+  } | null>(null);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -67,7 +69,7 @@ function Map() {
         // Store the current map state before zooming in
         setPrevMapState({
           center: map.getCenter(),
-          zoom: map.getZoom()
+          zoom: map.getZoom(),
         });
 
         const newTempSpot = {
@@ -109,7 +111,7 @@ function Map() {
     if (prevMapState && mapRef.current) {
       mapRef.current.setView(prevMapState.center, prevMapState.zoom, {
         animate: true,
-        duration: 0.5
+        duration: 0.5,
       });
     }
     setPrevMapState(null);

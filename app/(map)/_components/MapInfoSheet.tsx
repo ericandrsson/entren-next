@@ -19,7 +19,7 @@ import {
 import { LatLng } from "leaflet";
 import { pb } from "@/lib/db";
 import { useToast } from "@/hooks/use-toast";
-import ImageUploader from "./ui/ImageUploader";
+import ImageUploader from "../../../components/ui/image-uploader";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

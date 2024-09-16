@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { PanelsTopLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import { SidebarToggle } from "@/components/SidebarToggle";
+import { SidebarToggle } from "@/app/(map)/_components/SidebarToggle";
 
 export function Sidebar() {
   const { isOpen } = useSidebarToggle();
