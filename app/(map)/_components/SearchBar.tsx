@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import debounce from "lodash/debounce";
 
-interface SearchResult {
+export interface SearchResult {
   place_id: number;
   lat: string;
   lon: string;

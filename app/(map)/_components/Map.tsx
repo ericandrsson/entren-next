@@ -1,16 +1,22 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  useMapEvents,
+  Marker,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoSheet from "./SpotCreationSheet";
 import MapControls from "./controls/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
-import SearchBar from "./SearchBar";
-import { SearchResult } from "./SearchBar"; // Add this import
+import SearchBar, { SearchResult } from "./SearchBar"; // Add this import
+import { pb } from "@/lib/db";
 
 interface Spot {
   id: string;
@@ -39,7 +45,7 @@ function MapClickHandler({
 function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
-  const [selectedPlace, setSelectedPlace] = useState<SearchResult | undefined>(undefined);
+  const [selectedPlace, setSelectedPlace] = useState<SearchResult | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
@@ -51,6 +57,8 @@ function Map() {
     center: L.LatLng;
     zoom: number;
   } | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([62.0, 15.0]);
+  const [zoom, setZoom] = useState(5);
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -128,14 +136,40 @@ function Map() {
     ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
 
-  const handleSelectPlace = useCallback(
-    (result: SearchResult) => {
-      setMarkerPosition(new L.LatLng(parseFloat(result.lat), parseFloat(result.lon)));
+  const handleSelectPlace = useCallback(async (result: SearchResult) => {
+    try {
+      const existingSpot = await pb
+        .collection("spots")
+        .getFirstListItem(`data.osm_id=${result.osm_id}`);
+
+      console.log("Existing spot:", existingSpot);
+      if (existingSpot) {
+        setMapCenter([existingSpot.lat, existingSpot.lng]);
+        setZoom(18);
+        setPreviewedSpot(existingSpot);
+      } else {
+        const newCenter: [number, number] = [
+          parseFloat(result.lat),
+          parseFloat(result.lon),
+        ];
+        setMapCenter(newCenter);
+        setZoom(18);
+        setMarkerPosition(L.latLng(newCenter[0], newCenter[1]));
+        setSelectedPlace(result);
+        setIsSheetOpen(true);
+      }
+    } catch (error) {
+      const newCenter: [number, number] = [
+        parseFloat(result.lat),
+        parseFloat(result.lon),
+      ];
+      setMapCenter(newCenter);
+      setZoom(18);
+      setMarkerPosition(L.latLng(newCenter[0], newCenter[1]));
       setSelectedPlace(result);
       setIsSheetOpen(true);
-    },
-    []
-  );
+    }
+  }, []);
 
   return (
     <div className="flex h-screen relative isolate">
@@ -143,8 +177,8 @@ function Map() {
         <SearchBar onSelectPlace={handleSelectPlace} />
 
         <MapContainer
-          center={[62.0, 15.0]}
-          zoom={5}
+          center={mapCenter}
+          zoom={zoom}
           className="w-full h-full cursor-pointer-map leaflet-grab"
           ref={mapRef}
           zoomControl={false}
@@ -171,6 +205,7 @@ function Map() {
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />
           )}
+          <MapCenterAdjuster center={mapCenter} zoom={zoom} />
         </MapContainer>
       </div>
       <div className="relative z-10 flex w-full h-full pointer-events-none">
@@ -193,6 +228,20 @@ function Map() {
       />
     </div>
   );
+}
+
+function MapCenterAdjuster({
+  center,
+  zoom,
+}: {
+  center: [number, number];
+  zoom: number;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
+  return null;
 }
 
 export default Map;

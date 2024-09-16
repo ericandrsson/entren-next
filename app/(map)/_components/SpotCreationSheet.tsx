@@ -33,7 +33,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Camera } from "lucide-react";
-import { SearchResult } from "./SearchBar"; // Add this import
+import { SearchResult } from "./SearchBar";
 
 interface Category {
   id: string;
@@ -47,7 +47,7 @@ interface MapInfoSheetProps {
   onOpenChange: (open: boolean) => void;
   markerPosition: LatLng | null;
   onSpotCreated: () => void;
-  selectedPlace?: SearchResult;
+  selectedPlace: SearchResult | null;
 }
 
 const formSchema = z.object({
@@ -57,6 +57,8 @@ const formSchema = z.object({
   image: z.instanceof(File, { message: "En bild är obligatorisk" }),
   source: z.string(),
   data: z.any().optional(),
+  osmId: z.string().optional(),
+  osmType: z.string().optional(),
 });
 
 function MapInfoSheet({
@@ -202,8 +204,8 @@ function MapInfoSheet({
         formData.append("image", values.image);
       }
 
-      if (values.osmId) formData.append("osmId", values.osmId.toString());
-      if (values.osmType) formData.append("osmType", values.osmType);
+      if (values.osmId) formData.append("osm_id", values.osmId);
+      if (values.osmType) formData.append("osm_type", values.osmType);
       formData.append("source", values.source);
       if (values.data) formData.append("data", JSON.stringify(values.data));
 
@@ -236,8 +238,8 @@ function MapInfoSheet({
 
   useEffect(() => {
     if (isOpen && selectedPlace) {
-      form.setValue("title", selectedPlace.name);
-      form.setValue("osmId", selectedPlace.osm_id);
+      form.setValue("title", selectedPlace.display_name.split(",")[0]);
+      form.setValue("osmId", selectedPlace.osm_id.toString());
       form.setValue("osmType", selectedPlace.osm_type);
       form.setValue("source", "nominatim");
       form.setValue("data", selectedPlace);
