@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import MapInfoSheet from "./MapInfoSheet";
+import MapInfoSheet from "./SpotCreationSheet";
 import MapControls from "./controls/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
@@ -38,6 +38,14 @@ function MapClickHandler({
 function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<{
+    name: string;
+    lat: number;
+    lon: number;
+    osmId: number;
+    osmType: string;
+    rawData: any;
+  } | undefined>(undefined);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
@@ -126,39 +134,23 @@ function Map() {
     ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
 
-  const handleSelectPlace = useCallback((lat: number, lon: number) => {
-    if (mapRef.current) {
-      const map = mapRef.current;
-
-      // Store the current map state before zooming in
-      setPrevMapState({
-        center: map.getCenter(),
-        zoom: map.getZoom(),
-      });
-
-      const newTempSpot = {
-        id: "temp",
-        lat: lat,
-        lng: lon,
-        name: "New Spot",
-        category: "",
-        created: new Date().toISOString(),
-        isVerified: false,
-        user: "",
-      };
-
-      setTempSpot(newTempSpot);
+  const handleSelectPlace = useCallback(
+    (lat: number, lon: number, name: string, osmId: number, osmType: string, rawData: any) => {
       setMarkerPosition(new L.LatLng(lat, lon));
-
-      map.setView([lat, lon], 15);
+      setSelectedPlace({ name, lat, lon, osmId, osmType, rawData });
       setIsSheetOpen(true);
-    }
-  }, []);
+    },
+    []
+  );
 
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
-        <SearchBar onSelectPlace={handleSelectPlace} />
+        <SearchBar
+          onSelectPlace={(lat, lon, name, osmId, osmType, rawData) =>
+            handleSelectPlace(lat, lon, name, osmId, osmType, rawData)
+          }
+        />
 
         <MapContainer
           center={[62.0, 15.0]}
@@ -207,6 +199,7 @@ function Map() {
           handleSheetClose();
           refreshSpots();
         }}
+        selectedPlace={selectedPlace}
       />
     </div>
   );

@@ -46,6 +46,14 @@ interface MapInfoSheetProps {
   onOpenChange: (open: boolean) => void;
   markerPosition: LatLng | null;
   onSpotCreated: () => void;
+  selectedPlace?: {
+    name: string;
+    lat: number;
+    lon: number;
+    osmId: number;
+    osmType: string;
+    rawData: any;
+  };
 }
 
 const formSchema = z.object({
@@ -53,6 +61,10 @@ const formSchema = z.object({
   mainCategory: z.string().min(1, "Huvudkategori är obligatorisk"),
   subCategory: z.string().optional(),
   image: z.instanceof(File, { message: "En bild är obligatorisk" }),
+  osmId: z.number().optional(),
+  osmType: z.string().optional(),
+  source: z.string(),
+  data: z.any().optional(),
 });
 
 function MapInfoSheet({
@@ -60,6 +72,7 @@ function MapInfoSheet({
   onOpenChange,
   markerPosition,
   onSpotCreated,
+  selectedPlace,
 }: MapInfoSheetProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const { toast } = useToast();
@@ -197,6 +210,13 @@ function MapInfoSheet({
         formData.append("image", values.image);
       }
 
+      if (values.osmId) formData.append("osmId", values.osmId.toString());
+      if (values.osmType) formData.append("osmType", values.osmType);
+      formData.append("source", values.source);
+      if (values.data) formData.append("data", JSON.stringify(values.data));
+
+      console.log("Form data:", formData);
+
       const newSpot = await pb.collection("spots").create(formData);
 
       console.log("New spot created:", newSpot);
@@ -221,6 +241,18 @@ function MapInfoSheet({
       });
     }
   };
+
+  useEffect(() => {
+    if (isOpen && selectedPlace) {
+      form.setValue('title', selectedPlace.name);
+      form.setValue('osmId', selectedPlace.osmId);
+      form.setValue('osmType', selectedPlace.osmType);
+      form.setValue('source', 'nominatim');
+      form.setValue('data', selectedPlace.rawData);
+    } else if (isOpen) {
+      form.setValue('source', 'user');
+    }
+  }, [isOpen, selectedPlace, form]);
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>

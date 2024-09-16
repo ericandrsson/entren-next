@@ -11,10 +11,12 @@ interface SearchResult {
   display_name: string;
   type: string;
   importance: number;
+  osm_id: number;
+  osm_type: string;
 }
 
 interface SearchBarProps {
-  onSelectPlace: (lat: number, lon: number) => void;
+  onSelectPlace: (lat: number, lon: number, name: string, osmId: number, osmType: string, rawData: any) => void;
 }
 
 function SearchBar({ onSelectPlace }: SearchBarProps) {
@@ -69,7 +71,16 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
   }, [query, debouncedSearch]);
 
   const handleSelectPlace = (result: SearchResult) => {
-    onSelectPlace(parseFloat(result.lat), parseFloat(result.lon));
+    const placeName = result.display_name.split(',')[0].trim();
+    
+    onSelectPlace(
+      parseFloat(result.lat),
+      parseFloat(result.lon),
+      placeName,
+      result.osm_id,
+      result.osm_type,
+      result // Pass the entire result object as rawData
+    );
     setResults([]);
     setQuery("");
   };
