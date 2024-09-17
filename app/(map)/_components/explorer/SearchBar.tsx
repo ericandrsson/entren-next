@@ -3,30 +3,22 @@ import { Search, MapPin, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import debounce from "lodash/debounce";
-import { Spot, SearchResult } from "@/types";
-import SpotDetailsBox from "./SpotDetailsPanel";
-import FilterBox from "./FilterBox";
+import { SearchResult } from "@/types";
 
 interface SearchBarProps {
   onSelectPlace: (result: SearchResult) => void;
   onFocus: () => void;
   onBlur: () => void;
-  selectedSpot: Spot | null;
-  onCloseSpotDetails: () => void;
   isFilterOpen: boolean;
   toggleFilter: () => void;
-  onFilterChange: (filters: any) => void;
 }
 
 function SearchBar({
   onSelectPlace,
   onFocus,
   onBlur,
-  selectedSpot,
-  onCloseSpotDetails,
   isFilterOpen,
   toggleFilter,
-  onFilterChange,
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -83,7 +75,7 @@ function SearchBar({
   };
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-lg p-4">
+    <div className="w-full">
       <div className="flex relative">
         <Input
           type="text"
@@ -136,16 +128,6 @@ function SearchBar({
             </li>
           ))}
         </ul>
-      )}
-      {selectedSpot && !results.length && (
-        <div className="mt-2 border-t">
-          <SpotDetailsBox spot={selectedSpot} onClose={onCloseSpotDetails} />
-        </div>
-      )}
-      {!selectedSpot && !results.length && isFilterOpen && (
-        <div className="mt-2 border-t">
-          <FilterBox onFilterChange={onFilterChange} />
-        </div>
       )}
     </div>
   );

@@ -5,7 +5,6 @@ import {
   Tag,
   Calendar,
   CheckCircle,
-  Camera,
   Globe,
   Map,
   AlertTriangle,

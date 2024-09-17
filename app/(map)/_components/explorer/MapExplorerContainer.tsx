@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 import FilterBox from "./FilterBox";
+import SpotDetailsBox from "./SpotDetailsPanel";
 import { Spot, SearchResult } from "@/types";
 
 interface MapExplorerContainerProps {
@@ -24,7 +25,7 @@ function MapExplorerContainer({
   };
 
   const handleSearchBlur = () => {
-    setTimeout(() => setIsSearching(false), 200); // Delay to allow click events on search results
+    setTimeout(() => setIsSearching(false), 200);
   };
 
   const handleSelectPlace = (result: SearchResult) => {
@@ -44,16 +45,25 @@ function MapExplorerContainer({
   return (
     <div className="w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden pointer-events-auto">
       <div className="p-4">
-        <SearchBar
-          onSelectPlace={handleSelectPlace}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-          selectedSpot={selectedSpot}
-          onCloseSpotDetails={handleCloseSpotDetails}
-          isFilterOpen={isFilterOpen}
-          toggleFilter={toggleFilter}
-          onFilterChange={onFilterChange}
-        />
+        <div className="w-full bg-white rounded-lg shadow-lg p-4">
+          <SearchBar
+            onSelectPlace={handleSelectPlace}
+            onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}
+            isFilterOpen={isFilterOpen}
+            toggleFilter={toggleFilter}
+          />
+          {selectedSpot && !isSearching && (
+            <div className="mt-2 border-t">
+              <SpotDetailsBox spot={selectedSpot} onClose={handleCloseSpotDetails} />
+            </div>
+          )}
+          {!selectedSpot && !isSearching && isFilterOpen && (
+            <div className="mt-2 border-t">
+              <FilterBox onFilterChange={onFilterChange} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
