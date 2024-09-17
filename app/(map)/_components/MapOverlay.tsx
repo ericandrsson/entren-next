@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
 import MapExplorerContainer from "./explorer/MapExplorerContainer";
+import ModeSwitcher from "./controls/ModeSwitcher";
 import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";
 
@@ -26,6 +27,13 @@ function MapOverlay({
   onFilterChange,
   map,
 }: MapOverlayProps) {
+  const [currentMode, setCurrentMode] = useState<'view' | 'contribute'>('view');
+
+  const handleModeChange = (mode: 'view' | 'contribute') => {
+    setCurrentMode(mode);
+    // Add any additional logic for mode change here
+  };
+
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute top-4 left-4 z-[1000]">
@@ -36,7 +44,8 @@ function MapOverlay({
           onFilterChange={onFilterChange}
         />
       </div>
-      <div className="absolute top-4 right-4 z-[1000] pointer-events-auto">
+      <div className="absolute top-4 right-4 z-[1000] pointer-events-auto flex items-center space-x-4">
+        <ModeSwitcher currentMode={currentMode} onModeChange={handleModeChange} />
         <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
       </div>
       {map && (
