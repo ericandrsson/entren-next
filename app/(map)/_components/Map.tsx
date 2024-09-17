@@ -10,6 +10,8 @@ import {
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
+import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
 import MapInfoSheet from "./SpotCreationSheet";
 import MapOverlay from "./MapOverlay";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";

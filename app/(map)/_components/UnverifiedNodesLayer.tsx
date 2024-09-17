@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 interface UnverifiedNode {
   id: number;
@@ -27,13 +28,14 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
   const map = useMap();
   const lastFetchRef = useRef<number>(0);
 
-  const fetchNodes = useCallback(async (bounds: L.LatLngBounds) => {
-    if (isLoading || map.getZoom() < 14) return;
+  const fetchNodes = useCallback(
+    async (bounds: L.LatLngBounds) => {
+      if (isLoading || map.getZoom() < 14) return;
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    const query = `
+      const query = `
       [out:json][timeout:25];
       (
         node["amenity"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
@@ -42,33 +44,39 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
       out body;
     `;
 
-    console.log("Fetching nodes with query:", query);
+      console.log("Fetching nodes with query:", query);
 
-    try {
-      const response = await fetch("https://overpass-api.de/api/interpreter", {
-        method: "POST",
-        body: query,
-      });
+      try {
+        const response = await fetch(
+          "https://overpass-api.de/api/interpreter",
+          {
+            method: "POST",
+            body: query,
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Received data:", data);
+        setNodes(data.elements);
+        console.log("Number of nodes set:", data.elements.length);
+      } catch (error) {
+        console.error("Error fetching unverified nodes:", error);
+        setError("Failed to fetch nodes. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
-
-      const data = await response.json();
-      console.log("Received data:", data);
-      setNodes(data.elements);
-      console.log("Number of nodes set:", data.elements.length);
-    } catch (error) {
-      console.error("Error fetching unverified nodes:", error);
-      setError("Failed to fetch nodes. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [map]);
+    },
+    [map]
+  );
 
   const debouncedFetchNodes = useCallback(() => {
     const now = Date.now();
-    if (now - lastFetchRef.current > 2000) { // 2 seconds debounce
+    if (now - lastFetchRef.current > 2000) {
+      // 2 seconds debounce
       lastFetchRef.current = now;
       const zoom = map.getZoom();
       console.log("Current zoom level:", zoom);
@@ -102,7 +110,12 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
   }
 
   return (
-    <>
+    <MarkerClusterGroup
+      chunkedLoading
+      maxClusterRadius={60}
+      spiderfyOnMaxZoom={false}
+      disableClusteringAtZoom={16}
+    >
       {nodes.map((node) => (
         <Marker
           key={node.id}
@@ -125,7 +138,7 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
           </Popup>
         </Marker>
       ))}
-    </>
+    </MarkerClusterGroup>
   );
 };
 
