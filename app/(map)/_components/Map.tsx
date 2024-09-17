@@ -19,6 +19,7 @@ import { pb } from "@/lib/db";
 import SpotDetailsBox from "./explorer/SpotDetailsPanel";
 import { useMapZoom } from "@/hooks/useMapZoom";
 import MapSidebar from "./controls/MapSidebar";
+import UnverifiedNodesLayer from "./UnverifiedNodesLayer";
 
 interface Spot {
   id: string;
@@ -65,6 +66,7 @@ function Map() {
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
   const [map, setMap] = useState<L.Map | null>(null);
+  const [currentMode, setCurrentMode] = useState<'view' | 'contribute'>('view');
 
   const handleMapCreated = (map: L.Map) => {
     setMap(map);
@@ -173,6 +175,20 @@ function Map() {
     // You might want to update the SpotLayer or fetch new data based on filters
   }, []);
 
+  const handleModeChange = (mode: 'view' | 'contribute') => {
+    setCurrentMode(mode);
+    if (mode === 'contribute') {
+      console.log('Switching to contribute mode');
+    } else {
+      console.log('Switching to view mode');
+    }
+  };
+
+  const handleUnverifiedNodeClick = (node: any) => {
+    console.log("Unverified node clicked:", node);
+    // Implement logic to show contribution form for this node
+  };
+
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
@@ -190,12 +206,19 @@ function Map() {
             noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
-          <SpotLayer
-            key={refreshKey}
-            isAdmin={false}
-            user={null}
-            onSpotClick={handleSpotClick}
-          />
+          {currentMode === 'view' && (
+            <SpotLayer
+              key={refreshKey}
+              isAdmin={false}
+              user={null}
+              onSpotClick={handleSpotClick}
+            />
+          )}
+          {currentMode === 'contribute' && (
+            <UnverifiedNodesLayer 
+              onNodeClick={handleUnverifiedNodeClick}
+            />
+          )}
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />
           )}
@@ -214,6 +237,8 @@ function Map() {
         }}
         onFilterChange={handleFilterChange}
         map={map}
+        onModeChange={handleModeChange}
+        currentMode={currentMode}
       />
     </div>
   );
