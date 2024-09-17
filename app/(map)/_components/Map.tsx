@@ -68,7 +68,7 @@ function Map() {
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
   const [map, setMap] = useState<L.Map | null>(null);
-  const [currentMode, setCurrentMode] = useState<'view' | 'contribute'>('view');
+  const [currentMode, setCurrentMode] = useState<"view" | "contribute">("view");
 
   const handleMapCreated = (map: L.Map) => {
     setMap(map);
@@ -177,12 +177,12 @@ function Map() {
     // You might want to update the SpotLayer or fetch new data based on filters
   }, []);
 
-  const handleModeChange = (mode: 'view' | 'contribute') => {
+  const handleModeChange = (mode: "view" | "contribute") => {
     setCurrentMode(mode);
-    if (mode === 'contribute') {
-      console.log('Switching to contribute mode');
+    if (mode === "contribute") {
+      console.log("Switching to contribute mode");
     } else {
-      console.log('Switching to view mode');
+      console.log("Switching to view mode");
     }
   };
 
@@ -208,7 +208,7 @@ function Map() {
             noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
-          {currentMode === 'view' && (
+          {currentMode === "view" && (
             <SpotLayer
               key={refreshKey}
               isAdmin={false}
@@ -216,10 +216,8 @@ function Map() {
               onSpotClick={handleSpotClick}
             />
           )}
-          {currentMode === 'contribute' && (
-            <UnverifiedNodesLayer 
-              onNodeClick={handleUnverifiedNodeClick}
-            />
+          {currentMode === "contribute" && (
+            <UnverifiedNodesLayer onNodeClick={handleUnverifiedNodeClick} />
           )}
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />

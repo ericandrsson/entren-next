@@ -1,51 +1,32 @@
 import React, { useState } from "react";
-import SearchBar from "./SearchBar";
-import SpotDetailsBox from "./SpotDetailsPanel";
+import SearchBar from "./controls/SearchBar";
+import SpotDetailsBox from "./SpotDetailsBox";
 import FilterBox from "./FilterBox";
-import { Spot, SearchResult } from "@/types";
+import { Spot, SearchResult } from "@/types"; // Make sure to create these types
 
-interface MapExplorerPanelProps {
+interface MapSidebarProps {
   onSelectPlace: (result: SearchResult) => void;
   selectedSpot: Spot | null;
   onCloseSpotDetails: () => void;
   onFilterChange: (filters: any) => void;
 }
 
-function MapExplorerPanel({
+function MapSidebar({
   onSelectPlace,
   selectedSpot,
   onCloseSpotDetails,
   onFilterChange,
-}: MapExplorerPanelProps) {
+}: MapSidebarProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearchFocus = () => {
-    setIsSearching(true);
-  };
-
-  const handleSearchBlur = () => {
-    setIsSearching(false);
-  };
-
-  const handleSelectPlace = (result: SearchResult) => {
-    setIsSearching(false);
-    onSelectPlace(result);
-  };
 
   return (
     <div className="w-[400px] max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg overflow-hidden pointer-events-auto">
       <div className="p-4">
-        <SearchBar 
-          onSelectPlace={handleSelectPlace} 
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-        />
+        <SearchBar onSelectPlace={onSelectPlace} />
       </div>
-      {!isSearching && selectedSpot && (
+      {selectedSpot ? (
         <SpotDetailsBox spot={selectedSpot} onClose={onCloseSpotDetails} />
-      )}
-      {!isSearching && !selectedSpot && (
+      ) : (
         <div className="p-4 border-t">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -60,4 +41,4 @@ function MapExplorerPanel({
   );
 }
 
-export default MapExplorerPanel;
+export default MapSidebar;

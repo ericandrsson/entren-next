@@ -13,8 +13,6 @@ const ContributePanel: React.FC<ContributePanelProps> = ({ map, currentMode }) =
 
   useEffect(() => {
     if (map && currentMode === 'contribute') {
-      // Fetch unverified places from OpenStreetMap
-      // This is a placeholder - you'll need to implement the actual API call
       fetchUnverifiedPlaces(map.getBounds());
     }
   }, [map, currentMode]);

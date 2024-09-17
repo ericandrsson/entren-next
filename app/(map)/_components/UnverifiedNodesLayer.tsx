@@ -3,6 +3,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { latLngToTile, tileToLatLng } from "../utils/tileUtils";
 
 interface UnverifiedNode {
   id: number;
@@ -29,16 +30,23 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
   const lastFetchRef = useRef<number>(0);
 
   const fetchNodes = useCallback(
-    async (bounds: L.LatLngBounds) => {
-      if (isLoading || map.getZoom() < 14) return;
+    async (bounds: L.LatLngBounds, zoom: number) => {
+      if (isLoading || zoom < 14) return;
 
       setIsLoading(true);
       setError(null);
 
+      const nw = latLngToTile(bounds.getNorth(), bounds.getWest(), zoom);
+      const se = latLngToTile(bounds.getSouth(), bounds.getEast(), zoom);
+
+      const minX = Math.min(nw.x, se.x);
+      const maxX = Math.max(nw.x, se.x);
+      const minY = Math.min(nw.y, se.y);
+      const maxY = Math.max(nw.y, se.y);
+
       const query = `
       [out:json][timeout:25];
       (
-        node["amenity"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
         node["shop"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
       );
       out body;
@@ -70,19 +78,18 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
         setIsLoading(false);
       }
     },
-    [map]
+    []
   );
 
   const debouncedFetchNodes = useCallback(() => {
     const now = Date.now();
     if (now - lastFetchRef.current > 2000) {
-      // 2 seconds debounce
       lastFetchRef.current = now;
       const zoom = map.getZoom();
       console.log("Current zoom level:", zoom);
       if (zoom >= 14) {
         console.log("Fetching nodes...");
-        fetchNodes(map.getBounds());
+        fetchNodes(map.getBounds(), zoom);
       } else {
         console.log("Clearing nodes due to low zoom level");
         setNodes([]);
