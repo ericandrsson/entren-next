@@ -4,6 +4,7 @@ import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { latLngToTile, tileToLatLng } from "../utils/tileUtils";
+import { pb } from "@/lib/db";
 
 interface UnverifiedNode {
   id: number;
@@ -29,20 +30,28 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
   const map = useMap();
   const lastFetchRef = useRef<number>(0);
 
+  const fetchExistingNodeIds = async (
+    osmIds: number[]
+  ): Promise<Set<number>> => {
+    try {
+      const result = await pb.collection("spots").getList(1, 1000, {
+        filter: `data.osm_id?~ "${osmIds.join("|")}"`,
+        fields: "data.osm_id",
+      });
+      console.log("Existing node IDs:", result.items);
+      return new Set(result.items.map((item) => Number(item.osm_id)));
+    } catch (error) {
+      console.error("Error fetching existing node IDs:", error);
+      return new Set();
+    }
+  };
+
   const fetchNodes = useCallback(
     async (bounds: L.LatLngBounds, zoom: number) => {
       if (isLoading || zoom < 14) return;
 
       setIsLoading(true);
       setError(null);
-
-      const nw = latLngToTile(bounds.getNorth(), bounds.getWest(), zoom);
-      const se = latLngToTile(bounds.getSouth(), bounds.getEast(), zoom);
-
-      const minX = Math.min(nw.x, se.x);
-      const maxX = Math.max(nw.x, se.x);
-      const minY = Math.min(nw.y, se.y);
-      const maxY = Math.max(nw.y, se.y);
 
       const query = `
       [out:json][timeout:25];
@@ -69,8 +78,20 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
 
         const data = await response.json();
         console.log("Received data:", data);
-        setNodes(data.elements);
-        console.log("Number of nodes set:", data.elements.length);
+
+        // Extract OSM IDs from the fetched nodes
+        const osmIds = data.elements.map((node: UnverifiedNode) => node.id);
+
+        // Fetch existing node IDs from your database
+        const existingNodeIds = await fetchExistingNodeIds(osmIds);
+
+        // Filter out nodes that already exist in your database
+        const filteredNodes = data.elements.filter(
+          (node: UnverifiedNode) => !existingNodeIds.has(node.id)
+        );
+
+        setNodes(filteredNodes);
+        console.log("Number of unverified nodes set:", filteredNodes.length);
       } catch (error) {
         console.error("Error fetching unverified nodes:", error);
         setError("Failed to fetch nodes. Please try again later.");

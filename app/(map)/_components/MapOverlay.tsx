@@ -3,7 +3,6 @@ import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
 import MapExplorerContainer from "./explorer/MapExplorerContainer";
 import ModeSwitcher from "./controls/ModeSwitcher";
-import ContributePanel from "./contribute/ContributePanel";
 import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";
 
@@ -39,16 +38,12 @@ function MapOverlay({
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute top-4 left-4 z-[1000]">
-        {currentMode === 'view' ? (
-          <MapExplorerContainer
-            onSelectPlace={onSelectPlace}
-            selectedSpot={selectedSpot}
-            onCloseSpotDetails={onCloseSpotDetails}
-            onFilterChange={onFilterChange}
-          />
-        ) : (
-          <ContributePanel map={map} currentMode={currentMode} />
-        )}
+        <MapExplorerContainer
+          onSelectPlace={onSelectPlace}
+          selectedSpot={selectedSpot}
+          onCloseSpotDetails={onCloseSpotDetails}
+          onFilterChange={onFilterChange}
+        />
       </div>
       <div className="absolute top-4 right-4 z-[1000] pointer-events-auto flex items-center space-x-4">
         <ModeSwitcher currentMode={currentMode} onModeChange={handleModeChange} />

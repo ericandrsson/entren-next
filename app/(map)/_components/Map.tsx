@@ -177,16 +177,13 @@ function Map() {
     // You might want to update the SpotLayer or fetch new data based on filters
   }, []);
 
-  const handleModeChange = (mode: "view" | "contribute") => {
+  const handleModeChange = (mode: 'view' | 'contribute') => {
     setCurrentMode(mode);
-    if (mode === "contribute") {
-      console.log("Switching to contribute mode");
-    } else {
-      console.log("Switching to view mode");
-    }
+    // You might want to add logic here to change the visible layer
+    // or fetch different data based on the mode
   };
 
-  const handleUnverifiedNodeClick = (node: any) => {
+  const handleUnverifiedNodeClick = (node: UnverifiedNode) => {
     console.log("Unverified node clicked:", node);
     // Implement logic to show contribution form for this node
   };
@@ -208,7 +205,7 @@ function Map() {
             noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
-          {currentMode === "view" && (
+          {currentMode === 'view' && (
             <SpotLayer
               key={refreshKey}
               isAdmin={false}
@@ -216,7 +213,7 @@ function Map() {
               onSpotClick={handleSpotClick}
             />
           )}
-          {currentMode === "contribute" && (
+          {currentMode === 'contribute' && (
             <UnverifiedNodesLayer onNodeClick={handleUnverifiedNodeClick} />
           )}
           {tempSpot && (
