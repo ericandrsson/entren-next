@@ -11,13 +11,14 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MapInfoSheet from "./SpotCreationSheet";
-import MapControls from "./controls/MapControls";
+import MapOverlay from "./MapOverlay";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
 import { pb } from "@/lib/db";
-import SpotDetailsSheet from "./SpotDetailsSheet";
+import SpotDetailsBox from "./explorer/SpotDetailsPanel";
 import { useMapZoom } from "@/hooks/useMapZoom";
+import MapSidebar from "./controls/MapSidebar";
 
 interface Spot {
   id: string;
@@ -161,6 +162,12 @@ function Map() {
     }
   }, []);
 
+  const handleFilterChange = useCallback((filters: any) => {
+    // Implement filter logic here
+    console.log("Filters changed:", filters);
+    // You might want to update the SpotLayer or fetch new data based on filters
+  }, []);
+
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
@@ -178,11 +185,17 @@ function Map() {
           />
           <MapClickHandler onMapClick={handleMapClick} />
           <div ref={controlsRef}>
-            <MapControls
+            <MapOverlay
               showListView={isSheetOpen}
               isDetailed={isDetailed}
               onDetailToggle={() => setIsDetailed(!isDetailed)}
               onSelectPlace={handleSelectPlace}
+              selectedSpot={selectedSpot}
+              onCloseSpotDetails={() => {
+                setSelectedSpot(null);
+                resetZoom();
+              }}
+              onFilterChange={handleFilterChange}
             />
           </div>
           <SpotLayer
@@ -197,29 +210,7 @@ function Map() {
           <MapCenterAdjuster center={mapCenter} zoom={zoom} />
         </MapContainer>
       </div>
-      <div className="relative z-10 flex w-full h-full pointer-events-none">
-        {/*<Sidebar /> */}
-        <div className={`flex-1 ${isSidebarOpen ? "ml-72" : "ml-[90px]"}`}>
-          <div className="pointer-events-auto">
-            {/* Remove MapControls from here if it's not needed outside the map */}
-          </div>
-        </div>
-      </div>
-      <MapInfoSheet
-        isOpen={isSheetOpen}
-        onOpenChange={handleSheetClose}
-        markerPosition={markerPosition}
-        onSpotCreated={() => {
-          handleSheetClose();
-          refreshSpots();
-        }}
-        selectedPlace={selectedPlace}
-      />
-      <SpotDetailsSheet
-        isOpen={isSpotDetailsOpen}
-        onOpenChange={handleSpotDetailsClose}
-        spot={selectedSpot}
-      />
+      {/* Remove the MapSidebar from here */}
     </div>
   );
 }
