@@ -1,5 +1,15 @@
 import React from "react";
-import { Navigation, MapPin, Tag, Calendar, CheckCircle } from "lucide-react";
+import {
+  Navigation,
+  MapPin,
+  Tag,
+  Calendar,
+  CheckCircle,
+  Camera,
+  Globe,
+  Map,
+  AlertTriangle,
+} from "lucide-react";
 import { pb } from "@/lib/db";
 import { Spot } from "@/types";
 
@@ -15,12 +25,28 @@ function SpotDetailsBox({ spot, onClose }: SpotDetailsBoxProps) {
 
   return (
     <div className="bg-white rounded-lg overflow-hidden">
-      <div className="p-4">
-        <h2 className="text-xl font-bold text-gray-900">{spot.name}</h2>
-        <p className="text-sm text-gray-600">
-          {spot.category.icon} {spot.category.name}
-        </p>
-      </div>
+      <header className="p-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">{spot.name}</h1>
+          <p className="text-sm text-gray-600 flex items-center">
+            <span className="mr-1">{spot.category.icon}</span>
+            {spot.category.name}
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 rounded-full hover:bg-gray-100"
+          aria-label="Close"
+        >
+          <svg width="13" height="13" viewBox="0 0 17 17">
+            <polygon
+              fill="#000000"
+              opacity="0.6"
+              points="15.2311234 17 8.51565378 10.174954 1.76887661 17 0 15.2467772 6.80939227 8.53130755 0 1.67495396 1.76887661 0 8.51565378 6.73112339 15.2311234 0 17 1.67495396 10.2375691 8.53130755 17 15.2467772"
+            ></polygon>
+          </svg>
+        </button>
+      </header>
       {spot.image && (
         <div className="w-full h-48 relative">
           <img
@@ -64,13 +90,37 @@ function SpotDetailsBox({ spot, onClose }: SpotDetailsBoxProps) {
           <p className="text-sm text-gray-700">{spot.description}</p>
         </div>
       )}
-      <div className="p-4 bg-gray-50 flex justify-end">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
-        >
-          Close
-        </button>
+      <div className="p-4 bg-gray-50">
+        <ul className="space-y-2">
+          <li>
+            <a
+              href={`geo:${spot.lat},${spot.lng}?q=${spot.lat},${
+                spot.lng
+              }(${encodeURIComponent(spot.name)})`}
+              className="flex items-center w-full p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              <Map className="w-6 h-6 mr-3" />
+              <span>Open in Maps app</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href={`https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lng}&zoom=19`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center w-full p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              <Globe className="w-6 h-6 mr-3" />
+              <span>Open on OpenStreetMap</span>
+            </a>
+          </li>
+          <li>
+            <button className="flex items-center w-full p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              <AlertTriangle className="w-6 h-6 mr-3" />
+              <span>Report this spot</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
   );
