@@ -1,14 +1,14 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
-import { useMap } from "react-leaflet";
+import { Map as LeafletMap } from "leaflet";
 
 interface ZoomButtonsProps {
   showListView: boolean;
+  map: LeafletMap;
 }
 
-function ZoomButtons({ showListView }: ZoomButtonsProps) {
-  const map = useMap();
-
+function ZoomButtons({ showListView, map }: ZoomButtonsProps) {
   const handleZoomIn = () => {
     map.zoomIn();
   };

@@ -64,6 +64,11 @@ function Map() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
+  const [map, setMap] = useState<L.Map | null>(null);
+
+  const handleMapCreated = (map: L.Map) => {
+    setMap(map);
+  };
 
   const handleMapClick = useCallback(
     (e: L.LeafletMouseEvent) => {
@@ -177,6 +182,7 @@ function Map() {
           className="w-full h-full cursor-pointer-map leaflet-grab"
           ref={mapRef}
           zoomControl={false}
+          whenCreated={handleMapCreated}
         >
           <TileLayer
             url={tileLayerUrl}
@@ -184,20 +190,6 @@ function Map() {
             noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
-          <div ref={controlsRef}>
-            <MapOverlay
-              showListView={isSheetOpen}
-              isDetailed={isDetailed}
-              onDetailToggle={() => setIsDetailed(!isDetailed)}
-              onSelectPlace={handleSelectPlace}
-              selectedSpot={selectedSpot}
-              onCloseSpotDetails={() => {
-                setSelectedSpot(null);
-                resetZoom();
-              }}
-              onFilterChange={handleFilterChange}
-            />
-          </div>
           <SpotLayer
             key={refreshKey}
             isAdmin={false}
@@ -210,7 +202,19 @@ function Map() {
           <MapCenterAdjuster center={mapCenter} zoom={zoom} />
         </MapContainer>
       </div>
-      {/* Remove the MapSidebar from here */}
+      <MapOverlay
+        showListView={isSheetOpen}
+        isDetailed={isDetailed}
+        onDetailToggle={() => setIsDetailed(!isDetailed)}
+        onSelectPlace={handleSelectPlace}
+        selectedSpot={selectedSpot}
+        onCloseSpotDetails={() => {
+          setSelectedSpot(null);
+          resetZoom();
+        }}
+        onFilterChange={handleFilterChange}
+        map={map}
+      />
     </div>
   );
 }

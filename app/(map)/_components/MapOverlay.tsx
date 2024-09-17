@@ -3,8 +3,9 @@ import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
 import MapExplorerPanel from "./explorer/MapExplorerPanel";
 import { Spot, SearchResult } from "@/types"; // Make sure to create these types
+import { Map as LeafletMap } from "leaflet";
 
-interface MapControlsProps {
+interface MapOverlayProps {
   showListView: boolean;
   isDetailed: boolean;
   onDetailToggle: () => void;
@@ -12,6 +13,7 @@ interface MapControlsProps {
   selectedSpot: Spot | null;
   onCloseSpotDetails: () => void;
   onFilterChange: (filters: any) => void;
+  map: LeafletMap | null;
 }
 
 function MapOverlay({
@@ -22,21 +24,26 @@ function MapOverlay({
   selectedSpot,
   onCloseSpotDetails,
   onFilterChange,
-}: MapControlsProps) {
+  map,
+}: MapOverlayProps) {
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <MapExplorerPanel
-        onSelectPlace={onSelectPlace}
-        selectedSpot={selectedSpot}
-        onCloseSpotDetails={onCloseSpotDetails}
-        onFilterChange={onFilterChange}
-      />
+      <div className="absolute top-4 left-4 z-[1000]">
+        <MapExplorerPanel
+          onSelectPlace={onSelectPlace}
+          selectedSpot={selectedSpot}
+          onCloseSpotDetails={onCloseSpotDetails}
+          onFilterChange={onFilterChange}
+        />
+      </div>
       <div className="absolute top-4 right-4 z-[1000] pointer-events-auto">
         <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
       </div>
-      <div className="absolute bottom-4 right-4 z-[1000] hidden sm:block pointer-events-auto">
-        <ZoomButtons showListView={showListView} />
-      </div>
+      {map && (
+        <div className="absolute bottom-4 right-4 z-[1000] hidden sm:block pointer-events-auto">
+          <ZoomButtons showListView={showListView} map={map} />
+        </div>
+      )}
     </div>
   );
 }
