@@ -3,6 +3,8 @@ import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import debounce from "lodash/debounce";
+import { Spot, SearchResult } from "@/types";
+import SpotDetailsBox from "./SpotDetailsPanel";
 
 export interface SearchResult {
   place_id: number;
@@ -19,9 +21,11 @@ interface SearchBarProps {
   onSelectPlace: (result: SearchResult) => void;
   onFocus: () => void;
   onBlur: () => void;
+  selectedSpot: Spot | null;
+  onCloseSpotDetails: () => void;
 }
 
-function SearchBar({ onSelectPlace, onFocus, onBlur }: SearchBarProps) {
+function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDetails }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -120,6 +124,11 @@ function SearchBar({ onSelectPlace, onFocus, onBlur }: SearchBarProps) {
             </li>
           ))}
         </ul>
+      )}
+      {selectedSpot && !results.length && (
+        <div className="mt-2 border-t">
+          <SpotDetailsBox spot={selectedSpot} onClose={onCloseSpotDetails} />
+        </div>
       )}
     </div>
   );

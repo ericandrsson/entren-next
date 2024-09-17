@@ -26,7 +26,7 @@ function MapExplorerContainer({
   };
 
   const handleSearchBlur = () => {
-    setIsSearching(false);
+    setTimeout(() => setIsSearching(false), 200); // Delay to allow click events on search results
   };
 
   const handleSelectPlace = (result: SearchResult) => {
@@ -41,23 +41,19 @@ function MapExplorerContainer({
           onSelectPlace={handleSelectPlace} 
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
+          selectedSpot={selectedSpot}
+          onCloseSpotDetails={onCloseSpotDetails}
         />
       </div>
-      {!isSearching && (
+      {!selectedSpot && !isSearching && (
         <div className="p-4 border-t">
-          {selectedSpot ? (
-            <SpotDetailsBox spot={selectedSpot} onClose={onCloseSpotDetails} />
-          ) : (
-            <>
-              <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="w-full px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors"
-              >
-                {isFilterOpen ? "Hide Filters" : "Show Filters"}
-              </button>
-              {isFilterOpen && <FilterBox onFilterChange={onFilterChange} />}
-            </>
-          )}
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors"
+          >
+            {isFilterOpen ? "Hide Filters" : "Show Filters"}
+          </button>
+          {isFilterOpen && <FilterBox onFilterChange={onFilterChange} />}
         </div>
       )}
     </div>
