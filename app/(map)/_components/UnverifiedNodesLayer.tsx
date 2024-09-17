@@ -56,7 +56,11 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
       const query = `
       [out:json][timeout:25];
       (
-        node["shop"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        node["amenity"="toilets"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        node["wheelchair"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        node["tactile_paving"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        node["hearing_impaired:induction_loop"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        node["amenity"="parking"]["disabled"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
       );
       out body;
     `;
