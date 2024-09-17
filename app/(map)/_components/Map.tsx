@@ -15,7 +15,6 @@ import MapControls from "./controls/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import SpotLayer from "./SpotLayer";
 import SpotMarker from "./SpotMarker";
-import SearchBar, { SearchResult } from "./SearchBar"; // Add this import
 import { pb } from "@/lib/db";
 import SpotDetailsSheet from "./SpotDetailsSheet";
 import { useMapZoom } from "@/hooks/useMapZoom";
@@ -165,8 +164,6 @@ function Map() {
   return (
     <div className="flex h-screen relative isolate">
       <div className="absolute inset-0 z-0">
-        <SearchBar onSelectPlace={handleSelectPlace} />
-
         <MapContainer
           center={mapCenter}
           zoom={zoom}
@@ -185,6 +182,7 @@ function Map() {
               showListView={isSheetOpen}
               isDetailed={isDetailed}
               onDetailToggle={() => setIsDetailed(!isDetailed)}
+              onSelectPlace={handleSelectPlace}
             />
           </div>
           <SpotLayer

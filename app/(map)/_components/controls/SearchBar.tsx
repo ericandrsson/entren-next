@@ -75,17 +75,19 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
   };
 
   return (
-    <div className="absolute top-4 left-4 z-[1000] w-64 sm:w-96 bg-white rounded-lg shadow-lg">
+    <div className="w-64 sm:w-96 bg-white rounded-lg shadow-lg">
       <div className="flex relative p-2">
         <Input
           type="text"
-          placeholder="Search for places in Sweden..."
+          placeholder="Sök plats eller adress..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="pr-10 text-base text-gray-900 placeholder-gray-500"
         />
         {isLoading ? (
-          <Loader2 className="h-5 w-5 animate-spin absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
+          <div className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 overflow-hidden">
+            <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+          </div>
         ) : (
           <Search className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
         )}
