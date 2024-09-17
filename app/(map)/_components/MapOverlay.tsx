@@ -15,8 +15,8 @@ interface MapOverlayProps {
   onCloseSpotDetails: () => void;
   onFilterChange: (filters: any) => void;
   map: LeafletMap | null;
-  onModeChange: (mode: 'view' | 'contribute') => void;
-  currentMode: 'view' | 'contribute';
+  onModeChange: (mode: "view" | "contribute") => void;
+  currentMode: "view" | "contribute";
 }
 
 function MapOverlay({
@@ -31,23 +31,30 @@ function MapOverlay({
   onModeChange,
   currentMode,
 }: MapOverlayProps) {
-  const handleModeChange = (mode: 'view' | 'contribute') => {
+  const handleModeChange = (mode: "view" | "contribute") => {
     onModeChange(mode);
   };
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-4 left-4 z-[1000]">
-        <MapExplorerContainer
-          onSelectPlace={onSelectPlace}
-          selectedSpot={selectedSpot}
-          onCloseSpotDetails={onCloseSpotDetails}
-          onFilterChange={onFilterChange}
-        />
-      </div>
-      <div className="absolute top-4 right-4 z-[1000] pointer-events-auto flex items-center space-x-4">
-        <ModeSwitcher currentMode={currentMode} onModeChange={handleModeChange} />
-        <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
+      <div className="flex flex-col items-center sm:flex-row sm:justify-between sm:items-start w-full p-4 z-[1000]">
+        <div className="pointer-events-auto order-2 sm:order-1 mt-4 sm:mt-0">
+          <MapExplorerContainer
+            onSelectPlace={onSelectPlace}
+            selectedSpot={selectedSpot}
+            onCloseSpotDetails={onCloseSpotDetails}
+            onFilterChange={onFilterChange}
+          />
+        </div>
+        <div className="pointer-events-auto order-1 sm:order-2 sm:mb-0">
+          <ModeSwitcher
+            currentMode={currentMode}
+            onModeChange={handleModeChange}
+          />
+        </div>
+        <div className="pointer-events-auto order-3 mt-4 sm:mt-0">
+          <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
+        </div>
       </div>
       {map && (
         <div className="absolute bottom-4 right-4 z-[1000] hidden sm:block pointer-events-auto">
