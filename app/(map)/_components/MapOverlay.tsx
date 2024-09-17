@@ -1,8 +1,8 @@
 import React from "react";
 import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
-import MapExplorerPanel from "./explorer/MapExplorerPanel";
-import { Spot, SearchResult } from "@/types"; // Make sure to create these types
+import MapExplorerContainer from "./explorer/MapExplorerContainer";
+import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";
 
 interface MapOverlayProps {
@@ -29,7 +29,7 @@ function MapOverlay({
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute top-4 left-4 z-[1000]">
-        <MapExplorerPanel
+        <MapExplorerContainer
           onSelectPlace={onSelectPlace}
           selectedSpot={selectedSpot}
           onCloseSpotDetails={onCloseSpotDetails}

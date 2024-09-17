@@ -17,9 +17,11 @@ export interface SearchResult {
 
 interface SearchBarProps {
   onSelectPlace: (result: SearchResult) => void;
+  onFocus: () => void;
+  onBlur: () => void;
 }
 
-function SearchBar({ onSelectPlace }: SearchBarProps) {
+function SearchBar({ onSelectPlace, onFocus, onBlur }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,13 +77,15 @@ function SearchBar({ onSelectPlace }: SearchBarProps) {
   };
 
   return (
-    <div className="w-64 sm:w-96 bg-white rounded-lg shadow-lg">
+    <div className="w-full bg-white rounded-lg shadow-lg">
       <div className="flex relative p-2">
         <Input
           type="text"
           placeholder="Sök plats eller adress..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onFocus={onFocus}
+          onBlur={onBlur}
           className="pr-10 text-base text-gray-900 placeholder-gray-500"
         />
         {isLoading ? (

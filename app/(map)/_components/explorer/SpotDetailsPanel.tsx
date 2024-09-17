@@ -1,40 +1,20 @@
 import React from "react";
 import { Navigation, MapPin, Tag, Calendar, CheckCircle } from "lucide-react";
 import { pb } from "@/lib/db";
-
-interface Spot {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  category: {
-    id: string;
-    name: string;
-    icon: string;
-  };
-  created: string;
-  description?: string;
-  tags?: string[];
-  user: string;
-  isVerified: boolean;
-  image?: string;
-  address?: string;
-}
+import { Spot } from "@/types";
 
 interface SpotDetailsBoxProps {
-  spot: Spot | null;
+  spot: Spot;
   onClose: () => void;
 }
 
 function SpotDetailsBox({ spot, onClose }: SpotDetailsBoxProps) {
-  if (!spot) return null;
-
   const getImageUrl = (imageFilename: string) => {
     return `${pb.baseUrl}/api/files/spots/${spot.id}/${imageFilename}`;
   };
 
   return (
-    <div className="absolute top-20 left-4 z-[1000] w-[400px] max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white rounded-lg overflow-hidden">
       <div className="p-4">
         <h2 className="text-xl font-bold text-gray-900">{spot.name}</h2>
         <p className="text-sm text-gray-600">

@@ -15,7 +15,10 @@ function FilterBox({ onFilterChange }: FilterBoxProps) {
   return (
     <div className="mt-4 space-y-4">
       <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="category"
+          className="block text-sm font-medium text-gray-700"
+        >
           Category
         </label>
         <select
