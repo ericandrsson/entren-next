@@ -36,8 +36,8 @@ function MapExplorerPanel({
   return (
     <div className="w-[400px] max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg overflow-hidden pointer-events-auto">
       <div className="p-4">
-        <SearchBar 
-          onSelectPlace={handleSelectPlace} 
+        <SearchBar
+          onSelectPlace={handleSelectPlace}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
         />

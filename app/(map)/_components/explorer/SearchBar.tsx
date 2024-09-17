@@ -1,21 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import debounce from "lodash/debounce";
 import { Spot, SearchResult } from "@/types";
 import SpotDetailsBox from "./SpotDetailsPanel";
-
-export interface SearchResult {
-  place_id: number;
-  lat: string;
-  lon: string;
-  display_name: string;
-  type: string;
-  importance: number;
-  osm_id: number;
-  osm_type: string;
-}
+import FilterBox from "./FilterBox";
 
 interface SearchBarProps {
   onSelectPlace: (result: SearchResult) => void;
@@ -23,9 +13,21 @@ interface SearchBarProps {
   onBlur: () => void;
   selectedSpot: Spot | null;
   onCloseSpotDetails: () => void;
+  isFilterOpen: boolean;
+  toggleFilter: () => void;
+  onFilterChange: (filters: any) => void;
 }
 
-function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDetails }: SearchBarProps) {
+function SearchBar({
+  onSelectPlace,
+  onFocus,
+  onBlur,
+  selectedSpot,
+  onCloseSpotDetails,
+  isFilterOpen,
+  toggleFilter,
+  onFilterChange,
+}: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +56,7 @@ function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDe
 
       setResults(data);
       if (data.length === 0) {
-        setError("No results found");
+        setError("Inga platser hittades, prova med en annan sökterm.");
       }
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -81,8 +83,8 @@ function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDe
   };
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-lg">
-      <div className="flex relative p-2">
+    <div className="w-full bg-white rounded-lg shadow-lg p-4">
+      <div className="flex relative">
         <Input
           type="text"
           placeholder="Sök plats eller adress..."
@@ -90,15 +92,25 @@ function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDe
           onChange={(e) => setQuery(e.target.value)}
           onFocus={onFocus}
           onBlur={onBlur}
-          className="pr-10 text-base text-gray-900 placeholder-gray-500"
+          className="w-full pr-20 text-base text-gray-900 placeholder-gray-500"
         />
-        {isLoading ? (
-          <div className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 overflow-hidden">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
-          </div>
-        ) : (
-          <Search className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
-        )}
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+          {isLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin text-gray-600 mr-2" />
+          ) : (
+            <Search className="h-5 w-5 text-gray-600 mr-2" />
+          )}
+          <button
+            onClick={toggleFilter}
+            className="p-1 rounded-full hover:bg-gray-200 transition-colors duration-200"
+          >
+            <Filter
+              className={`h-5 w-5 ${
+                isFilterOpen ? "text-blue-500" : "text-gray-600"
+              }`}
+            />
+          </button>
+        </div>
       </div>
       {error && <p className="text-red-600 text-sm p-2 font-medium">{error}</p>}
       {results.length > 0 && (
@@ -128,6 +140,11 @@ function SearchBar({ onSelectPlace, onFocus, onBlur, selectedSpot, onCloseSpotDe
       {selectedSpot && !results.length && (
         <div className="mt-2 border-t">
           <SpotDetailsBox spot={selectedSpot} onClose={onCloseSpotDetails} />
+        </div>
+      )}
+      {!selectedSpot && !results.length && isFilterOpen && (
+        <div className="mt-2 border-t">
+          <FilterBox onFilterChange={onFilterChange} />
         </div>
       )}
     </div>

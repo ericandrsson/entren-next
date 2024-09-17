@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import SearchBar from "./SearchBar";
-import SpotDetailsBox from "./SpotDetailsPanel";
 import FilterBox from "./FilterBox";
 import { Spot, SearchResult } from "@/types";
 
@@ -18,11 +17,10 @@ function MapExplorerContainer({
   onFilterChange,
 }: MapExplorerContainerProps) {
   const [isSearching, setIsSearching] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const handleSearchFocus = () => {
     setIsSearching(true);
-    setIsFilterOpen(false);
   };
 
   const handleSearchBlur = () => {
@@ -34,28 +32,29 @@ function MapExplorerContainer({
     onSelectPlace(result);
   };
 
+  const handleCloseSpotDetails = () => {
+    onCloseSpotDetails();
+    setIsFilterOpen(true);
+  };
+
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
   return (
-    <div className="w-[400px] max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg overflow-hidden pointer-events-auto">
+    <div className="w-[400px] max-w-[calc(100vw-2rem)]  overflow-hidden pointer-events-auto">
       <div className="p-4">
-        <SearchBar 
-          onSelectPlace={handleSelectPlace} 
+        <SearchBar
+          onSelectPlace={handleSelectPlace}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
           selectedSpot={selectedSpot}
-          onCloseSpotDetails={onCloseSpotDetails}
+          onCloseSpotDetails={handleCloseSpotDetails}
+          isFilterOpen={isFilterOpen}
+          toggleFilter={toggleFilter}
+          onFilterChange={onFilterChange}
         />
       </div>
-      {!selectedSpot && !isSearching && (
-        <div className="p-4 border-t">
-          <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="w-full px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors"
-          >
-            {isFilterOpen ? "Hide Filters" : "Show Filters"}
-          </button>
-          {isFilterOpen && <FilterBox onFilterChange={onFilterChange} />}
-        </div>
-      )}
     </div>
   );
 }
