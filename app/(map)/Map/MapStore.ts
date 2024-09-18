@@ -20,7 +20,7 @@ interface MapState {
   currentMode: "view" | "contribute";
   setCurrentMode: (mode: "view" | "contribute") => void;
   handleMapClick: (e: L.LeafletMouseEvent) => void;
-  handleSelectPlace: (result: SearchResult) => Promise<void>;
+  handleSelectSpot: (result: SearchResult) => Promise<void>;
   handleSpotClick: (spot: Spot) => void;
   handleUnverifiedNodeClick: (node: UnverifiedNode) => void;
 }
@@ -42,8 +42,8 @@ export const useMapStore = create<MapState>((set, get) => ({
   setSelectedSpot: (spot) => set({ selectedSpot: spot }),
   currentMode: "view",
   setCurrentMode: (mode) => set({ currentMode: mode }),
-  handleSelectPlace: async (result) => {
-    // Implement the logic for handleSelectPlace here
+  handleSelectSpot: async (result) => {
+    // Implement the logic for handleSelectSpot here
     // You can access other state values and setters using get()
     // For example: const { setMapCenter, setZoom } = get();
   },

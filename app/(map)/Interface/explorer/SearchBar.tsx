@@ -6,7 +6,7 @@ import debounce from "lodash/debounce";
 import { SearchResult } from "@/types";
 
 interface SearchBarProps {
-  onSelectPlace: (result: SearchResult) => void;
+  onSelectSpot: (result: SearchResult) => void;
   onFocus: () => void;
   onBlur: () => void;
   isFilterOpen: boolean;
@@ -14,7 +14,7 @@ interface SearchBarProps {
 }
 
 function SearchBar({
-  onSelectPlace,
+  onSelectSpot,
   onFocus,
   onBlur,
   isFilterOpen,
@@ -68,8 +68,8 @@ function SearchBar({
     return () => debouncedSearch.cancel();
   }, [query, debouncedSearch]);
 
-  const handleSelectPlace = (result: SearchResult) => {
-    onSelectPlace(result);
+  const handleSelectSpot = (result: SearchResult) => {
+    onSelectSpot(result);
     setResults([]);
     setQuery("");
   };
@@ -111,7 +111,7 @@ function SearchBar({
             <li
               key={result.place_id}
               className="p-3 hover:bg-gray-100 cursor-pointer transition duration-150 ease-in-out"
-              onClick={() => handleSelectPlace(result)}
+              onClick={() => handleSelectSpot(result)}
             >
               <div className="flex items-start">
                 <MapPin className="h-5 w-5 text-gray-600 mt-1 mr-2 flex-shrink-0" />

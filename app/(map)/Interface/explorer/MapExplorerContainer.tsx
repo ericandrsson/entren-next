@@ -5,14 +5,14 @@ import SpotDetailsBox from "./SpotDetailsPanel";
 import { Spot, SearchResult } from "@/types";
 
 interface MapExplorerContainerProps {
-  onSelectPlace: (result: SearchResult) => void;
+  onSelectSpot: (result: SearchResult) => void;
   selectedSpot: Spot | null;
   onCloseSpotDetails: () => void;
   onFilterChange: (filters: any) => void;
 }
 
 function MapExplorerContainer({
-  onSelectPlace,
+  onSelectSpot,
   selectedSpot,
   onCloseSpotDetails,
   onFilterChange,
@@ -28,9 +28,9 @@ function MapExplorerContainer({
     setTimeout(() => setIsSearching(false), 200);
   };
 
-  const handleSelectPlace = (result: SearchResult) => {
+  const handleSelectSpot = (result: SearchResult) => {
     setIsSearching(false);
-    onSelectPlace(result);
+    onSelectSpot(result);
   };
 
   const handleCloseSpotDetails = () => {
@@ -46,7 +46,7 @@ function MapExplorerContainer({
     <div className="w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden pointer-events-auto">
       <div className="w-full bg-white rounded-lg shadow-lg p-4">
         <SearchBar
-          onSelectPlace={handleSelectPlace}
+          onSelectSpot={handleSelectSpot}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
           isFilterOpen={isFilterOpen}

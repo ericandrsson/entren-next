@@ -13,7 +13,7 @@ function MapInterface({ map }: { map: L.Map | undefined }) {
     selectedSpot,
     currentMode,
     setCurrentMode,
-    handleSelectPlace,
+    handleSelectSpot,
     setSelectedSpot,
   } = useMapStore();
 
@@ -31,7 +31,7 @@ function MapInterface({ map }: { map: L.Map | undefined }) {
       <div className="flex flex-col items-center sm:flex-row sm:justify-between sm:items-start w-full p-4 z-[1000]">
         <div className="pointer-events-auto order-2 sm:order-1 mt-4 sm:mt-0">
           <MapExplorerContainer
-            onSelectPlace={handleSelectPlace}
+            onSelectSpot={handleSelectSpot}
             selectedSpot={selectedSpot}
             onCloseSpotDetails={handleCloseSpotDetails}
             onFilterChange={handleFilterChange}

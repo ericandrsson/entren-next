@@ -4,26 +4,16 @@ import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { pb } from "@/lib/db";
-
-interface UnverifiedSpot {
-  id: number;
-  lat: number;
-  lon: number;
-  tags: {
-    name?: string;
-    amenity?: string;
-    [key: string]: string | undefined;
-  };
-}
+import { SpotInterface, transformOverpassNode } from "@/types/Spot";
 
 interface UnverifiedSpotsLayerProps {
-  onNodeClick: (node: UnverifiedSpot) => void;
+  onNodeClick: (node: SpotInterface) => void;
 }
 
 const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
   onNodeClick,
 }) => {
-  const [nodes, setNodes] = useState<UnverifiedSpot[]>([]);
+  const [nodes, setNodes] = useState<SpotInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const map = useMap();
@@ -60,7 +50,6 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
         node["shop"](${bbox});
         node["amenity"="restaurant"](${bbox});
         node["amenity"="cafe"](${bbox});
-        node["public_transport"](${bbox});
         node["tourism"](${bbox});
         node["amenity"="school"](${bbox});
         node["amenity"="hospital"](${bbox});
@@ -71,14 +60,10 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
         // Accessibility-related tags
         node["wheelchair"](${bbox});
         node["wheelchair:toilet"](${bbox});
-        node["tactile_paving"](${bbox});
-        node["hearing_impaired:induction_loop"](${bbox});
         node["amenity"="parking"]["disabled"](${bbox});
       );
       out body;
     `;
-
-      console.log("Fetching nodes with query:", query);
 
       try {
         const response = await fetch(
@@ -96,19 +81,10 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
         const data = await response.json();
         console.log("Received data:", data);
 
-        // Extract OSM IDs from the fetched nodes
-        const osmIds = data.elements.map((node: UnverifiedSpot) => node.id);
+        // Transform the Overpass nodes to SpotInterface
+        const transformedNodes = data.elements.map(transformOverpassNode);
 
-        // Fetch existing node IDs from your database
-        const existingNodeIds = await fetchExistingNodeIds(osmIds);
-
-        // Filter out nodes that already exist in your database
-        const filteredNodes = data.elements.filter(
-          (node: UnverifiedSpot) => !existingNodeIds.has(node.id)
-        );
-
-        setNodes(filteredNodes);
-        console.log("Number of unverified nodes set:", filteredNodes.length);
+        setNodes(transformedNodes);
       } catch (error) {
         console.error("Error fetching unverified nodes:", error);
         setError("Failed to fetch nodes. Please try again later.");
@@ -164,11 +140,11 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
       {nodes.map((node) => (
         <Marker
           key={node.id}
-          position={[node.lat, node.lon]}
+          position={[node.lat, node.lng]}
           icon={L.divIcon({
             className: "unverified-node-marker",
-            html: "📍",
-            iconSize: [25, 25],
+            html: node.category.icon,
+            iconSize: [50, 50],
             iconAnchor: [12, 24],
           })}
           eventHandlers={{
@@ -177,9 +153,9 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
         >
           <Popup>
             <div className="text-sm">
-              <p>Name: {node.tags.name}</p>
-              <p>Amenity: {node.tags.amenity}</p>
-              <p>Tags: {JSON.stringify(node.tags)}</p>
+              <p>Name: {node.name}</p>
+              <p>Category: {node.category.name}</p>
+              <p>Tags: {node.tags?.join(", ")}</p>
             </div>
           </Popup>
         </Marker>
