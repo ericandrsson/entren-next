@@ -2,17 +2,11 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import L from "leaflet";
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  Marker,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
-import MapOverlay from "./MapControls";
+import MapControls from "./MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import VerifiedSpotsLayer from "./VerifiedSpotsLayer";
 import SpotMarker from "./SpotMarker";
@@ -20,19 +14,6 @@ import { pb } from "@/lib/db";
 import { useMapZoom } from "@/hooks/useMapZoom";
 import UnverifiedSpotsLayer from "./UnverifiedSpotsLayer";
 import { SearchResult, Spot, UnverifiedNode } from "@/types";
-
-interface Spot {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  category: string;
-  created: string;
-  description?: string;
-  tags?: string[];
-  user: string;
-  isVerified: boolean;
-}
 
 function MapClickHandler({
   onMapClick,
@@ -47,8 +28,6 @@ function MapClickHandler({
 
 function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
-  const [selectedPlace, setSelectedPlace] = useState<SearchResult | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const { isOpen: isSidebarOpen } = useSidebarToggle();
@@ -63,19 +42,14 @@ function Map() {
   const [mapCenter, setMapCenter] = useState<[number, number]>([62.0, 15.0]);
   const [zoom, setZoom] = useState(5);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
-  const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
   const [currentMode, setCurrentMode] = useState<"view" | "contribute">("view");
 
-  useEffect(() => {
-    if (mapRef.current && !mapInstance) {
-      setMapInstance(mapRef.current);
-    }
-  }, [mapRef, mapInstance]);
-
   const handleMapCreated = (map: L.Map) => {
-    setMapInstance(map);
+    if (!mapInstance) {
+      setMapInstance(map);
+    }
   };
 
   const handleMapClick = useCallback(
@@ -201,7 +175,7 @@ function Map() {
           className="w-full h-full cursor-pointer-map leaflet-grab"
           ref={mapRef}
           zoomControl={false}
-          whenCreated={handleMapCreated}
+          whenReady={(map) => handleMapCreated(map.target)}
         >
           <TileLayer
             url={tileLayerUrl}
@@ -226,7 +200,8 @@ function Map() {
           <MapCenterAdjuster center={mapCenter} zoom={zoom} />
         </MapContainer>
       </div>
-      <MapOverlay
+      <MapControls
+        map={mapInstance}
         showListView={isSheetOpen}
         isDetailed={isDetailed}
         onDetailToggle={() => setIsDetailed(!isDetailed)}
@@ -237,7 +212,6 @@ function Map() {
           resetZoom();
         }}
         onFilterChange={handleFilterChange}
-        map={mapInstance}
         onModeChange={handleModeChange}
         currentMode={currentMode}
       />

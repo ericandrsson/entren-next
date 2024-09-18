@@ -21,6 +21,7 @@ interface MapControlProps {
 }
 
 function MapOverlay({
+  map,
   showListView,
   isDetailed,
   onDetailToggle,
@@ -28,17 +29,10 @@ function MapOverlay({
   selectedSpot,
   onCloseSpotDetails,
   onFilterChange,
-  map,
   onModeChange,
   currentMode,
 }: MapControlProps) {
-  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
-
-  useEffect(() => {
-    if (map && !mapInstance) {
-      setMapInstance(map);
-    }
-  }, [map, mapInstance]);
+  const mapInstance = map;
 
   const handleModeChange = (mode: "view" | "contribute") => {
     onModeChange(mode);
