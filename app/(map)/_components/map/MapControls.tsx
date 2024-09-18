@@ -1,10 +1,11 @@
 import React from "react";
-import ZoomButtons from "../controls/ZoomButtons";
-import MapDetailToggle from "../controls/MapDetailToggle";
+import ZoomButtons from "./controls/ZoomButtons";
+import MapDetailToggle from "./controls/MapDetailToggle";
 import MapExplorerContainer from "../explorer/MapExplorerContainer";
-import ModeSwitcher from "../controls/ModeSwitcher";
+import ModeSwitcher from "./controls/ModeSwitcher";
 import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";
+import LocationButton from "./controls/LocationButton";
 
 interface MapControlProps {
   showListView: boolean;
@@ -54,6 +55,7 @@ function MapOverlay({
         </div>
         <div className="pointer-events-auto order-3 mt-4 sm:mt-0">
           <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
+          <LocationButton map={map} />
         </div>
       </div>
       {map && (
