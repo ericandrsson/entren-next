@@ -52,14 +52,28 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
       setIsLoading(true);
       setError(null);
 
+      const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
       const query = `
       [out:json][timeout:25];
       (
-        node["amenity"="toilets"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
-        node["wheelchair"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
-        node["tactile_paving"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
-        node["hearing_impaired:induction_loop"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
-        node["amenity"="parking"]["disabled"](${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()});
+        // Main categories
+        node["shop"](${bbox});
+        node["amenity"="restaurant"](${bbox});
+        node["amenity"="cafe"](${bbox});
+        node["public_transport"](${bbox});
+        node["tourism"](${bbox});
+        node["amenity"="school"](${bbox});
+        node["amenity"="hospital"](${bbox});
+        node["amenity"="bank"](${bbox});
+        node["leisure"](${bbox});
+        node["amenity"="toilets"](${bbox});
+
+        // Accessibility-related tags
+        node["wheelchair"](${bbox});
+        node["wheelchair:toilet"](${bbox});
+        node["tactile_paving"](${bbox});
+        node["hearing_impaired:induction_loop"](${bbox});
+        node["amenity"="parking"]["disabled"](${bbox});
       );
       out body;
     `;
@@ -160,7 +174,15 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
           eventHandlers={{
             click: () => onNodeClick(node),
           }}
-        ></Marker>
+        >
+          <Popup>
+            <div className="text-sm">
+              <p>Name: {node.tags.name}</p>
+              <p>Amenity: {node.tags.amenity}</p>
+              <p>Tags: {JSON.stringify(node.tags)}</p>
+            </div>
+          </Popup>
+        </Marker>
       ))}
     </MarkerClusterGroup>
   );
