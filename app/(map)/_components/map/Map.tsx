@@ -12,16 +12,13 @@ import {
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
-import MapInfoSheet from "./SpotCreationSheet";
-import MapOverlay from "./MapOverlay";
+import MapOverlay from "./MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import SpotLayer from "./SpotLayer";
+import VerifiedSpotsLayer from "./VerifiedSpotsLayer";
 import SpotMarker from "./SpotMarker";
 import { pb } from "@/lib/db";
-import SpotDetailsBox from "./explorer/SpotDetailsPanel";
 import { useMapZoom } from "@/hooks/useMapZoom";
-import MapSidebar from "./controls/MapSidebar";
-import UnverifiedNodesLayer from "./UnverifiedNodesLayer";
+import UnverifiedSpotsLayer from "./UnverifiedSpotsLayer";
 
 interface Spot {
   id: string;
@@ -177,7 +174,7 @@ function Map() {
     // You might want to update the SpotLayer or fetch new data based on filters
   }, []);
 
-  const handleModeChange = (mode: 'view' | 'contribute') => {
+  const handleModeChange = (mode: "view" | "contribute") => {
     setCurrentMode(mode);
     // You might want to add logic here to change the visible layer
     // or fetch different data based on the mode
@@ -205,16 +202,16 @@ function Map() {
             noWrap={true}
           />
           <MapClickHandler onMapClick={handleMapClick} />
-          {currentMode === 'view' && (
-            <SpotLayer
+          {currentMode === "view" && (
+            <VerifiedSpotsLayer
               key={refreshKey}
               isAdmin={false}
               user={null}
               onSpotClick={handleSpotClick}
             />
           )}
-          {currentMode === 'contribute' && (
-            <UnverifiedNodesLayer onNodeClick={handleUnverifiedNodeClick} />
+          {currentMode === "contribute" && (
+            <UnverifiedSpotsLayer onNodeClick={handleUnverifiedNodeClick} />
           )}
           {tempSpot && (
             <SpotMarker spot={tempSpot} isTemporary={true} categories={[]} />

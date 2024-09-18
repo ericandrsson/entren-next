@@ -1,12 +1,12 @@
 import React from "react";
-import ZoomButtons from "./controls/ZoomButtons";
-import MapDetailToggle from "./controls/MapDetailToggle";
-import MapExplorerContainer from "./explorer/MapExplorerContainer";
-import ModeSwitcher from "./controls/ModeSwitcher";
+import ZoomButtons from "../controls/ZoomButtons";
+import MapDetailToggle from "../controls/MapDetailToggle";
+import MapExplorerContainer from "../explorer/MapExplorerContainer";
+import ModeSwitcher from "../controls/ModeSwitcher";
 import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";
 
-interface MapOverlayProps {
+interface MapControlProps {
   showListView: boolean;
   isDetailed: boolean;
   onDetailToggle: () => void;
@@ -30,7 +30,7 @@ function MapOverlay({
   map,
   onModeChange,
   currentMode,
-}: MapOverlayProps) {
+}: MapControlProps) {
   const handleModeChange = (mode: "view" | "contribute") => {
     onModeChange(mode);
   };
