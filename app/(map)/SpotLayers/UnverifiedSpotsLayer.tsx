@@ -42,7 +42,9 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
       setIsLoading(true);
       setError(null);
 
-      const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+      // Adjust the bounding box based on zoom level
+      const adjustedBounds = adjustBoundsForZoom(bounds, zoom);
+      const bbox = `${adjustedBounds.getSouth()},${adjustedBounds.getWest()},${adjustedBounds.getNorth()},${adjustedBounds.getEast()}`;
       const query = `
       [out:json][timeout:25];
       (
@@ -94,6 +96,36 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
     },
     []
   );
+
+  const adjustBoundsForZoom = (
+    bounds: L.LatLngBounds,
+    zoom: number
+  ): L.LatLngBounds => {
+    const center = bounds.getCenter();
+    const latDelta = bounds.getNorth() - bounds.getSouth();
+    const lngDelta = bounds.getEast() - bounds.getWest();
+
+    // Adjust the radius based on zoom level
+    const minZoom = 5; // Minimum zoom level
+    const maxZoom = 18; // Maximum zoom level
+
+    // Normalize zoom level between 0 and 1
+    const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
+
+    // Ensure normalizedZoom is within [0,1]
+    const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
+
+    // Use an exponential function for smoother scaling
+    const radiusMultiplier = 0.1 + 0.9 * Math.pow(clampedZoom, 2);
+
+    const newLatDelta = latDelta * radiusMultiplier;
+    const newLngDelta = lngDelta * radiusMultiplier;
+
+    return L.latLngBounds(
+      [center.lat - newLatDelta / 2, center.lng - newLngDelta / 2],
+      [center.lat + newLatDelta / 2, center.lng + newLngDelta / 2]
+    );
+  };
 
   const debouncedFetchNodes = useCallback(() => {
     const now = Date.now();
