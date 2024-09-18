@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
-import MapExplorerContainer from "../explorer/MapExplorerContainer";
+import MapExplorerContainer from "./explorer/MapExplorerContainer";
 import ModeSwitcher from "./controls/ModeSwitcher";
 import { Spot, SearchResult } from "@/types";
 import { Map as LeafletMap } from "leaflet";

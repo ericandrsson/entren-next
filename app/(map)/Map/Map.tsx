@@ -6,13 +6,13 @@ import { MapContainer, TileLayer, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
-import MapControls from "./MapControls";
+import MapControls from "../Interface/MapControls";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import VerifiedSpotsLayer from "./VerifiedSpotsLayer";
-import SpotMarker from "./SpotMarker";
+import VerifiedSpotsLayer from "../Spots/VerifiedSpotsLayer";
+import SpotMarker from "../Spots/SpotMarker";
 import { pb } from "@/lib/db";
 import { useMapZoom } from "@/hooks/useMapZoom";
-import UnverifiedSpotsLayer from "./UnverifiedSpotsLayer";
+import UnverifiedSpotsLayer from "../Spots/UnverifiedSpotsLayer";
 import { SearchResult, Spot, UnverifiedNode } from "@/types";
 
 function MapClickHandler({
@@ -30,15 +30,10 @@ function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
-  const { isOpen: isSidebarOpen } = useSidebarToggle();
   const [tempSpot, setTempSpot] = useState<Spot | null>(null);
   const [previewedSpot, setPreviewedSpot] = useState<Spot | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isDetailed, setIsDetailed] = useState(false);
-  const [prevMapState, setPrevMapState] = useState<{
-    center: L.LatLng;
-    zoom: number;
-  } | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([62.0, 15.0]);
   const [zoom, setZoom] = useState(5);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
@@ -90,19 +85,11 @@ function Map() {
       console.log("Spot clicked:", spot);
       setSelectedSpot(spot);
       zoomToSpot(L.latLng(spot.lat, spot.lng));
-      setIsSpotDetailsOpen(true);
     },
     [zoomToSpot]
   );
 
-  const handleSheetClose = useCallback(() => {
-    setTempSpot(null);
-    setIsSheetOpen(false);
-    resetZoom();
-  }, [resetZoom]);
-
   const handleSpotDetailsClose = useCallback(() => {
-    setIsSpotDetailsOpen(false);
     resetZoom();
   }, [resetZoom]);
 
@@ -175,7 +162,11 @@ function Map() {
           className="w-full h-full cursor-pointer-map leaflet-grab"
           ref={mapRef}
           zoomControl={false}
-          whenReady={(map) => handleMapCreated(map.target)}
+          whenReady={() => {
+            if (mapRef.current) {
+              handleMapCreated(mapRef.current);
+            }
+          }}
         >
           <TileLayer
             url={tileLayerUrl}

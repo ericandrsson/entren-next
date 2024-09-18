@@ -3,7 +3,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { latLngToTile, tileToLatLng } from "../utils/tileUtils";
+import { latLngToTile, tileToLatLng } from "../../lib/tileUtils";
 import { pb } from "@/lib/db";
 
 interface UnverifiedNode {
