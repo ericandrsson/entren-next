@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ZoomButtons from "./controls/ZoomButtons";
 import MapDetailToggle from "./controls/MapDetailToggle";
 import MapExplorerContainer from "../explorer/MapExplorerContainer";
@@ -32,6 +32,14 @@ function MapOverlay({
   onModeChange,
   currentMode,
 }: MapControlProps) {
+  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
+
+  useEffect(() => {
+    if (map && !mapInstance) {
+      setMapInstance(map);
+    }
+  }, [map, mapInstance]);
+
   const handleModeChange = (mode: "view" | "contribute") => {
     onModeChange(mode);
   };
@@ -55,7 +63,7 @@ function MapOverlay({
         </div>
         <div className="pointer-events-auto order-3 mt-4 sm:mt-0">
           <MapDetailToggle isDetailed={isDetailed} onToggle={onDetailToggle} />
-          <LocationButton map={map} />
+          <LocationButton map={mapInstance} />
         </div>
       </div>
       {map && (

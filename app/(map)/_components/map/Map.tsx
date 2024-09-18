@@ -19,6 +19,7 @@ import SpotMarker from "./SpotMarker";
 import { pb } from "@/lib/db";
 import { useMapZoom } from "@/hooks/useMapZoom";
 import UnverifiedSpotsLayer from "./UnverifiedSpotsLayer";
+import { SearchResult, Spot, UnverifiedNode } from "@/types";
 
 interface Spot {
   id: string;
@@ -64,11 +65,17 @@ function Map() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const { zoomToSpot, resetZoom } = useMapZoom(mapRef);
-  const [map, setMap] = useState<L.Map | null>(null);
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
   const [currentMode, setCurrentMode] = useState<"view" | "contribute">("view");
 
+  useEffect(() => {
+    if (mapRef.current && !mapInstance) {
+      setMapInstance(mapRef.current);
+    }
+  }, [mapRef, mapInstance]);
+
   const handleMapCreated = (map: L.Map) => {
-    setMap(map);
+    setMapInstance(map);
   };
 
   const handleMapClick = useCallback(
@@ -230,7 +237,7 @@ function Map() {
           resetZoom();
         }}
         onFilterChange={handleFilterChange}
-        map={map}
+        map={mapInstance}
         onModeChange={handleModeChange}
         currentMode={currentMode}
       />
