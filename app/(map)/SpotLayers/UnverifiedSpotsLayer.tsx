@@ -3,10 +3,9 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { latLngToTile, tileToLatLng } from "../../lib/tileUtils";
 import { pb } from "@/lib/db";
 
-interface UnverifiedNode {
+interface UnverifiedSpot {
   id: number;
   lat: number;
   lon: number;
@@ -17,14 +16,14 @@ interface UnverifiedNode {
   };
 }
 
-interface UnverifiedNodesLayerProps {
-  onNodeClick: (node: UnverifiedNode) => void;
+interface UnverifiedSpotsLayerProps {
+  onNodeClick: (node: UnverifiedSpot) => void;
 }
 
-const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
+const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
   onNodeClick,
 }) => {
-  const [nodes, setNodes] = useState<UnverifiedNode[]>([]);
+  const [nodes, setNodes] = useState<UnverifiedSpot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const map = useMap();
@@ -84,14 +83,14 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
         console.log("Received data:", data);
 
         // Extract OSM IDs from the fetched nodes
-        const osmIds = data.elements.map((node: UnverifiedNode) => node.id);
+        const osmIds = data.elements.map((node: UnverifiedSpot) => node.id);
 
         // Fetch existing node IDs from your database
         const existingNodeIds = await fetchExistingNodeIds(osmIds);
 
         // Filter out nodes that already exist in your database
         const filteredNodes = data.elements.filter(
-          (node: UnverifiedNode) => !existingNodeIds.has(node.id)
+          (node: UnverifiedSpot) => !existingNodeIds.has(node.id)
         );
 
         setNodes(filteredNodes);
@@ -135,7 +134,7 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
     };
   }, [map, debouncedFetchNodes]);
 
-  console.log("Rendering UnverifiedNodesLayer, number of nodes:", nodes.length);
+  console.log("Rendering UnverifiedSpotsLayer, number of nodes:", nodes.length);
 
   if (error) {
     return <div className="text-red-500">{error}</div>;
@@ -161,17 +160,10 @@ const UnverifiedNodesLayer: React.FC<UnverifiedNodesLayerProps> = ({
           eventHandlers={{
             click: () => onNodeClick(node),
           }}
-        >
-          <Popup>
-            <div>
-              <h3>{node.tags.name || "Unnamed Place"}</h3>
-              <p>{node.tags.amenity || node.tags.shop || "Unknown type"}</p>
-            </div>
-          </Popup>
-        </Marker>
+        ></Marker>
       ))}
     </MarkerClusterGroup>
   );
 };
 
-export default UnverifiedNodesLayer;
+export default UnverifiedSpotsLayer;

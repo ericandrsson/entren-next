@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 import { Map as LeafletMap, CircleMarker, LatLng } from "leaflet";
 
 interface LocationButtonProps {
-  map: LeafletMap | null;
+  map: LeafletMap | undefined;
 }
 
 function LocationButton({ map }: LocationButtonProps) {

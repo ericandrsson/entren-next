@@ -3,7 +3,6 @@ import L from "leaflet";
 import { Marker } from "react-leaflet";
 import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
-import { pb } from "@/lib/db";
 
 interface Category {
   id: string;
@@ -30,11 +29,10 @@ interface Spot {
 
 interface SpotMarkerProps {
   spot: Spot;
-  categories: Category[];
   onClick: () => void;
 }
 
-function SpotMarker({ spot, categories, onClick }: SpotMarkerProps) {
+function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
   const getSpotIcon = () => {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {
@@ -45,7 +43,6 @@ function SpotMarker({ spot, categories, onClick }: SpotMarkerProps) {
 
     const size = 40;
     const fontSize = 24;
-
     const formattedTime = getFormattedTime(spot.created);
 
     return L.divIcon({
@@ -88,33 +85,6 @@ function SpotMarker({ spot, categories, onClick }: SpotMarkerProps) {
     return null;
   };
 
-  const getCategoryInfo = () => {
-    let icon = "📍";
-    let name = "Uncategorized";
-
-    if (typeof spot.category === "object" && spot.category.icon) {
-      icon = spot.category.icon;
-      name = spot.category.name;
-    } else if (spot.expand?.category) {
-      icon = spot.expand.category.icon;
-      name = spot.expand.category.name;
-
-      // Check for subcategory
-      if (spot.expand.category.parent_spot_category) {
-        const parentCategory = categories.find(
-          (c) => c.id === spot.expand.category.parent_spot_category
-        );
-        if (parentCategory) {
-          name = `${parentCategory.name} - ${name}`;
-        }
-      }
-    }
-
-    return { icon, name };
-  };
-
-  const { icon: categoryIcon, name: categoryName } = getCategoryInfo();
-
   return (
     <Marker
       position={[spot.lat, spot.lng]}
@@ -126,4 +96,4 @@ function SpotMarker({ spot, categories, onClick }: SpotMarkerProps) {
   );
 }
 
-export default SpotMarker;
+export default VerifiedSpotsMarker;

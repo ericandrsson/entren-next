@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useMap } from "react-leaflet";
 import { LatLngBounds } from "leaflet";
 import { pb } from "@/lib/db";
-import SpotMarker from "./SpotMarker";
+import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 interface Spot {
@@ -21,26 +21,16 @@ interface Spot {
   isVerified: boolean;
 }
 
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
-  parent_spot_category?: string | null;
-}
-
-interface SpotLayerProps {
-  isAdmin: boolean;
-  user: any; // Replace 'any' with your user type
+interface VerifiedSpotsLayerProps {
+  user: any;
   onSpotClick: (spot: Spot) => void;
 }
 
-const SpotLayer: React.FC<SpotLayerProps> = ({
-  isAdmin,
+const VerifiedSpotsLayer: React.FC<VerifiedSpotsLayerProps> = ({
   user,
   onSpotClick,
 }) => {
   const [spots, setSpots] = useState<Spot[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const map = useMap();
 
   const fetchSpots = useCallback(
@@ -67,19 +57,8 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
         console.error("Error fetching spots:", error);
       }
     },
-    [map, isAdmin, user]
+    [map, user]
   );
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      const result = await pb
-        .collection("spot_categories")
-        .getFullList<Category>();
-      setCategories(result);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  }, []);
 
   useEffect(() => {
     const handleMoveEnd = () => {
@@ -88,12 +67,11 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
 
     map.on("moveend", handleMoveEnd);
     fetchSpots(map.getBounds());
-    fetchCategories();
 
     return () => {
       map.off("moveend", handleMoveEnd);
     };
-  }, [map, fetchSpots, fetchCategories]);
+  }, [map, fetchSpots]);
 
   return (
     <MarkerClusterGroup
@@ -103,10 +81,9 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
       disableClusteringAtZoom={16}
     >
       {spots.map((spot) => (
-        <SpotMarker
+        <VerifiedSpotsMarker
           key={spot.id}
           spot={spot}
-          categories={categories}
           onClick={() => onSpotClick(spot)}
         />
       ))}
@@ -114,4 +91,4 @@ const SpotLayer: React.FC<SpotLayerProps> = ({
   );
 };
 
-export default SpotLayer;
+export default VerifiedSpotsLayer;

@@ -4,11 +4,10 @@ import { Plus, Minus } from "lucide-react";
 import { Map as LeafletMap } from "leaflet";
 
 interface ZoomButtonsProps {
-  showListView: boolean;
   map: LeafletMap;
 }
 
-function ZoomButtons({ showListView, map }: ZoomButtonsProps) {
+function ZoomButtons({ map }: ZoomButtonsProps) {
   const handleZoomIn = () => {
     map.zoomIn();
   };

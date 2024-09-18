@@ -9,7 +9,6 @@ const MapWithNoSSR = dynamic(() => import("./(map)/Map/Map"), {
 export default function Page() {
   return (
     <div>
-      <Header />
       <div className="h-screen w-full">
         <MapWithNoSSR />
       </div>
