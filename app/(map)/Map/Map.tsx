@@ -37,7 +37,7 @@ function Map() {
           maxBounds={swedenBounds}
           maxBoundsViscosity={1.0} // Fully restricts panning beyond bounds
           minZoom={6}
-          maxZoom={18}
+          maxZoom={20}
           boundsOptions={{ padding: [50, 50] }}
         >
           <MapTileLayer tileLayerUrl={tileLayerUrl} />

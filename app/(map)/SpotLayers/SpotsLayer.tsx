@@ -13,12 +13,7 @@ function SpotsLayer() {
   return (
     <>
       {currentMode === "view" && (
-        <VerifiedSpotsLayer
-          key={refreshKey}
-          isAdmin={false}
-          user={null}
-          onSpotClick={handleSpotClick}
-        />
+        <VerifiedSpotsLayer key={refreshKey} onSpotClick={handleSpotClick} />
       )}
       {currentMode === "contribute" && (
         <UnverifiedSpotsLayer onNodeClick={handleUnverifiedNodeClick} />

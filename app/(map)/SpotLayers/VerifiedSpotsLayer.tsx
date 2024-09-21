@@ -22,12 +22,10 @@ interface Spot {
 }
 
 interface VerifiedSpotsLayerProps {
-  user: any;
   onSpotClick: (spot: Spot) => void;
 }
 
 const VerifiedSpotsLayer: React.FC<VerifiedSpotsLayerProps> = ({
-  user,
   onSpotClick,
 }) => {
   const [spots, setSpots] = useState<Spot[]>([]);
@@ -57,7 +55,7 @@ const VerifiedSpotsLayer: React.FC<VerifiedSpotsLayerProps> = ({
         console.error("Error fetching spots:", error);
       }
     },
-    [map, user]
+    [map]
   );
 
   useEffect(() => {

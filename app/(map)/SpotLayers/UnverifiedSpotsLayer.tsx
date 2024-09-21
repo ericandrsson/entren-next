@@ -4,16 +4,16 @@ import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { pb } from "@/lib/db";
-import { SpotInterface, transformOverpassNode } from "@/types/Spot";
+import { UnverifiedSpotInterface, transformOverpassNode } from "@/types/Spot";
 
 interface UnverifiedSpotsLayerProps {
-  onNodeClick: (node: SpotInterface) => void;
+  onNodeClick: (node: UnverifiedSpotInterface) => void;
 }
 
 const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
   onNodeClick,
 }) => {
-  const [nodes, setNodes] = useState<SpotInterface[]>([]);
+  const [nodes, setNodes] = useState<UnverifiedSpotInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const map = useMap();
@@ -43,8 +43,7 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
       setError(null);
 
       // Adjust the bounding box based on zoom level
-      const adjustedBounds = adjustBoundsForZoom(bounds, zoom);
-      const bbox = `${adjustedBounds.getSouth()},${adjustedBounds.getWest()},${adjustedBounds.getNorth()},${adjustedBounds.getEast()}`;
+      const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
       const query = `
       [out:json][timeout:25];
       (
@@ -52,12 +51,17 @@ const UnverifiedSpotsLayer: React.FC<UnverifiedSpotsLayerProps> = ({
         node["shop"](${bbox});
         node["amenity"="restaurant"](${bbox});
         node["amenity"="cafe"](${bbox});
+        node["amenity"="fast_food"](${bbox});
+        node["amenity"="bar"](${bbox});
+        node["amenity"="pub"](${bbox});
+        node["amenity"="food_court"](${bbox});
         node["tourism"](${bbox});
         node["amenity"="school"](${bbox});
         node["amenity"="hospital"](${bbox});
         node["amenity"="bank"](${bbox});
         node["leisure"](${bbox});
-        node["amenity"="toilets"](${bbox});
+        // Theatre
+        node["amenity"="theatre"](${bbox});
 
         // Accessibility-related tags
         node["wheelchair"](${bbox});
