@@ -13,7 +13,6 @@ export default function SearchBar() {
   const [searchResults, setSearchResults] = useState<Spot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { setSelectedSpot, setMapView } = useSpotsStore();
-
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   async function handleSearch(term: string) {
@@ -55,9 +54,10 @@ export default function SearchBar() {
 
   function handleSelectSpot(spot: Spot) {
     setSelectedSpot(spot);
-    setMapView({ center: [spot.lat, spot.lng], zoom: 16 });
+    //setMapView({ center: [spot.lat, spot.lng], zoom: 16 });
     setSearchTerm("");
     setSearchResults([]);
+    //openSpotSheet(spot);
   }
 
   useEffect(() => {

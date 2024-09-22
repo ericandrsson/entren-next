@@ -59,10 +59,18 @@ export const useSpotsStore = create<SpotStore>((set, get) => ({
     get().fetchSpots({ bounds });
   }, 500),
   selectedSpot: null,
-  setSelectedSpot: (spot) => set({ selectedSpot: spot }),
+  setSelectedSpot: (spot: Spot | null) => {
+    set({ selectedSpot: spot });
+    if (spot) {
+      set({ mapView: { center: [spot.lat, spot.lng], zoom: 16 } });
+      setTimeout(() => {
+        set({ isSheetOpen: true });
+      }, 500);
+    }
+  },
   mapView: { center: [0, 0], zoom: 2 },
   setMapView: (view) => set({ mapView: view }),
   isSheetOpen: false,
-  openSpotSheet: (spot) => set({ selectedSpot: spot, isSheetOpen: true }),
+  openSpotSheet: (spot: Spot) => set({ selectedSpot: spot, isSheetOpen: true }),
   closeSpotSheet: () => set({ isSheetOpen: false }),
 }));

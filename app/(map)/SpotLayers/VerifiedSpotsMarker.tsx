@@ -13,8 +13,7 @@ interface SpotMarkerProps {
 function VerifiedSpotsMarker({ spot }: SpotMarkerProps) {
   const markerRef = useRef<L.Marker>(null);
   const map = useMap();
-  const openSpotSheet = useSpotsStore((state) => state.openSpotSheet);
-
+  const setSelectedSpot = useSpotsStore((state) => state.setSelectedSpot);
   const getSpotIcon = () => {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {
@@ -68,7 +67,7 @@ function VerifiedSpotsMarker({ spot }: SpotMarkerProps) {
   };
 
   const handleMarkerClick = () => {
-    openSpotSheet(spot);
+    setSelectedSpot(spot);
   };
 
   React.useEffect(() => {
