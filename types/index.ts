@@ -13,7 +13,7 @@ export interface Spot {
   tags?: string[];
   user: string;
   isVerified: boolean;
-  image?: string;
+  image: string;
   address?: string;
 }
 

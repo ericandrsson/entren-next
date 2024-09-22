@@ -31,6 +31,7 @@ export default function Page() {
   const [isListCollapsed, setIsListCollapsed] = useState(false);
 
   const { spots } = useMapStore();
+  console.log(spots);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -49,29 +50,35 @@ export default function Page() {
 
   const ListContent = () => (
     <div className="space-y-4">
-      {spots.map((spot, index) => (
-        <div
-          key={spot.id}
-          className="flex bg-white shadow rounded-lg overflow-hidden"
-        >
-          <Image
-            src={getImageUrl(spot.image, spot.id) || ""}
-            alt={spot.name}
-            width={96}
-            height={96}
-            className="w-24 h-24 object-cover"
-          />
-          <div className="p-4 flex flex-col justify-between">
-            <div>
-              <h3 className="font-semibold text-lg">{spot.name}</h3>
-              <p className="text-sm text-gray-600">{`${spot.lat}, ${spot.lng}`}</p>
+      {spots.length === 0 ? (
+        <p className="text-center text-gray-500">No spots available</p>
+      ) : (
+        spots.map((spot) => (
+          <div
+            key={spot.id}
+            className="flex bg-white shadow rounded-lg overflow-hidden"
+          >
+            <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden">
+              <Image
+                src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
+                alt={spot.name}
+                fill
+                className="object-cover"
+              />
             </div>
-            <Badge variant="secondary" className="self-start mt-2">
-              {spot.category.name}
-            </Badge>
+
+            <div className="p-4 flex flex-col justify-between">
+              <div>
+                <h3 className="font-semibold text-lg">{spot.name}</h3>
+                <p className="text-sm text-gray-600">{`${spot.lat}, ${spot.lng}`}</p>
+              </div>
+              <Badge variant="secondary" className="self-start mt-2">
+                {spot.category.name}
+              </Badge>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 
