@@ -2,14 +2,20 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { getImageUrl } from "@/app/lib/spots";
 import { Spot } from "@/types";
+import { useSpotsStore } from "../lib/spotStore";
 
 interface SpotCardProps {
   spot: Spot;
 }
 
 export default function SpotCard({ spot }: SpotCardProps) {
+  const openSpotSheet = useSpotsStore((state) => state.openSpotSheet);
+
   return (
-    <div className="flex bg-white shadow rounded-lg overflow-hidden">
+    <div
+      className="flex bg-white shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300"
+      onClick={() => openSpotSheet(spot)}
+    >
       <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden">
         <Image
           src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
