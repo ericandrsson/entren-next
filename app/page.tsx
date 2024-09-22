@@ -17,6 +17,7 @@ export default function Page() {
     checkIsMobile();
     window.addEventListener("resize", checkIsMobile);
 
+    
     return () => window.removeEventListener("resize", checkIsMobile);
   }, [setIsMobile]);
 
