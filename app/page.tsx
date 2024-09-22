@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Search,
   Filter,
   MapPin,
   List,
@@ -14,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { Toggle } from "@/components/ui/toggle";
 
 import dynamic from "next/dynamic";
 import { Header } from "./_components/Header";
@@ -132,7 +130,8 @@ export default function Page() {
   );
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)]">
+    <div className="flex flex-col h-[calc(100vh-20px)]">
+      <Header />
       {/* Search and Filter Bar */}
       <div className="bg-white shadow-md p-4 flex items-center space-x-2">
         <Input placeholder="Search..." className="flex-grow" />
@@ -178,33 +177,8 @@ export default function Page() {
         </Sheet>
       </div>
 
-      {/* View Toggle (Mobile Only) */}
-      {isMobile && (
-        <div className="bg-white p-4 flex justify-center">
-          <Toggle
-            variant="outline"
-            aria-label="Toggle view"
-            className="rounded-full"
-            pressed={view === "map"}
-            onPressedChange={(pressed) => setView(pressed ? "map" : "list")}
-          >
-            {view === "list" ? (
-              <>
-                <MapPin className="h-4 w-4 mr-2" />
-                View on Map
-              </>
-            ) : (
-              <>
-                <List className="h-4 w-4 mr-2" />
-                View List
-              </>
-            )}
-          </Toggle>
-        </div>
-      )}
-
       {/* Main Content Area */}
-      <div className="flex-grow overflow-hidden flex">
+      <div className="flex-grow overflow-hidden flex relative">
         {/* List View */}
         <div
           className={`h-full overflow-y-auto transition-all duration-300 ease-in-out
@@ -259,6 +233,30 @@ export default function Page() {
             )}
           </div>
         </div>
+
+        {/* Floating View Toggle Button (Mobile Only) */}
+        {isMobile && (
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+            <Button
+              variant="default"
+              size="lg"
+              className="text-white rounded-full shadow-lg"
+              onClick={() => setView(view === "list" ? "map" : "list")}
+            >
+              {view === "list" ? (
+                <>
+                  <MapPin className="h-4 w-4 mr-2" />
+                  View on Map
+                </>
+              ) : (
+                <>
+                  <List className="h-4 w-4 mr-2" />
+                  View List
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
