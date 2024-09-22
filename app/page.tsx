@@ -148,7 +148,7 @@ export default function Page() {
             }`}
         >
           <div className="p-4 h-full relative">
-            <div className="w-full h-full rounded-lg overflow-hidden relative">
+            <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
               <MapWithNoSSR />
             </div>
             {!isMobile && (

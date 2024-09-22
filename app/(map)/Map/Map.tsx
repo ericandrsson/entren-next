@@ -24,12 +24,11 @@ function Map() {
     [55.34, 10.95], // Southwest corner (Smygehuk)
     [69.06, 24.15], // Northeast corner (Treriksröset)
   ];
-
   return (
     <MapContainer
       center={mapCenter}
       zoom={zoom}
-      className="w-full h-full"
+      className="w-full h-full cursor-pointer-map leaflet-grab"
       ref={mapRef}
       zoomControl={false}
       maxBounds={swedenBounds}
