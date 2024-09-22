@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { Header } from "./_components/Header";
 import SearchBar from "./_components/SearchBar";
 import ListContent from "./_components/ListContent";
 import MapView from "./(map)/Map/MapView";
@@ -23,7 +22,6 @@ export default function Page() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-20px)]">
-      <Header />
       <SearchBar />
 
       {/* Main Content Area */}
