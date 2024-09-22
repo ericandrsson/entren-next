@@ -45,5 +45,5 @@ export const useSpotsStore = create<SpotsState>((set, get) => ({
   debouncedFetchSpots: debounce((bounds: L.LatLngBounds | null) => {
     if (!bounds) return;
     get().fetchSpots({ bounds });
-  }, 300),
+  }, 500),
 }));
