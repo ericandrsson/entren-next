@@ -34,7 +34,7 @@ export default function Page() {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      const isMobile = window.innerWidth < 768;
+      const isMobile = window.innerWidth <= 960;
       setIsMobile(isMobile);
       setView(isMobile ? "list" : "both");
     };

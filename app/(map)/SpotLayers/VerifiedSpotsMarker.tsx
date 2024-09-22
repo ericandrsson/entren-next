@@ -30,7 +30,7 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
       icon = spot.expand.category.icon;
     }
 
-    const size = 40;
+    const size = 22;
     const fontSize = 24;
     const formattedTime = getFormattedTime(spot.created);
 
