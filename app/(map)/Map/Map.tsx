@@ -17,14 +17,17 @@ function MapEvents() {
   const { debouncedFetchSpots, selectedSpot, setSelectedSpot } =
     useSpotsStore();
 
+  const { view } = useMapStore();
+
   useEffect(() => {
-    // Fetch spots on initial load
     debouncedFetchSpots(map.getBounds());
   }, [debouncedFetchSpots, map]);
 
   useMapEvents({
     moveend: () => {
-      debouncedFetchSpots(map.getBounds());
+      if (view !== "list") {
+        debouncedFetchSpots(map.getBounds());
+      }
     },
     click: () => {
       setSelectedSpot(null);
