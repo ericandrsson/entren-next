@@ -1,20 +1,19 @@
 import React, { useRef } from "react";
 import L from "leaflet";
-import { Marker, Popup, useMap } from "react-leaflet";
+import { Marker, useMap } from "react-leaflet";
 import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
-import { getImageUrl } from "@/app/lib/spots";
-import Image from "next/image";
 import { Spot } from "@/types";
+import { useSpotsStore } from "@/app/lib/spotStore";
 
 interface SpotMarkerProps {
   spot: Spot;
-  onClick: () => void;
 }
 
-function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
+function VerifiedSpotsMarker({ spot }: SpotMarkerProps) {
   const markerRef = useRef<L.Marker>(null);
   const map = useMap();
+  const openSpotSheet = useSpotsStore((state) => state.openSpotSheet);
 
   const getSpotIcon = () => {
     let icon = "📍"; // Default icon
@@ -68,6 +67,10 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
     return null;
   };
 
+  const handleMarkerClick = () => {
+    openSpotSheet(spot);
+  };
+
   React.useEffect(() => {
     const closePopup = () => {
       if (markerRef.current) {
@@ -88,26 +91,9 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
       position={[spot.lat, spot.lng]}
       icon={getSpotIcon()}
       eventHandlers={{
-        click: onClick,
+        click: handleMarkerClick,
       }}
-    >
-      <Popup>
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="w-full max-w-64 h-64 relative rounded-lg overflow-hidden shadow-md">
-            <Image
-              src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
-              alt={spot.name}
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="text-base">
-            <h3 className="font-semibold text-xl">{spot.name}</h3>
-            <p className="text-gray-700">{spot.address}</p>
-          </div>
-        </div>
-      </Popup>
-    </Marker>
+    />
   );
 }
 

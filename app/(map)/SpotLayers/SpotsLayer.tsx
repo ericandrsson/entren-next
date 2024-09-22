@@ -1,26 +1,24 @@
-import MarkerClusterGroup from "react-leaflet-cluster";
-import { useSpotsStore } from "@/app/lib/spotStore";
+import React from "react";
 import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
+import SpotSheetContent from "./SpotSheetContent";
+import { useSpotsStore } from "@/app/lib/spotStore";
 
 function SpotsLayer() {
-  const { spots, setSelectedSpot } = useSpotsStore();
+  const spots = useSpotsStore((state) => state.spots);
+  const selectedSpot = useSpotsStore((state) => state.selectedSpot);
+  const isSheetOpen = useSpotsStore((state) => state.isSheetOpen);
+  const closeSpotSheet = useSpotsStore((state) => state.closeSpotSheet);
 
   return (
     <>
-      <MarkerClusterGroup
-        chunkedLoading
-        maxClusterRadius={60}
-        spiderfyOnMaxZoom={false}
-        disableClusteringAtZoom={16}
-      >
-        {spots.map((spot) => (
-          <VerifiedSpotsMarker
-            key={spot.id}
-            spot={spot}
-            onClick={() => setSelectedSpot(spot)}
-          />
-        ))}
-      </MarkerClusterGroup>
+      {spots.map((spot) => (
+        <VerifiedSpotsMarker key={spot.id} spot={spot} />
+      ))}
+      <SpotSheetContent
+        spot={selectedSpot}
+        isOpen={isSheetOpen}
+        onClose={closeSpotSheet}
+      />
     </>
   );
 }

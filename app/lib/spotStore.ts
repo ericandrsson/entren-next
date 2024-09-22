@@ -21,6 +21,9 @@ type SpotStore = {
   setSelectedSpot: (spot: Spot | null) => void;
   mapView: { center: [number, number]; zoom: number };
   setMapView: (view: { center: [number, number]; zoom: number }) => void;
+  isSheetOpen: boolean;
+  openSpotSheet: (spot: Spot) => void;
+  closeSpotSheet: () => void;
 };
 
 export const useSpotsStore = create<SpotStore>((set, get) => ({
@@ -59,4 +62,7 @@ export const useSpotsStore = create<SpotStore>((set, get) => ({
   setSelectedSpot: (spot) => set({ selectedSpot: spot }),
   mapView: { center: [0, 0], zoom: 2 },
   setMapView: (view) => set({ mapView: view }),
+  isSheetOpen: false,
+  openSpotSheet: (spot) => set({ selectedSpot: spot, isSheetOpen: true }),
+  closeSpotSheet: () => set({ isSheetOpen: false }),
 }));
