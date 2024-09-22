@@ -16,7 +16,14 @@ interface SpotsState {
   debouncedFetchSpots: (bounds: L.LatLngBounds | null) => void;
 }
 
-export const useSpotsStore = create<SpotsState>((set, get) => ({
+interface SpotStore {
+  selectedSpot: Spot | null;
+  setSelectedSpot: (spot: Spot | null) => void;
+  mapView: { center: [number, number]; zoom: number };
+  setMapView: (view: { center: [number, number]; zoom: number }) => void;
+}
+
+export const useSpotsStore = create<SpotsState & SpotStore>((set, get) => ({
   spots: [],
   fetchSpots: async (params) => {
     try {
@@ -46,4 +53,8 @@ export const useSpotsStore = create<SpotsState>((set, get) => ({
     if (!bounds) return;
     get().fetchSpots({ bounds });
   }, 500),
+  selectedSpot: null,
+  setSelectedSpot: (spot) => set({ selectedSpot: spot }),
+  mapView: { center: [0, 0], zoom: 2 },
+  setMapView: (view) => set({ mapView: view }),
 }));

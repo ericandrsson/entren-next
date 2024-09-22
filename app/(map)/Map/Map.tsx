@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import L from "leaflet";
-import { MapContainer, useMap } from "react-leaflet";
+import { MapContainer, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
@@ -13,20 +13,22 @@ import MapControls from "./MapControls";
 
 function MapEvents() {
   const map = useMap();
-  const { debouncedFetchSpots } = useSpotsStore();
+  const { debouncedFetchSpots, selectedSpot, setSelectedSpot } = useSpotsStore();
+
+  useMapEvents({
+    moveend: () => {
+      debouncedFetchSpots(map.getBounds());
+    },
+    click: () => {
+      setSelectedSpot(null);
+    },
+  });
 
   useEffect(() => {
-    const handleMoveEnd = () => {
-      debouncedFetchSpots(map.getBounds());
-    };
-
-    map.on("moveend", handleMoveEnd);
-    debouncedFetchSpots(map.getBounds());
-
-    return () => {
-      map.off("moveend", handleMoveEnd);
-    };
-  }, [map, debouncedFetchSpots]);
+    if (selectedSpot) {
+      map.setView([selectedSpot.lat, selectedSpot.lng], 16, { animate: true });
+    }
+  }, [selectedSpot, map]);
 
   return null;
 }
@@ -48,8 +50,8 @@ function MapWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Map() {
-  const mapRef = useRef<L.Map | null>(null);
-  const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const mapRef = useRef<L.Map>(null);
+  const { mapView } = useSpotsStore();
 
   const isDetailed = false;
 
@@ -63,37 +65,11 @@ function Map() {
     [69.06, 24.15], // Northeast corner (Treriksröset)
   ];
 
-  useEffect(() => {
-    if (!isMapInitialized && !mapRef.current) {
-      mapRef.current = L.map("map", {
-        center: [62.0, 15.0],
-        zoom: 5,
-        zoomControl: false,
-        maxBounds: swedenBounds,
-        maxBoundsViscosity: 1.0,
-        minZoom: 6,
-        maxZoom: 20,
-      });
-      setIsMapInitialized(true);
-    }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [isMapInitialized]);
-
-  if (!isMapInitialized) {
-    return <div id="map" className="w-full h-full" />;
-  }
-
   return (
     <MapContainer
       ref={mapRef}
-      center={[62.0, 15.0]}
-      zoom={5}
+      center={mapView.center}
+      zoom={mapView.zoom}
       className="w-full h-full cursor-pointer-map leaflet-grab"
       zoomControl={false}
       maxBounds={swedenBounds}

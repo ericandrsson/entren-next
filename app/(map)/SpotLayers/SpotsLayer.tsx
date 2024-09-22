@@ -3,7 +3,7 @@ import { useSpotsStore } from "@/app/lib/spotStore";
 import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
 
 function SpotsLayer() {
-  const spots = useSpotsStore((state) => state.spots);
+  const { spots, selectedSpot, setSelectedSpot } = useSpotsStore();
 
   return (
     <>
@@ -14,7 +14,11 @@ function SpotsLayer() {
         disableClusteringAtZoom={16}
       >
         {spots.map((spot) => (
-          <VerifiedSpotsMarker key={spot.id} spot={spot} onClick={() => {}} />
+          <VerifiedSpotsMarker 
+            key={spot.id} 
+            spot={spot} 
+            onClick={() => setSelectedSpot(spot)} 
+          />
         ))}
       </MarkerClusterGroup>
     </>
