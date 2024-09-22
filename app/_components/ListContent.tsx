@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 export default function ListContent() {
   const spots = useSpotsStore((state) => state.spots);
   const isLoading = useSpotsStore((state) => state.isLoading);
-  console.log(isLoading);
-
   const [debouncedIsLoading, setDebouncedIsLoading] = useState(isLoading);
 
   useEffect(() => {

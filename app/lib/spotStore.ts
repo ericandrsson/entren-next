@@ -25,16 +25,13 @@ type SpotStore = {
 
 export const useSpotsStore = create<SpotStore>((set, get) => ({
   spots: [],
-  isLoading: false,
+  isLoading: true,
   setSpots: (spots) => set({ spots }),
   setIsLoading: (isLoading) => set({ isLoading }),
   fetchSpots: async (params) => {
     set({ isLoading: true });
     try {
       let filter = "";
-
-      // Simulate a delay for testing purposes
-      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
