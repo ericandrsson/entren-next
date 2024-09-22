@@ -10,26 +10,32 @@ interface FetchParams {
   searchQuery?: string;
 }
 
-interface SpotsState {
+type SpotStore = {
   spots: Spot[];
+  isLoading: boolean;
+  setSpots: (spots: Spot[]) => void;
+  setIsLoading: (isLoading: boolean) => void;
   fetchSpots: (params?: FetchParams) => Promise<void>;
   debouncedFetchSpots: (bounds: L.LatLngBounds | null) => void;
-}
-
-interface SpotStore {
   selectedSpot: Spot | null;
   setSelectedSpot: (spot: Spot | null) => void;
   mapView: { center: [number, number]; zoom: number };
   setMapView: (view: { center: [number, number]; zoom: number }) => void;
-}
+};
 
-export const useSpotsStore = create<SpotsState & SpotStore>((set, get) => ({
+export const useSpotsStore = create<SpotStore>((set, get) => ({
   spots: [],
+  isLoading: false,
+  setSpots: (spots) => set({ spots }),
+  setIsLoading: (isLoading) => set({ isLoading }),
   fetchSpots: async (params) => {
+    set({ isLoading: true });
     try {
       let filter = "";
 
-      // Construct filter based on bounds
+      // Simulate a delay for testing purposes
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
         const sw = params.bounds.getSouthWest();
@@ -42,9 +48,10 @@ export const useSpotsStore = create<SpotsState & SpotStore>((set, get) => ({
         expand: "category",
       });
 
-      set({ spots: result.items });
+      set({ spots: result.items, isLoading: false });
     } catch (error) {
       console.error("Error fetching spots:", error);
+      set({ isLoading: false });
     }
   },
   debouncedFetchSpots: debounce((bounds: L.LatLngBounds | null) => {
