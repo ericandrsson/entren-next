@@ -1,8 +1,10 @@
 import React from "react";
 import L from "leaflet";
-import { Marker } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
 import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
+import { getImageUrl } from "@/app/lib/spots";
+import Image from "next/image";
 
 interface Category {
   id: string;
@@ -92,7 +94,18 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
       eventHandlers={{
         click: onClick,
       }}
-    />
+    >
+      <Popup>
+        <div className="w-48 h-48 relative">
+          <Image
+            src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
+            alt={spot.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+      </Popup>
+    </Marker>
   );
 }
 
