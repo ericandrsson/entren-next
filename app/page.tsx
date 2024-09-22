@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Header } from "./_components/Header";
 import SearchBar from "./_components/SearchBar";
 import ListContent from "./_components/ListContent";
-import MapView from "./_components/MapView";
+import MapView from "./(map)/Map/MapView";
 import ViewToggleButton from "@/app/_components/ViewToggleButton";
 import { useMapStore } from "@/app/lib/mapStore";
 

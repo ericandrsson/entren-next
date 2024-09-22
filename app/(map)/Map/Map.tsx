@@ -15,6 +15,11 @@ function MapEvents() {
   const map = useMap();
   const { debouncedFetchSpots, selectedSpot, setSelectedSpot } = useSpotsStore();
 
+  useEffect(() => {
+    // Fetch spots on initial load
+    debouncedFetchSpots(map.getBounds());
+  }, [debouncedFetchSpots, map]);
+
   useMapEvents({
     moveend: () => {
       debouncedFetchSpots(map.getBounds());
