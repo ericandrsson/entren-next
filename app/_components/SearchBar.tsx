@@ -12,7 +12,7 @@ export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Spot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { setSelectedSpot, setMapView } = useSpotsStore();
+  const { setSelectedSpot } = useSpotsStore();
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   async function handleSearch(term: string) {

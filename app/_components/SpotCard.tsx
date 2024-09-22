@@ -9,7 +9,7 @@ interface SpotCardProps {
 }
 
 export default function SpotCard({ spot }: SpotCardProps) {
-  const openSpotSheet = useSpotsStore((state: any) => state.openSpotSheet);
+  const openSpotSheet = useSpotsStore((state) => state.openSpotSheet);
 
   return (
     <div

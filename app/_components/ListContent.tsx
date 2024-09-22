@@ -2,10 +2,12 @@ import { useSpotsStore } from "@/app/lib/spotStore";
 import SpotCard from "./SpotCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
+import { useMapStore } from "../lib/mapStore";
 
 export default function ListContent() {
   const spots = useSpotsStore((state) => state.spots);
   const isLoading = useSpotsStore((state) => state.isLoading);
+  const view = useMapStore((state) => state.view);
   const [debouncedIsLoading, setDebouncedIsLoading] = useState(isLoading);
 
   useEffect(() => {
@@ -30,7 +32,9 @@ export default function ListContent() {
     <div className="space-y-4">
       {spots.length === 0 ? (
         <p className="text-center text-gray-500 mt-8">
-          Inga platser hittades, försök med en annan sökterm.
+          {view === "list"
+            ? "Inga platser hittades. Försök med en annan sökterm eller ändra dina filterinställningar."
+            : "Inga platser hittades i det aktuella kartområdet. Zooma ut eller flytta kartan för att se fler platser."}
         </p>
       ) : (
         spots.map((spot) => <SpotCard key={spot.id} spot={spot} />)

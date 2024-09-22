@@ -15,12 +15,12 @@ export default function ViewToggleButton() {
       {view === "list" ? (
         <>
           <MapPin className="h-4 w-4 mr-2" />
-          View on Map
+          Visa på karta
         </>
       ) : (
         <>
           <List className="h-4 w-4 mr-2" />
-          View List
+          Visa lista
         </>
       )}
     </Button>
