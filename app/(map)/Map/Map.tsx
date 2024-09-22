@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import L from "leaflet";
-import { MapContainer, useMap } from "react-leaflet";
+import { MapContainer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
@@ -10,21 +10,7 @@ import { useMapStore } from "./MapStore";
 import MapTileLayer from "./MapTileLayer";
 import SpotsLayer from "../SpotLayers/SpotsLayer";
 
-function MapUpdater({ shouldUpdate }: { shouldUpdate: boolean }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (shouldUpdate) {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-    }
-  }, [map, shouldUpdate]);
-
-  return null;
-}
-
-function Map({ shouldUpdate }: { shouldUpdate: boolean }) {
+function Map() {
   const mapRef = useRef<L.Map | null>(null);
 
   const { isDetailed, mapCenter, zoom } = useMapStore();
@@ -54,7 +40,6 @@ function Map({ shouldUpdate }: { shouldUpdate: boolean }) {
     >
       <MapTileLayer tileLayerUrl={tileLayerUrl} />
       <SpotsLayer />
-      <MapUpdater shouldUpdate={shouldUpdate} />
     </MapContainer>
   );
 }

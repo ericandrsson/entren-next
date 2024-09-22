@@ -3,8 +3,6 @@ import { SearchResult, Spot, UnverifiedNode } from "@/types";
 import L from "leaflet";
 
 interface MapState {
-  tempSpot: Spot | null;
-  setTempSpot: (spot: Spot | null) => void;
   previewedSpot: Spot | null;
   setPreviewedSpot: (spot: Spot | null) => void;
   refreshKey: number;
@@ -26,8 +24,6 @@ interface MapState {
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
-  tempSpot: null,
-  setTempSpot: (spot) => set({ tempSpot: spot }),
   previewedSpot: null,
   setPreviewedSpot: (spot) => set({ previewedSpot: spot }),
   refreshKey: 0,
@@ -42,10 +38,12 @@ export const useMapStore = create<MapState>((set, get) => ({
   setSelectedSpot: (spot) => set({ selectedSpot: spot }),
   currentMode: "view",
   setCurrentMode: (mode) => set({ currentMode: mode }),
+  handleMapClick: (e) => {
+    // Implement map click logic
+  },
   handleSelectSpot: async (result) => {
-    // Implement the logic for handleSelectSpot here
-    // You can access other state values and setters using get()
-    // For example: const { setMapCenter, setZoom } = get();
+    const { setSelectedSpot, setMapCenter, setZoom } = get();
+    // Implement select spot logic
   },
   handleSpotClick: (spot) => {
     const { setSelectedSpot, setMapCenter, setZoom } = get();
@@ -54,6 +52,6 @@ export const useMapStore = create<MapState>((set, get) => ({
     setZoom(18);
   },
   handleUnverifiedNodeClick: (node) => {
-    // Implement the logic for handleUnverifiedNodeClick here
+    // Implement unverified node click logic
   },
 }));

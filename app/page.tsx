@@ -27,7 +27,6 @@ export default function Page() {
   const [view, setView] = useState<"list" | "map" | "both">("both");
   const [isMobile, setIsMobile] = useState(false);
   const [isListCollapsed, setIsListCollapsed] = useState(false);
-  const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -50,17 +49,7 @@ export default function Page() {
 
   const toggleListCollapse = () => {
     setIsListCollapsed(!isListCollapsed);
-    setShouldUpdateMap(true);
   };
-
-  useEffect(() => {
-    if (shouldUpdateMap) {
-      const timer = setTimeout(() => {
-        setShouldUpdateMap(false);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [shouldUpdateMap]);
 
   const ListContent = () => (
     <div className="space-y-4">
@@ -214,7 +203,7 @@ export default function Page() {
           <div className="p-4 h-full relative">
             <div className="w-full h-full rounded-lg overflow-hidden relative">
               <div className="absolute inset-0 z-0">
-                <MapWithNoSSR shouldUpdate={shouldUpdateMap} />
+                <MapWithNoSSR />
               </div>
             </div>
             {!isMobile && (
