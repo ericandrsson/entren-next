@@ -21,7 +21,7 @@ export default function Page() {
   }, [setIsMobile]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-20px)]">
+    <div className="flex flex-col h-screen">
       <SearchBar />
 
       {/* Main Content Area */}
