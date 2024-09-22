@@ -88,8 +88,8 @@ function Map() {
   return (
     <MapContainer
       ref={mapRef}
-      center={mapView.center}
-      zoom={mapView.zoom}
+      center={center}
+      zoom={zoom}
       className="w-full h-full cursor-pointer-map leaflet-grab"
       zoomControl={false}
       maxBounds={swedenBounds}

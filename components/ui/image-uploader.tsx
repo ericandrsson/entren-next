@@ -25,18 +25,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     [onImageSelected]
   );
 
-  const { getRootProps, getInputProps, isDragActive, fileRejections } =
-    useDropzone({
-      onDrop,
-      maxFiles: 1,
-      accept: {
-        "image/png": [],
-        "image/jpg": [],
-        "image/jpeg": [],
-        "image/heic": [],
-        "image/heif": [],
-      },
-    });
+  const { getRootProps, getInputProps, fileRejections } = useDropzone({
+    onDrop,
+    maxFiles: 1,
+    accept: {
+      "image/png": [],
+      "image/jpg": [],
+      "image/jpeg": [],
+      "image/heic": [],
+      "image/heif": [],
+    },
+  });
 
   return (
     <div

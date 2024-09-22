@@ -5,13 +5,7 @@ import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
 import { getImageUrl } from "@/app/lib/spots";
 import Image from "next/image";
-
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
-  parent_spot_category?: string | null;
-}
+import { Spot } from "@/types";
 
 interface SpotMarkerProps {
   spot: Spot;
@@ -26,8 +20,6 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {
       icon = spot.category.icon;
-    } else if (spot.expand?.category?.icon) {
-      icon = spot.expand.category.icon;
     }
 
     const size = 22;

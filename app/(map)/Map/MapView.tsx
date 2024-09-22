@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMapStore } from "@/app/lib/mapStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSpotsStore } from "@/app/lib/spotStore";
 
 const MapWithNoSSR = dynamic(() => import("@/app/(map)/Map/Map"), {
   loading: () => <Skeleton className="w-full h-full rounded-lg" />,

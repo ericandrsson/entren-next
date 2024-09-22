@@ -28,18 +28,23 @@ export default function SearchBar() {
         filter: `name ~ "${term}" || description ~ "${term}"`,
         sort: "-created",
       });
-      setSearchResults(resultList.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        lat: item.lat,
-        lng: item.lng,
-        category: item.category,
-        created: item.created,
-        description: item.description,
-        user: item.user,
-        isVerified: item.isVerified,
-        image: item.image,
-      } as Spot)));
+      setSearchResults(
+        resultList.items.map(
+          (item) =>
+            ({
+              id: item.id,
+              name: item.name,
+              lat: item.lat,
+              lng: item.lng,
+              category: item.category,
+              created: item.created,
+              description: item.description,
+              user: item.user,
+              isVerified: item.isVerified,
+              image: item.image,
+            } as Spot)
+        )
+      );
     } catch (error) {
       console.error("Error searching spots:", error);
       setSearchResults([]);
@@ -63,7 +68,7 @@ export default function SearchBar() {
     <div className="relative z-10">
       <div className="bg-white shadow-md p-4 flex items-center space-x-2">
         <Input
-          placeholder="Search..."
+          placeholder="Sök på en plats, adress eller landmärke"
           className="flex-grow"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

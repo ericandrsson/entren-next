@@ -72,6 +72,7 @@ function LocationButton({ map }: LocationButtonProps) {
     };
 
     const handleLocationError = (e: L.ErrorEvent) => {
+      console.log(e);
       toast({
         title: "Unable to find your location",
         description:

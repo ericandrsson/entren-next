@@ -29,7 +29,9 @@ export default function ListContent() {
   return (
     <div className="space-y-4">
       {spots.length === 0 ? (
-        <p className="text-center text-gray-500">No spots available</p>
+        <p className="text-center text-gray-500 mt-8">
+          Inga platser hittades, försök med en annan sökterm.
+        </p>
       ) : (
         spots.map((spot) => <SpotCard key={spot.id} spot={spot} />)
       )}
