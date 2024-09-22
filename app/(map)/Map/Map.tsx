@@ -10,10 +10,12 @@ import MapTileLayer from "./MapTileLayer";
 import SpotsLayer from "../SpotLayers/SpotsLayer";
 import { useSpotsStore } from "@/app/lib/spotStore";
 import MapControls from "./MapControls";
+import { useMapStore } from "@/app/lib/mapStore";
 
 function MapEvents() {
   const map = useMap();
-  const { debouncedFetchSpots, selectedSpot, setSelectedSpot } = useSpotsStore();
+  const { debouncedFetchSpots, selectedSpot, setSelectedSpot } =
+    useSpotsStore();
 
   useEffect(() => {
     // Fetch spots on initial load
@@ -41,10 +43,19 @@ function MapEvents() {
 function MapWrapper({ children }: { children: React.ReactNode }) {
   const map = useMap();
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
-
+  const { view, isListCollapsed } = useMapStore();
   useEffect(() => {
     setMapInstance(map);
   }, [map]);
+
+  useEffect(() => {
+    if (map) {
+      setTimeout(() => {
+        console.log("invalidating size");
+        map.invalidateSize();
+      }, 100);
+    }
+  }, [view, isListCollapsed, map]);
 
   return (
     <>
@@ -57,6 +68,10 @@ function MapWrapper({ children }: { children: React.ReactNode }) {
 function Map() {
   const mapRef = useRef<L.Map>(null);
   const { mapView } = useSpotsStore();
+
+  const defaultCenter: [number, number] = [62.0, 15.0]; // Center of Sweden
+  const defaultZoom = 5; // Zoom level to show most of Sweden
+  const { center = defaultCenter, zoom = defaultZoom } = mapView;
 
   const isDetailed = false;
 

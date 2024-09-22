@@ -28,7 +28,6 @@ export const useSpotsStore = create<SpotsState & SpotStore>((set, get) => ({
   fetchSpots: async (params) => {
     try {
       let filter = "";
-      console.log("Fetching spots with params:", params);
 
       // Construct filter based on bounds
       if (params?.bounds) {
@@ -43,7 +42,6 @@ export const useSpotsStore = create<SpotsState & SpotStore>((set, get) => ({
         expand: "category",
       });
 
-      console.log("Fetched spots:", result.items);
       set({ spots: result.items });
     } catch (error) {
       console.error("Error fetching spots:", error);
