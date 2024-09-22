@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -48,6 +48,9 @@ function MapWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Map() {
+  const mapRef = useRef<L.Map | null>(null);
+  const [isMapInitialized, setIsMapInitialized] = useState(false);
+
   const isDetailed = false;
 
   const tileLayerUrl = isDetailed
@@ -60,14 +63,41 @@ function Map() {
     [69.06, 24.15], // Northeast corner (Treriksröset)
   ];
 
+  useEffect(() => {
+    if (!isMapInitialized && !mapRef.current) {
+      mapRef.current = L.map("map", {
+        center: [62.0, 15.0],
+        zoom: 5,
+        zoomControl: false,
+        maxBounds: swedenBounds,
+        maxBoundsViscosity: 1.0,
+        minZoom: 6,
+        maxZoom: 20,
+      });
+      setIsMapInitialized(true);
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [isMapInitialized]);
+
+  if (!isMapInitialized) {
+    return <div id="map" className="w-full h-full" />;
+  }
+
   return (
     <MapContainer
+      ref={mapRef}
       center={[62.0, 15.0]}
       zoom={5}
       className="w-full h-full cursor-pointer-map leaflet-grab"
       zoomControl={false}
       maxBounds={swedenBounds}
-      maxBoundsViscosity={1.0} // Fully restricts panning beyond bounds
+      maxBoundsViscosity={1.0}
       minZoom={6}
       maxZoom={20}
       boundsOptions={{ padding: [50, 50] }}
@@ -81,4 +111,4 @@ function Map() {
   );
 }
 
-export default Map;
+export default React.memo(Map);

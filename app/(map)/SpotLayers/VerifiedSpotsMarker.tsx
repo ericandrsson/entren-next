@@ -13,22 +13,6 @@ interface Category {
   parent_spot_category?: string | null;
 }
 
-interface Spot {
-  id?: string;
-  name: string;
-  lat: number;
-  lng: number;
-  category: string | Category;
-  created?: string;
-  description?: string;
-  user?: string;
-  isVerified?: boolean;
-  image?: string;
-  expand?: {
-    category: Category;
-  };
-}
-
 interface SpotMarkerProps {
   spot: Spot;
   onClick: () => void;
@@ -114,13 +98,19 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
       }}
     >
       <Popup>
-        <div className="w-48 h-48 relative">
-          <Image
-            src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
-            alt={spot.name}
-            fill
-            className="object-cover"
-          />
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="w-full max-w-64 h-64 relative rounded-lg overflow-hidden shadow-md">
+            <Image
+              src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
+              alt={spot.name}
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="text-base">
+            <h3 className="font-semibold text-xl">{spot.name}</h3>
+            <p className="text-gray-700">{spot.address}</p>
+          </div>
         </div>
       </Popup>
     </Marker>
