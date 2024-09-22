@@ -17,7 +17,6 @@ export default function Page() {
     checkIsMobile();
     window.addEventListener("resize", checkIsMobile);
 
-    
     return () => window.removeEventListener("resize", checkIsMobile);
   }, [setIsMobile]);
 
@@ -64,7 +63,7 @@ export default function Page() {
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-10">
             <ViewToggleButton />
           </div>
         )}
