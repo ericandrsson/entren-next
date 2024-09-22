@@ -13,9 +13,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-
 import dynamic from "next/dynamic";
 import { Header } from "./_components/Header";
+import { useMapStore } from "./(map)/Map/MapStore";
+import { getImageUrl } from "./lib/spots";
+import Image from "next/image";
 
 const MapWithNoSSR = dynamic(() => import("./(map)/Map/Map"), {
   loading: () => <div>Loading....</div>,
@@ -28,6 +30,8 @@ export default function Page() {
   const [isMobile, setIsMobile] = useState(false);
   const [isListCollapsed, setIsListCollapsed] = useState(false);
 
+  const { spots } = useMapStore();
+
   useEffect(() => {
     const checkIsMobile = () => {
       const isMobile = window.innerWidth < 768;
@@ -39,78 +43,31 @@ export default function Page() {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
-  const categories = [
-    "Healthcare",
-    "Education",
-    "Recreation",
-    "Public Service",
-    "Hospitality",
-  ];
-
   const toggleListCollapse = () => {
     setIsListCollapsed(!isListCollapsed);
   };
 
   const ListContent = () => (
     <div className="space-y-4">
-      {[
-        {
-          name: "Fysioterapeut Fosietorp",
-          address: "Ormvråksgatan 15, 215 62 Malmö",
-          category: "Healthcare",
-        },
-        {
-          name: "Distriktssköterska Fosietorp",
-          address: "Ormvråksgatan 15, 215 62 Malmö",
-          category: "Healthcare",
-        },
-        {
-          name: "Barnavårdscentral Fosietorp",
-          address: "Ormvråksgatan 15, 215 62 Malmö",
-          category: "Healthcare",
-        },
-        {
-          name: "Närhälsan Södra torget rehabmottagning",
-          address: "Kvarngatan 4, 503 36 Borås",
-          category: "Healthcare",
-        },
-        {
-          name: "Hunnebostrand Hav och Land",
-          address: "Parkgatan 1, 456 61 Hunnebostrand",
-          category: "Recreation",
-        },
-        {
-          name: "Bollstanässkolan",
-          address: "Stora vägen 80, 194 68 Upplands Väsby",
-          category: "Education",
-        },
-        {
-          name: "Frestaskolan",
-          address: "Älvhagsvägen 15, 194 53 Upplands Väsby",
-          category: "Education",
-        },
-        {
-          name: "Grimstaskolan",
-          address: "Väpnaren 1, 194 64 Upplands Väsby",
-          category: "Education",
-        },
-      ].map((item, index) => (
+      {spots.map((spot, index) => (
         <div
-          key={index}
+          key={spot.id}
           className="flex bg-white shadow rounded-lg overflow-hidden"
         >
-          <img
-            src={`/placeholder.svg?height=100&width=100&text=${index + 1}`}
-            alt={item.name}
+          <Image
+            src={getImageUrl(spot.image, spot.id) || ""}
+            alt={spot.name}
+            width={96}
+            height={96}
             className="w-24 h-24 object-cover"
           />
           <div className="p-4 flex flex-col justify-between">
             <div>
-              <h3 className="font-semibold text-lg">{item.name}</h3>
-              <p className="text-sm text-gray-600">{item.address}</p>
+              <h3 className="font-semibold text-lg">{spot.name}</h3>
+              <p className="text-sm text-gray-600">{`${spot.lat}, ${spot.lng}`}</p>
             </div>
             <Badge variant="secondary" className="self-start mt-2">
-              {item.category}
+              {spot.category.name}
             </Badge>
           </div>
         </div>
@@ -148,17 +105,7 @@ export default function Page() {
             <div className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2">Categories</h3>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <Badge
-                      key={category}
-                      variant="outline"
-                      className="cursor-pointer"
-                    >
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
+                <div className="flex flex-wrap gap-2"></div>
               </div>
               <Button className="w-full">Apply Filters</Button>
             </div>
@@ -202,9 +149,7 @@ export default function Page() {
         >
           <div className="p-4 h-full relative">
             <div className="w-full h-full rounded-lg overflow-hidden relative">
-              <div className="absolute inset-0 z-0">
-                <MapWithNoSSR />
-              </div>
+              <MapWithNoSSR />
             </div>
             {!isMobile && (
               <Button
