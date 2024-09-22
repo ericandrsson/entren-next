@@ -1,23 +1,22 @@
-import { useMapStore } from "../Map/MapStore";
-import UnverifiedSpotsLayer from "./UnverifiedSpotsLayer";
-import VerifiedSpotsLayer from "./VerifiedSpotsLayer";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import { useSpotsStore } from "@/app/lib/spotStore";
+import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
 
 function SpotsLayer() {
-  const {
-    currentMode,
-    refreshKey,
-    handleSpotClick,
-    handleUnverifiedNodeClick,
-  } = useMapStore();
+  const spots = useSpotsStore((state) => state.spots);
 
   return (
     <>
-      {currentMode === "view" && (
-        <VerifiedSpotsLayer key={refreshKey} onSpotClick={handleSpotClick} />
-      )}
-      {currentMode === "contribute" && (
-        <UnverifiedSpotsLayer onNodeClick={handleUnverifiedNodeClick} />
-      )}
+      <MarkerClusterGroup
+        chunkedLoading
+        maxClusterRadius={60}
+        spiderfyOnMaxZoom={false}
+        disableClusteringAtZoom={16}
+      >
+        {spots.map((spot) => (
+          <VerifiedSpotsMarker key={spot.id} spot={spot} onClick={() => {}} />
+        ))}
+      </MarkerClusterGroup>
     </>
   );
 }

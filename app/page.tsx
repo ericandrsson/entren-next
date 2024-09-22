@@ -15,9 +15,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
 import { Header } from "./_components/Header";
-import { useMapStore } from "./(map)/Map/MapStore";
-import { getImageUrl } from "./lib/spots";
 import Image from "next/image";
+import { getImageUrl } from "./lib/spots";
+import { useSpotsStore } from "./lib/spotStore";
 
 const MapWithNoSSR = dynamic(() => import("./(map)/Map/Map"), {
   loading: () => <div>Loading....</div>,
@@ -30,8 +30,7 @@ export default function Page() {
   const [isMobile, setIsMobile] = useState(false);
   const [isListCollapsed, setIsListCollapsed] = useState(false);
 
-  const { spots } = useMapStore();
-  console.log(spots);
+  const spots = useSpotsStore((state) => state.spots);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -41,6 +40,7 @@ export default function Page() {
     };
     checkIsMobile();
     window.addEventListener("resize", checkIsMobile);
+
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 

@@ -4,11 +4,11 @@ import debounce from "lodash/debounce";
 import { pb } from "@/lib/db";
 import { Spot } from "@/types";
 
-// Remove UnverifiedNode if it's not used or defined in @/types
 interface MapState {
+  mapCenter: L.LatLngExpression;
+  zoom: number;
+  currentMode: "view";
   spots: Spot[];
-  setSpots: (spots: Spot[]) => void;
-  fetchSpots: (bounds: L.LatLngBounds) => Promise<void>;
   debouncedFetchSpots: (bounds: L.LatLngBounds) => void;
 }
 
@@ -17,8 +17,16 @@ export const useMapStore = create<MapState>((set, get) => ({
   zoom: 5,
   currentMode: "view",
   spots: [],
-  setSpots: (spots) => set({ spots }),
-  fetchSpots: async (bounds: L.LatLngBounds) => {
+
+  debouncedFetchSpots: debounce(async (bounds: L.LatLngBounds) => {
+    if (!bounds) return; // Exit if bounds are invalid
+
+    console.log(
+      "Fetching spots with bounds:",
+      bounds.getNorthEast(),
+      bounds.getSouthWest()
+    );
+
     try {
       const ne = bounds.getNorthEast();
       const sw = bounds.getSouthWest();
@@ -36,9 +44,14 @@ export const useMapStore = create<MapState>((set, get) => ({
     } catch (error) {
       console.error("Error fetching spots:", error);
     }
-  },
-  debouncedFetchSpots: debounce(async (bounds: L.LatLngBounds) => {
-    const { fetchSpots } = get();
-    await fetchSpots(bounds);
   }, 300),
 }));
+
+// Add this new function to fetch spots
+export async function fetchSpots() {
+  // Implement your spot fetching logic here
+  // For example:
+  const response = await fetch("/api/spots");
+  const spots = await response.json();
+  return spots;
+}
