@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import L from "leaflet";
-import { Marker, Popup } from "react-leaflet";
+import { Marker, Popup, useMap } from "react-leaflet";
 import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
 import { getImageUrl } from "@/app/lib/spots";
@@ -35,6 +35,9 @@ interface SpotMarkerProps {
 }
 
 function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
+  const markerRef = useRef<L.Marker>(null);
+  const map = useMap();
+
   const getSpotIcon = () => {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {
@@ -87,8 +90,23 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
     return null;
   };
 
+  React.useEffect(() => {
+    const closePopup = () => {
+      if (markerRef.current) {
+        markerRef.current.closePopup();
+      }
+    };
+
+    map.on("movestart", closePopup);
+
+    return () => {
+      map.off("movestart", closePopup);
+    };
+  }, [map]);
+
   return (
     <Marker
+      ref={markerRef}
       position={[spot.lat, spot.lng]}
       icon={getSpotIcon()}
       eventHandlers={{

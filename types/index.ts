@@ -1,6 +1,7 @@
 export interface Spot {
   id: string;
   name: string;
+  address?: string;
   lat: number;
   lng: number;
   category: {
@@ -10,11 +11,9 @@ export interface Spot {
   };
   created: string;
   description?: string;
-  tags?: string[];
   user: string;
   isVerified: boolean;
   image: string;
-  address?: string;
 }
 
 export interface SearchResult {

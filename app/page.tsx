@@ -70,7 +70,7 @@ export default function Page() {
             <div className="p-4 flex flex-col justify-between">
               <div>
                 <h3 className="font-semibold text-lg">{spot.name}</h3>
-                <p className="text-sm text-gray-600">{`${spot.lat}, ${spot.lng}`}</p>
+                <p className="text-sm text-gray-600">{spot.address}</p>
               </div>
               <Badge variant="secondary" className="self-start mt-2">
                 {spot.category.name}

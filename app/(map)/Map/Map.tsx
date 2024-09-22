@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import L from "leaflet";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -9,10 +9,10 @@ import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
 import MapTileLayer from "./MapTileLayer";
 import SpotsLayer from "../SpotLayers/SpotsLayer";
 import { useSpotsStore } from "@/app/lib/spotStore";
+import MapControls from "./MapControls";
 
 function MapEvents() {
   const map = useMap();
-  console.log("map", map);
   const { debouncedFetchSpots } = useSpotsStore();
 
   useEffect(() => {
@@ -29,6 +29,22 @@ function MapEvents() {
   }, [map, debouncedFetchSpots]);
 
   return null;
+}
+
+function MapWrapper({ children }: { children: React.ReactNode }) {
+  const map = useMap();
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+
+  useEffect(() => {
+    setMapInstance(map);
+  }, [map]);
+
+  return (
+    <>
+      {children}
+      <MapControls map={mapInstance} />
+    </>
+  );
 }
 
 function Map() {
@@ -56,9 +72,11 @@ function Map() {
       maxZoom={20}
       boundsOptions={{ padding: [50, 50] }}
     >
-      <MapTileLayer tileLayerUrl={tileLayerUrl} />
-      <SpotsLayer />
-      <MapEvents />
+      <MapWrapper>
+        <MapTileLayer tileLayerUrl={tileLayerUrl} />
+        <SpotsLayer />
+        <MapEvents />
+      </MapWrapper>
     </MapContainer>
   );
 }
