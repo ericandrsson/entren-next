@@ -9,6 +9,13 @@ export interface Spot {
     name: string;
     icon: string;
   };
+  expand: {
+    category: {
+      id: string;
+      name: string;
+      icon: string;
+    };
+  };
   created: string;
   description?: string;
   user: string;

@@ -20,6 +20,8 @@ function VerifiedSpotsMarker({ spot, onClick }: SpotMarkerProps) {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {
       icon = spot.category.icon;
+    } else if (spot.expand?.category?.icon) {
+      icon = spot.expand.category.icon;
     }
 
     const size = 22;
