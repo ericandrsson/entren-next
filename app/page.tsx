@@ -5,10 +5,10 @@ import SearchBar from "./_components/SearchBar";
 import ListContent from "./_components/ListContent";
 import MapView from "./(map)/Map/MapView";
 import ViewToggleButton from "@/app/_components/ViewToggleButton";
-import { useMapStore } from "@/app/lib/mapStore";
+import { useStore } from "@/app/lib/store";
 
 export default function Page() {
-  const { view, isMobile, isListCollapsed, setIsMobile } = useMapStore();
+  const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
 
   useEffect(() => {
     const checkIsMobile = () => {

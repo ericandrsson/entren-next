@@ -1,13 +1,12 @@
-import { useSpotsStore } from "@/app/lib/spotStore";
+import { useStore } from "@/app/lib/store";
 import SpotCard from "./SpotCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
-import { useMapStore } from "../lib/mapStore";
 
 export default function ListContent() {
-  const spots = useSpotsStore((state) => state.spots);
-  const isLoading = useSpotsStore((state) => state.isLoading);
-  const view = useMapStore((state) => state.view);
+  const spots = useStore((state) => state.spots);
+  const isLoading = useStore((state) => state.isLoading);
+  const view = useStore((state) => state.view);
   const [debouncedIsLoading, setDebouncedIsLoading] = useState(isLoading);
 
   useEffect(() => {

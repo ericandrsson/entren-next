@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { getImageUrl } from "@/app/lib/spots";
 import { Spot } from "@/types";
 import {
   Sheet,
@@ -8,6 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { getSpotImageUrl } from "@/lib/utils";
 
 interface SpotSheetContentProps {
   spot: Spot | null;
@@ -26,7 +26,7 @@ function SpotSheetContent({ spot, isOpen, onClose }: SpotSheetContentProps) {
         <div className="flex flex-col items-center gap-4 text-center mt-4">
           <div className="w-full max-w-64 h-64 relative rounded-lg overflow-hidden shadow-md">
             <Image
-              src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
+              src={getSpotImageUrl(spot.image, spot.id) || "/placeholder.png"}
               alt={spot.name}
               fill
               className="object-cover"

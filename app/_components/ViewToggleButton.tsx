@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, List } from "lucide-react";
-import { useMapStore } from "@/app/lib/mapStore";
+import { useStore } from "@/app/lib/store";
 
 export default function ViewToggleButton() {
-  const { view, setView } = useMapStore();
+  const { view, setView } = useStore();
 
   return (
     <Button

@@ -5,14 +5,14 @@ import { Input } from "@/components/ui/input";
 import FilterButton from "./FilterButton";
 import { Spot } from "@/types";
 import { useDebounce } from "@/app/lib/hooks";
-import { useSpotsStore } from "../lib/spotStore";
-import { pb } from "@/lib/db";
+import { useStore } from "@/app/lib/store";
+import { pb } from "@/lib/pocketbase";
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Spot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { setSelectedSpot } = useSpotsStore();
+  const { setMapView } = useStore();
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   async function handleSearch(term: string) {
@@ -53,8 +53,7 @@ export default function SearchBar() {
   }
 
   function handleSelectSpot(spot: Spot) {
-    setSelectedSpot(spot);
-    //setMapView({ center: [spot.lat, spot.lng], zoom: 16 });
+    setMapView({ center: [spot.lat, spot.lng], zoom: 16 });
     setSearchTerm("");
     setSearchResults([]);
     //openSpotSheet(spot);

@@ -8,16 +8,13 @@ import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
 import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
 import MapTileLayer from "./MapTileLayer";
 import SpotsLayer from "../SpotLayers/SpotsLayer";
-import { useSpotsStore } from "@/app/lib/spotStore";
+import { useStore } from "@/app/lib/store";
 import MapControls from "./MapControls";
-import { useMapStore } from "@/app/lib/mapStore";
 
 function MapEvents() {
   const map = useMap();
-  const { debouncedFetchSpots, selectedSpot, setSelectedSpot } =
-    useSpotsStore();
-
-  const { view } = useMapStore();
+  const { debouncedFetchSpots, selectedSpot, setSelectedSpot, view } =
+    useStore();
 
   useEffect(() => {
     debouncedFetchSpots(map.getBounds());
@@ -46,7 +43,7 @@ function MapEvents() {
 function MapWrapper({ children }: { children: React.ReactNode }) {
   const map = useMap();
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
-  const { view, isListCollapsed } = useMapStore();
+  const { view, isListCollapsed } = useStore();
   useEffect(() => {
     setMapInstance(map);
   }, [map]);
@@ -70,7 +67,7 @@ function MapWrapper({ children }: { children: React.ReactNode }) {
 
 function Map() {
   const mapRef = useRef<L.Map>(null);
-  const { mapView } = useSpotsStore();
+  const { mapView } = useStore();
 
   const defaultCenter: [number, number] = [62.0, 15.0]; // Center of Sweden
   const defaultZoom = 5; // Zoom level to show most of Sweden

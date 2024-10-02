@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMapStore } from "@/app/lib/mapStore";
+import { useStore } from "@/app/lib/store";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MapWithNoSSR = dynamic(() => import("@/app/(map)/Map/Map"), {
@@ -10,7 +10,7 @@ const MapWithNoSSR = dynamic(() => import("@/app/(map)/Map/Map"), {
 });
 
 export default function MapView() {
-  const { isListCollapsed, toggleListCollapse, isMobile } = useMapStore();
+  const { isListCollapsed, toggleListCollapse, isMobile } = useStore();
 
   return (
     <div className="p-4 h-full relative">

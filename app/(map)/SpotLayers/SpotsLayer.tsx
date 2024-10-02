@@ -1,13 +1,13 @@
 import React from "react";
 import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
 import SpotSheetContent from "./SpotSheetContent";
-import { useSpotsStore } from "@/app/lib/spotStore";
+import { useStore } from "@/app/lib/store";
 
 function SpotsLayer() {
-  const spots = useSpotsStore((state) => state.spots);
-  const selectedSpot = useSpotsStore((state) => state.selectedSpot);
-  const isSheetOpen = useSpotsStore((state) => state.isSheetOpen);
-  const closeSpotSheet = useSpotsStore((state) => state.closeSpotSheet);
+  const spots = useStore((state) => state.spots);
+  const selectedSpot = useStore((state) => state.selectedSpot);
+  const isSheetOpen = useStore((state) => state.isSheetOpen);
+  const closeSpotSheet = useStore((state) => state.closeSpotSheet);
 
   return (
     <>

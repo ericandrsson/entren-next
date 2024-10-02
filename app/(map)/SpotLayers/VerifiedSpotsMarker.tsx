@@ -4,7 +4,7 @@ import { Marker, useMap } from "react-leaflet";
 import { formatDistanceToNow, parseISO, isAfter, subDays } from "date-fns";
 import { sv } from "date-fns/locale";
 import { Spot } from "@/types";
-import { useSpotsStore } from "@/app/lib/spotStore";
+import { useStore } from "@/app/lib/store";
 
 interface SpotMarkerProps {
   spot: Spot;
@@ -13,7 +13,7 @@ interface SpotMarkerProps {
 function VerifiedSpotsMarker({ spot }: SpotMarkerProps) {
   const markerRef = useRef<L.Marker>(null);
   const map = useMap();
-  const setSelectedSpot = useSpotsStore((state) => state.setSelectedSpot);
+  const setSelectedSpot = useStore((state) => state.setSelectedSpot);
   const getSpotIcon = () => {
     let icon = "📍"; // Default icon
     if (typeof spot.category === "object" && spot.category.icon) {

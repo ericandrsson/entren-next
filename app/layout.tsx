@@ -40,6 +40,13 @@ export default function RootLayout({
         <div className="flex flex-col h-screen">
           <Header />
           {children}
+          <footer className="w-full bg-white shadow-sm mt-auto">
+            <div className="mx-auto px-4 py-4 flex justify-center items-center">
+              <p className="text-sm text-gray-600">
+                © 2024 Entren. All rights reserved.
+              </p>
+            </div>
+          </footer>
           <Toaster />
           <CookieBanner />
         </div>

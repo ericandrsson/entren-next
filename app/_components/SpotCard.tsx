@@ -1,15 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { getImageUrl } from "@/app/lib/spots";
 import { Spot } from "@/types";
-import { useSpotsStore } from "../lib/spotStore";
+import { useStore } from "@/app/lib/store";
+import { getSpotImageUrl } from "@/lib/utils";
 
 interface SpotCardProps {
   spot: Spot;
 }
 
 export default function SpotCard({ spot }: SpotCardProps) {
-  const openSpotSheet = useSpotsStore((state) => state.openSpotSheet);
+  const openSpotSheet = useStore((state) => state.openSpotSheet);
 
   return (
     <div
@@ -18,7 +18,7 @@ export default function SpotCard({ spot }: SpotCardProps) {
     >
       <div className="relative w-1/3 h-32 flex-shrink-0 overflow-hidden">
         <Image
-          src={getImageUrl(spot.image, spot.id) || "/placeholder.png"}
+          src={getSpotImageUrl(spot.image, spot.id) || "/placeholder.png"}
           alt={spot.name}
           fill
           className="object-cover"
