@@ -1,0 +1,27 @@
+services:
+  osm2pgsql:
+    image: iboates/osm2pgsql:latest
+    container_name: osm2pgsql
+    volumes:
+      - ./data:/osm-data
+      - ./points.lua:/points.lua
+    environment:
+      - PGHOST=135.181.108.171
+      - PGPORT=5432
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=p4ik5IdbSwQBMaUNBUgashGjZUxBhkN9Autx9R9Yj9VeXNgOIMYzhIuapPKn8ti1
+    entrypoint: >
+      /bin/sh -c "
+      wget -O /osm-data/sweden-latest.osm.pbf https://download.geofabrik.de/europe/sweden-latest.osm.pbf &&
+      osm2pgsql \
+      --create \
+      --slim \
+      --database $$PGDATABASE -U $$PGUSER -H $$PGHOST -P $$PGPORT -C 2000 \
+      --number-processes 4 \
+      --extra-attributes \
+      --output=flex \
+      --style=/points.lua \
+      --verbose \
+      /osm-data/sweden-latest.osm.pbf
+      "
