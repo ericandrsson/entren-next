@@ -7,7 +7,7 @@ services:
       - ./points.lua:/points.lua
     environment:
       - PGHOST=135.181.108.171
-      - PGPORT=5432
+      - PGPORT=5433
       - PGDATABASE=postgres
       - PGUSER=postgres
       - PGPASSWORD=p4ik5IdbSwQBMaUNBUgashGjZUxBhkN9Autx9R9Yj9VeXNgOIMYzhIuapPKn8ti1
