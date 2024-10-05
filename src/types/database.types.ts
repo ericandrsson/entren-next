@@ -1041,6 +1041,12 @@ export type Database = {
           {
             foreignKeyName: "spot_images_entrance_id_fkey"
             columns: ["entrance_id"]
+            referencedRelation: "detailed_spots_entrances"
+            referencedColumns: ["entrance_id"]
+          },
+          {
+            foreignKeyName: "spot_images_entrance_id_fkey"
+            columns: ["entrance_id"]
             referencedRelation: "spot_entrances"
             referencedColumns: ["id"]
           },
@@ -1174,6 +1180,34 @@ export type Database = {
       }
     }
     Views: {
+      detailed_spots_entrances: {
+        Row: {
+          accessibility_info: Json | null
+          entrance_created_at: string | null
+          entrance_id: number | null
+          entrance_name: string | null
+          entrance_updated_at: string | null
+          lat: number | null
+          long: number | null
+          osm_id: number | null
+          spot_id: number | null
+          spot_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spot_entrances_spot_id_fkey"
+            columns: ["spot_id"]
+            referencedRelation: "spots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spot_entrances_spot_id_fkey"
+            columns: ["spot_id"]
+            referencedRelation: "detailed_spots_view"
+            referencedColumns: ["spot_id"]
+          },
+        ]
+      }
       detailed_spots_view: {
         Row: {
           category_icon: string | null

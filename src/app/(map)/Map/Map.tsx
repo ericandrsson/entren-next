@@ -26,14 +26,13 @@ function MapEvents() {
         debouncedFetchSpots(map.getBounds());
       }
     },
-    click: () => {
-      setSelectedSpot(null);
-    },
   });
 
   useEffect(() => {
     if (selectedSpot) {
-      map.setView([selectedSpot.lat, selectedSpot.long], 16, { animate: true });
+      map.setView([selectedSpot.lat!, selectedSpot.long!], 16, {
+        animate: true,
+      });
     }
   }, [selectedSpot, map]);
 

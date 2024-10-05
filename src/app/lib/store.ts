@@ -2,7 +2,8 @@ import { create } from "zustand";
 import debounce from "lodash/debounce";
 import L from "leaflet";
 import { supabase } from "@/src/lib/supabase";
-import { Spot } from "@/src/types/custom.types";
+import { Spot, SpotEntrance } from "@/src/types/custom.types";
+
 interface FetchParams {
   bounds?: L.LatLngBounds;
   searchQuery?: string;
@@ -43,6 +44,14 @@ type Store = {
   setMapInstance: (map: L.Map | null) => void;
   setMapView: (view: { center: [number, number]; zoom: number }) => void;
   fitBounds: (bounds: L.LatLngBounds) => void;
+
+  // New properties for entrances
+  selectedSpotEntrances: SpotEntrance[];
+  isEntrancesLoading: boolean;
+
+  // New actions for entrances
+  fetchSpotEntrances: (spotId: number) => Promise<void>;
+  setSelectedSpotEntrances: (entrances: SpotEntrance[]) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
@@ -105,12 +114,16 @@ export const useStore = create<Store>((set, get) => ({
     get().fetchSpots({ bounds });
   }, 100),
   setSelectedSpot: (spot: Spot | null) => {
+    console.log(spot)
     set({ selectedSpot: spot });
     if (spot) {
       set({ mapView: { center: [spot.lat!, spot.long!], zoom: 16 } });
+      get().fetchSpotEntrances(spot.spot_id!);
       setTimeout(() => {
-        set({ isSheetOpen: true });
+        set({ isSheetOpen: false });
       }, 500);
+    } else {
+      set({ selectedSpotEntrances: [] });
     }
   },
   openSpotSheet: (spot: Spot) => set({ selectedSpot: spot, isSheetOpen: true }),
@@ -125,4 +138,30 @@ export const useStore = create<Store>((set, get) => ({
       mapInstance.fitBounds(bounds);
     }
   },
+
+  // New state for entrances
+  selectedSpotEntrances: [],
+  isEntrancesLoading: false,
+
+  // New actions for entrances
+  fetchSpotEntrances: async (spotId: number) => {
+    console.log(spotId)
+    set({ isEntrancesLoading: true });
+    try {
+      const { data, error } = await supabase
+        .from('detailed_spots_entrances')
+        .select('*')
+        .eq('spot_id', spotId);
+
+      if (error) {
+        console.error("Error fetching spot entrances:", error);
+        return;
+      }
+      set({ selectedSpotEntrances: data as SpotEntrance[], isEntrancesLoading: false });
+    } catch (error) {
+      console.error("Error fetching spot entrances:", error);
+      set({ isEntrancesLoading: false });
+    }
+  },
+  setSelectedSpotEntrances: (entrances: SpotEntrance[]) => set({ selectedSpotEntrances: entrances }),
 }));
