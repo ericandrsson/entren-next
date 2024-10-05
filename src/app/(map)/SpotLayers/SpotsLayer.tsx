@@ -2,6 +2,7 @@ import React from "react";
 import VerifiedSpotsMarker from "./VerifiedSpotsMarker";
 import SpotSheetContent from "./SpotSheetContent";
 import { useStore } from "@/src/app/lib/store";
+import MarkerClusterGroup from 'react-leaflet-cluster';
 
 function SpotsLayer() {
   const spots = useStore((state) => state.spots);
@@ -11,9 +12,22 @@ function SpotsLayer() {
 
   return (
     <>
-      {spots.map((spot) => (
-        <VerifiedSpotsMarker key={spot.id} spot={spot} />
-      ))}
+      <MarkerClusterGroup
+        chunkedLoading
+        maxClusterRadius={60}
+        spiderfyOnMaxZoom={true}
+        polygonOptions={{
+          fillColor: '#ffffff',
+          color: '#3388ff',
+          weight: 4,
+          opacity: 1,
+          fillOpacity: 0.7
+        }}
+      >
+        {spots.map((spot) => (
+          <VerifiedSpotsMarker key={spot.id} spot={spot} />
+        ))}
+      </MarkerClusterGroup>
       <SpotSheetContent
         spot={selectedSpot}
         isOpen={isSheetOpen}
