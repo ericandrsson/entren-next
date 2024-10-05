@@ -58,7 +58,6 @@ function VerifiedSpotsMarker({ spot }: { spot: Spot }) {
   };
 
   const handleMarkerClick = () => {
-    console.log("Selecting spot:", spot);
     setSelectedSpot(spot);
   };
 
