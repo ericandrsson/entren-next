@@ -1,4 +1,5 @@
 services:
+
   osm2pgsql:
     image: iboates/osm2pgsql:latest
     container_name: osm2pgsql
