@@ -114,14 +114,10 @@ export const useStore = create<Store>((set, get) => ({
     get().fetchSpots({ bounds });
   }, 100),
   setSelectedSpot: (spot: Spot | null) => {
-    console.log(spot)
     set({ selectedSpot: spot });
     if (spot) {
       set({ mapView: { center: [spot.lat!, spot.long!], zoom: 16 } });
       get().fetchSpotEntrances(spot.spot_id!);
-      setTimeout(() => {
-        set({ isSheetOpen: false });
-      }, 500);
     } else {
       set({ selectedSpotEntrances: [] });
     }

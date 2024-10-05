@@ -13,8 +13,7 @@ import MapControls from "./MapControls";
 
 function MapEvents() {
   const map = useMap();
-  const { debouncedFetchSpots, selectedSpot, setSelectedSpot, view } =
-    useStore();
+  const { debouncedFetchSpots, selectedSpot, setSelectedSpot, view } = useStore();
 
   useEffect(() => {
     debouncedFetchSpots(map.getBounds());
@@ -24,6 +23,11 @@ function MapEvents() {
     moveend: () => {
       if (view !== "list") {
         debouncedFetchSpots(map.getBounds());
+      }
+    },
+    click: () => {
+      if (selectedSpot) {
+        setSelectedSpot(null);
       }
     },
   });
