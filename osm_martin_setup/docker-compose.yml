@@ -1,0 +1,9 @@
+services:
+  martin:
+    image: ghcr.io/maplibre/martin:v0.13.0
+    container_name: martin
+    ports:
+      - "3001:3000"  # Expose port 3000 for accessing Martin
+    environment:
+      - DATABASE_URL=postgresql://postgres:p4ik5IdbSwQBMaUNBUgashGjZUxBhkN9Autx9R9Yj9VeXNgOIMYzhIuapPKn8ti1@135.181.108.171:5433/postgres
+    restart: unless-stopped

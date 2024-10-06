@@ -6,23 +6,20 @@ services:
     volumes:
       - ./data:/osm-data
       - ./points.lua:/points.lua
-    environment:
-      - PGHOST=135.181.108.171
-      - PGPORT=5433
-      - PGDATABASE=postgres
-      - PGUSER=postgres
-      - PGPASSWORD=p4ik5IdbSwQBMaUNBUgashGjZUxBhkN9Autx9R9Yj9VeXNgOIMYzhIuapPKn8ti1
+    env_file:
+      - .env
     entrypoint: >
       /bin/sh -c "
-      wget -O /osm-data/sweden-latest.osm.pbf https://download.geofabrik.de/europe/sweden-latest.osm.pbf &&
+      wget -O /osm-data/data.pbf $$OSM_PBF_SWEDEN_URL &&
       osm2pgsql \
       --create \
       --slim \
-      --database $$PGDATABASE -U $$PGUSER -H $$PGHOST -P $$PGPORT -C 2000 \
-      --number-processes 4 \
+      --database $$PGDATABASE -U $$PGUSER -H $$PGHOST -P $$PGPORT -C 4000 \
+      --number-processes 1 \
       --extra-attributes \
       --output=flex \
       --style=/points.lua \
       --verbose \
-      /osm-data/sweden-latest.osm.pbf
+      /osm-data/data.pbf
       "
+    restart: no
