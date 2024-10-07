@@ -17,7 +17,7 @@
     }
   },
   "glyphs": "http://localhost:3010/font/{fontstack}/{range}",
-  "sprite": "http://localhost:8080/styles/OSM OpenMapTiles/sprite",
+  "sprite": "http://localhost:3010/sprite/sprites",
   "layers": [
     {
       "id": "background",

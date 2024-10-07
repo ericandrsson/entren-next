@@ -5,11 +5,13 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '@/src/app/lib/store';
 import MapControls from './MapControls';
+import { Spot } from '@/src/types/custom.types';
+import { supabase } from '@/src/lib/supabase';
 
 function Map() {
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const { mapView, debouncedFetchSpots, selectedSpot, setSelectedSpot, view } = useStore();
+  const { mapView, debouncedFetchSpots, selectedSpot, setSelectedSpot, view, setMapInstance } = useStore();
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const defaultCenter: [number, number] = [57.0, 15.0]; // Slightly south of the center of Sweden
@@ -37,15 +39,11 @@ function Map() {
       ]
     });
 
-    const popup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false
-    });
 
     map.current.on('load', () => {
       map.current?.addSource('detailedSpots', {
         type: 'vector',
-        url: 'http://localhost:3010/detailed_spots_view'
+        url: 'http://localhost:3010/detailed_spots_view',
       });
       
       map.current?.addLayer({
@@ -54,42 +52,50 @@ function Map() {
         source: 'detailedSpots',
         'source-layer': 'detailed_spots_view',
         layout: {
-          'text-field': '{name}', // Replace with your desired emoji
-          'text-font': ['Noto Sans Regular'],
-          'text-size': 24,
-          'text-offset': [0, -0.5], // Optional: Adjusts the position
-          'text-anchor': 'top'      // Optional: Anchors the emoji to the top of the point
+          'icon-image': 'coffee',
+          'icon-size': 0.5,  // Reduced icon size for better clarity
+          'icon-anchor': 'bottom',
+          'text-field': '{name}',
+          'text-font': ['Noto Sans Bold'],
+          'text-size': 12,  // Reduced text size for better balance
+          'text-offset': [0, 0.1],
+          'text-anchor': 'top',
+          'icon-allow-overlap': true,
+          'text-allow-overlap': true
+        },
+        paint: {
+          'icon-opacity': 0.9,  // Slightly reduce opacity to soften the icon
+          'text-halo-width': 1,  // Add a halo to the text for better readability
+          'text-halo-color': 'rgba(255, 255, 255, 0.75)'
         }
       });
       
-      setIsMapLoaded(true);
-
-      // Add event listeners for hover
-      map.current?.on('mouseenter', 'detailed_spots_view', (e) => {
+      
+      map.current?.on('click', 'detailed_spots_view', async (e) => {
         if (map.current) {
           map.current.getCanvas().style.cursor = 'pointer';
           
-          const coordinates = e.features[0].geometry.coordinates.slice();
-          const properties = e.features[0].properties;
-          console.log(properties);
-          
-          
-          // Create HTML content for popup
-          const popupContent = `
-            <h3>${properties.name || 'Unnamed Spot'}</h3>
-            <p>Tags: ${properties.osm_tags || 'N/A'}</p>
-          `;
+          const geometry = e.features?.[0]?.geometry;
+          if (geometry && 'coordinates' in geometry) {
+            const coordinates = geometry.coordinates.slice();
+            const properties = e.features?.[0]?.properties ?? {};
+            console.log(properties);
+            const { data: spot, error } = await supabase
+            .from('spots')
+            .select('*')
+            .eq('id', properties.spot_id)
+            .single();
+            console.log(spot);
+            setSelectedSpot(spot);
 
-          popup.setLngLat(coordinates).setHTML(popupContent).addTo(map.current);
+          }
         }
       });
 
-      map.current?.on('mouseleave', 'detailed_spots_view', () => {
-        if (map.current) {
-          map.current.getCanvas().style.cursor = '';
-          popup.remove();
-        }
-      });
+      setMapInstance(map.current);
+      setIsMapLoaded(true);
+
+
     });
 
     return () => {
