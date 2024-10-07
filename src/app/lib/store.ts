@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import debounce from "lodash/debounce";
-import L from "leaflet";
+import maplibregl from 'maplibre-gl';
 import { supabase } from "@/src/lib/supabase";
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 
 interface FetchParams {
-  bounds?: L.LatLngBounds;
+  bounds?: maplibregl.LngLatBounds;
   searchQuery?: string;
 }
 
@@ -28,22 +28,22 @@ type Store = {
   isSheetOpen: boolean;
 
   // Map-related state
-  mapInstance: L.Map | null;
+  mapInstance: maplibregl.Map | null;
   mapView: { center: [number, number]; zoom: number };
 
   // Spot actions
   setSpots: (spots: Spot[]) => void;
   setIsLoading: (isLoading: boolean) => void;
   fetchSpots: (params?: FetchParams) => Promise<void>;
-  debouncedFetchSpots: (bounds: L.LatLngBounds | null) => void;
+  debouncedFetchSpots: (bounds: maplibregl.LngLatBounds | null) => void;
   setSelectedSpot: (spot: Spot | null) => void;
   openSpotSheet: (spot: Spot) => void;
   closeSpotSheet: () => void;
 
   // Map actions
-  setMapInstance: (map: L.Map | null) => void;
+  setMapInstance: (map: maplibregl.Map | null) => void;
   setMapView: (view: { center: [number, number]; zoom: number }) => void;
-  fitBounds: (bounds: L.LatLngBounds) => void;
+  fitBounds: (bounds: maplibregl.LngLatBounds) => void;
 
   // New properties for entrances
   selectedSpotEntrances: SpotEntrance[];
@@ -84,39 +84,42 @@ export const useStore = create<Store>((set, get) => ({
   fetchSpots: async (params) => {
     set({ isLoading: true });
     try {
-      let filter = "";
-
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
         const sw = params.bounds.getSouthWest();
-        filter += `lat >= ${sw.lat} && lat <= ${ne.lat} && lng >= ${sw.lng} && lng <= ${ne.lng}`;
-      }
+        const { data, error } = await supabase.rpc("get_spots_in_bounding_box", {
+          min_lat: sw.lat,
+          min_long: sw.lng,
+          max_lat: ne.lat,
+          max_long: ne.lng,
+        });
 
-      const { data, error } = await supabase.rpc("get_spots_in_bounding_box", {
-        min_lat: params?.bounds?.getSouthWest().lat!,
-        min_long: params?.bounds?.getSouthWest().lng!,
-        max_lat: params?.bounds?.getNorthEast().lat!,
-        max_long: params?.bounds?.getNorthEast().lng!,
-      });
-
-      if (error) {
-        console.error("Error fetching spots:", error);
-        return;
+        if (error) {
+          console.error("Error fetching spots:", error);
+          return;
+        }
+        set({ spots: data as Spot[], isLoading: false });
       }
-      set({ spots: data as Spot[], isLoading: false });
     } catch (error) {
       console.error("Error fetching spots:", error);
       set({ isLoading: false });
     }
   },
-  debouncedFetchSpots: debounce((bounds: L.LatLngBounds | null) => {
+  debouncedFetchSpots: debounce((bounds: maplibregl.LngLatBounds | null) => {
     if (!bounds) return;
     get().fetchSpots({ bounds });
   }, 100),
   setSelectedSpot: (spot: Spot | null) => {
     set({ selectedSpot: spot });
     if (spot) {
-      set({ mapView: { center: [spot.lat!, spot.long!], zoom: 16 } });
+      const { mapInstance } = get();
+      if (mapInstance) {
+        mapInstance.flyTo({
+          center: [spot.long!, spot.lat!],
+          zoom: 16,
+          essential: true,
+        });
+      }
       get().fetchSpotEntrances(spot.spot_id!);
     } else {
       set({ selectedSpotEntrances: [] });
@@ -126,12 +129,12 @@ export const useStore = create<Store>((set, get) => ({
   closeSpotSheet: () => set({ isSheetOpen: false }),
 
   // Map actions
-  setMapInstance: (map: L.Map | null) => set({ mapInstance: map }),
+  setMapInstance: (map: maplibregl.Map | null) => set({ mapInstance: map }),
   setMapView: (view) => set({ mapView: view }),
-  fitBounds: (bounds: L.LatLngBounds) => {
+  fitBounds: (bounds: maplibregl.LngLatBounds) => {
     const { mapInstance } = get();
     if (mapInstance) {
-      mapInstance.fitBounds(bounds);
+      mapInstance.fitBounds(bounds, { padding: 50 });
     }
   },
 
@@ -141,7 +144,6 @@ export const useStore = create<Store>((set, get) => ({
 
   // New actions for entrances
   fetchSpotEntrances: async (spotId: number) => {
-    console.log(spotId)
     set({ isEntrancesLoading: true });
     try {
       const { data, error } = await supabase

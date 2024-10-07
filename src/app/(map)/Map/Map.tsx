@@ -39,7 +39,6 @@ function Map() {
       ]
     });
 
-
     map.current.on('load', () => {
       map.current?.addSource('detailedSpots', {
         type: 'vector',
@@ -52,7 +51,7 @@ function Map() {
         source: 'detailedSpots',
         'source-layer': 'detailed_spots_view',
         layout: {
-          'icon-image': 'coffee',
+          'icon-image': '{category_name}',
           'icon-size': 0.5,  // Reduced icon size for better clarity
           'icon-anchor': 'bottom',
           'text-field': '{name}',
@@ -74,34 +73,28 @@ function Map() {
       map.current?.on('click', 'detailed_spots_view', async (e) => {
         if (map.current) {
           map.current.getCanvas().style.cursor = 'pointer';
-          
           const geometry = e.features?.[0]?.geometry;
           if (geometry && 'coordinates' in geometry) {
-            const coordinates = geometry.coordinates.slice();
             const properties = e.features?.[0]?.properties ?? {};
             console.log(properties);
             const { data: spot, error } = await supabase
-            .from('spots')
+            .from('detailed_spots_view')
             .select('*')
-            .eq('id', properties.spot_id)
+            .eq('spot_id', properties.spot_id)
             .single();
-            console.log(spot);
             setSelectedSpot(spot);
-
           }
         }
       });
 
       setMapInstance(map.current);
       setIsMapLoaded(true);
-
-
     });
 
     return () => {
       map.current?.remove();
     };
-  }, [mapContainer, center, zoom]);
+  }, [mapContainer, center, zoom, setMapInstance, debouncedFetchSpots]);
 
   useEffect(() => {
     if (selectedSpot && map.current) {
