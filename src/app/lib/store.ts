@@ -59,7 +59,7 @@ export const useStore = create<Store>((set, get) => ({
   view: "both",
   isFilterOpen: false,
   isMobile: false,
-  isListCollapsed: false,
+  isListCollapsed: true,
   setView: (view) => set({ view }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) =>

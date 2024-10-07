@@ -16,7 +16,7 @@
       "type": "vector"
     }
   },
-  "glyphs": "http://localhost:8080/fonts/{fontstack}/{range}.pbf",
+  "glyphs": "http://localhost:3010/font/{fontstack}/{range}",
   "sprite": "http://localhost:8080/styles/OSM OpenMapTiles/sprite",
   "layers": [
     {
@@ -6900,8 +6900,7 @@
       "minzoom": 0,
       "layout": {
         "text-font": [
-          "Noto Sans Regular",
-          "Noto Sans Bold"
+          "Noto Sans Regular"
         ],
         "text-size": {
           "stops": [
@@ -6940,9 +6939,7 @@
       "minzoom": 0,
       "layout": {
         "text-font": [
-          "Noto Sans Regular",
-          "Noto Sans Bold"
-        ],
+          "Noto Sans Regular"        ],
         "text-size": 12,
         "text-field": "{name:latin}\n{name:nonlatin}",
         "visibility": "visible",
@@ -7374,8 +7371,7 @@
       "maxzoom": 12,
       "layout": {
         "text-font": [
-          "Noto Sans Regular",
-          "Noto Sans Bold"
+          "Noto Sans Regular"
         ],
         "text-size": {
           "stops": [
