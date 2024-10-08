@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import debounce from "lodash/debounce";
 import maplibregl from 'maplibre-gl';
-import { supabase } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 
 interface FetchParams {
@@ -95,6 +95,7 @@ export const useStore = create<Store>((set, get) => ({
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
         const sw = params.bounds.getSouthWest();
+        const supabase = createClient();
         const { data, error } = await supabase.rpc("get_spots_in_bounding_box", {
           min_lat: sw.lat,
           min_long: sw.lng,

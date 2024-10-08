@@ -5,7 +5,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '@/src/app/lib/store';
 import MapControls from './MapControls';
-import { supabase } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 
 function Map() {
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
@@ -17,6 +17,8 @@ function Map() {
   const defaultZoom = 6;
 
   const { center, zoom } = mapView;
+
+  const supabase = createClient();
 
   useEffect(() => {
     if (map.current || !mapContainer) return; // Initialize map only once when mapContainer is available

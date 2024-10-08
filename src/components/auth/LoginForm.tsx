@@ -9,7 +9,7 @@ import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { Separator } from '@/src/components/ui/separator'
 import { Lock, AlertTriangle } from 'lucide-react'
-import { supabase } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/client'
 import { Checkbox } from '@/src/components/ui/checkbox'
 import { useToast } from "@/src/hooks/use-toast"
 import {
@@ -36,6 +36,9 @@ export default function LoginForm() {
   const [emailExists, setEmailExists] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const [loginError, setLoginError] = useState<string | null>(null)
+
+  const supabase = createClient();
 
   // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -101,17 +104,14 @@ export default function LoginForm() {
 
   // Handle password login
   const handlePasswordLogin = async (values: z.infer<typeof formSchema>) => {
+    setLoginError(null) // Reset error state before attempting login
     const { error } = await supabase.auth.signInWithPassword({ 
       email: values.email, 
       password: values.password as string 
     })
     if (error) {
       console.error('Error logging in:', error)
-      toast({
-        title: "Fel vid inloggning",
-        description: "Det gick inte att logga in. Försök igen senare.",
-        variant: "destructive",
-      })
+      setLoginError("Felaktigt användarnamn eller lösenord")
     } else {
       router.push('/')
     }
@@ -264,6 +264,13 @@ export default function LoginForm() {
                 ? 'Logga in'
                 : 'Skicka länk till min e-postadress'}
           </Button>
+
+          {loginError && (
+            <div className="flex items-center mt-2 text-red-500">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              <span className="text-sm">{loginError}</span>
+            </div>
+          )}
         </form>
       </Form>
       <p className="text-xs text-muted-foreground mt-4">
