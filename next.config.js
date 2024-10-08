@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["pocketbase_8080-lkkw4kscw40os88cw4g4c808.135.181.108.171.sslip.io"],
+    domains: ["http://supabasekong-dgs0g8gwgs8s8kg08ss4k8gk.135.181.108.171.sslip.io"],
   },
 }
 
