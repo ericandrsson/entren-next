@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import debounce from "lodash/debounce";
 import maplibregl from 'maplibre-gl';
-import { supabase } from "@/src/lib/supabase";
+import { supabase } from '@/utils/supabase/server';
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 
 interface FetchParams {

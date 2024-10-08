@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <div className="flex flex-col h-screen">
           <Header />
-          {children}
+            {children}
           <footer className="w-full bg-white shadow-sm mt-auto">
             <div className="mx-auto px-4 py-4 flex justify-center items-center">
               <p className="text-sm text-gray-600">

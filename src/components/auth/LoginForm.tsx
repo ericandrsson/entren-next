@@ -6,9 +6,10 @@ import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { Separator } from '@/src/components/ui/separator'
 import { Lock, AlertTriangle } from 'lucide-react'
-import { supabase } from '@/src/lib/supabase'
+import { supabase } from '@/utils/supabase/server';
 import { Checkbox } from '@/src/components/ui/checkbox'
 import { useToast } from "@/src/hooks/use-toast"
+import { revalidatePath } from 'next/cache'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -40,7 +41,6 @@ export default function LoginForm() {
         setEmailExists(true)
         return
       }
-      console.log('Creating account:', email, password, subscribeNewsletter, acceptTerms)
       const { error } = await supabase.auth.signUp({ email, password })
       if (error) {
         console.error('Error creating account:', error)
@@ -50,21 +50,27 @@ export default function LoginForm() {
           variant: "destructive",
         })
       } else {
-        // Store the toast message in localStorage
         localStorage.setItem('accountCreatedToast', JSON.stringify({
           title: "Konto skapat",
           description: "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
           variant: "default",
         }))
-        // Redirect to the home page
         router.push('/')
       }
     } else if (showPassword) {
-      // Implement password login logic
-      console.log('Logging in with password:', email, password)
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        console.error('Error logging in:', error)
+        toast({
+          title: "Fel vid inloggning",
+          description: "Det gick inte att logga in. Försök igen senare.",
+          variant: "destructive",
+        })
+      } else {
+        router.push('/')
+      }
     } else {
-      // Implement OTP login logic
-      await signInWithOtp()
+      console.log("signing in with otp")
     }
   }
 

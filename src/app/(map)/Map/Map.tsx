@@ -5,7 +5,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '@/src/app/lib/store';
 import MapControls from './MapControls';
-import { supabase } from '@/src/lib/supabase';
+import { supabase } from '@/utils/supabase/server';
 
 function Map() {
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
