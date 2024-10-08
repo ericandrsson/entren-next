@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { Separator } from '@/src/components/ui/separator'
 import { Lock, AlertTriangle } from 'lucide-react'
 import { supabase } from '@/src/lib/supabase'
 import { Checkbox } from '@/src/components/ui/checkbox'
+import { useToast } from "@/src/hooks/use-toast"
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -16,6 +18,8 @@ export default function LoginForm() {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [emailExists, setEmailExists] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
 
   const checkEmailExists = async (email: string) => {
     try {
@@ -40,9 +44,20 @@ export default function LoginForm() {
       const { error } = await supabase.auth.signUp({ email, password })
       if (error) {
         console.error('Error creating account:', error)
+        toast({
+          title: "Fel vid skapande av konto",
+          description: "Det gick inte att skapa kontot. Försök igen senare.",
+          variant: "destructive",
+        })
       } else {
-        // Handle successful account creation
-        console.log('Account created successfully')
+        // Store the toast message in localStorage
+        localStorage.setItem('accountCreatedToast', JSON.stringify({
+          title: "Konto skapat",
+          description: "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
+          variant: "default",
+        }))
+        // Redirect to the home page
+        router.push('/')
       }
     } else if (showPassword) {
       // Implement password login logic
@@ -63,8 +78,18 @@ export default function LoginForm() {
       });
       if (error) throw error;
       console.log('OTP sign-in successful', data);
+      toast({
+        title: "Inloggningslänk skickad",
+        description: "Kolla din e-post för en länk att logga in med.",
+        variant: "default",
+      })
     } catch (error) {
       console.error('Error signing in with OTP:', error);
+      toast({
+        title: "Fel vid inloggning",
+        description: "Det gick inte att skicka inloggningslänken. Försök igen senare.",
+        variant: "destructive",
+      })
     }
   };
 

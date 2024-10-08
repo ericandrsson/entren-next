@@ -6,9 +6,11 @@ import ListContent from "./_components/ListContent";
 import MapView from "./(map)/Map/MapView";
 import ViewToggleButton from "@/src/app/_components/ViewToggleButton";
 import { useStore } from "@/src/app/lib/store";
+import { useToast } from "@/src/hooks/use-toast";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -19,6 +21,15 @@ export default function Page() {
 
     return () => window.removeEventListener("resize", checkIsMobile);
   }, [setIsMobile]);
+
+  useEffect(() => {
+    const storedToast = localStorage.getItem('accountCreatedToast');
+    if (storedToast) {
+      const toastData = JSON.parse(storedToast);
+      toast(toastData);
+      localStorage.removeItem('accountCreatedToast');
+    }
+  }, [toast]);
 
   return (
     <div className="flex flex-col h-screen">
