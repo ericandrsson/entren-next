@@ -34,7 +34,7 @@ type Store = {
   // Spot actions
   setSpots: (spots: Spot[]) => void;
   setIsLoading: (isLoading: boolean) => void;
-  fetchSpots: (params?: FetchParams) => Promise<void>;
+  fetchSpots: (params?: FetchParams) => Promise<Spot[]>;
   debouncedFetchSpots: (bounds: maplibregl.LngLatBounds | null) => void;
   setSelectedSpot: (spot: Spot | null) => void;
   openSpotSheet: (spot: Spot) => void;
@@ -52,6 +52,12 @@ type Store = {
   // New actions for entrances
   fetchSpotEntrances: (spotId: number) => Promise<void>;
   setSelectedSpotEntrances: (entrances: SpotEntrance[]) => void;
+
+  // New state for visible spots
+  visibleSpots: Spot[];
+
+  // New action for setting visible spots
+  setVisibleSpots: (spots: Spot[]) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
@@ -59,7 +65,7 @@ export const useStore = create<Store>((set, get) => ({
   view: "both",
   isFilterOpen: false,
   isMobile: false,
-  isListCollapsed: true,
+  isListCollapsed: false,
   setView: (view) => set({ view }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) =>
@@ -96,18 +102,22 @@ export const useStore = create<Store>((set, get) => ({
 
         if (error) {
           console.error("Error fetching spots:", error);
-          return;
+          return [];
         }
-        set({ spots: data as Spot[], isLoading: false });
+        const spots = data as Spot[];
+        set({ spots, isLoading: false });
+        return spots;
       }
     } catch (error) {
       console.error("Error fetching spots:", error);
-      set({ isLoading: false });
     }
+    set({ isLoading: false });
+    return [];
   },
-  debouncedFetchSpots: debounce((bounds: maplibregl.LngLatBounds | null) => {
+  debouncedFetchSpots: debounce(async (bounds: maplibregl.LngLatBounds | null) => {
     if (!bounds) return;
-    get().fetchSpots({ bounds });
+    const spots = await get().fetchSpots({ bounds });
+    get().setVisibleSpots(spots);
   }, 100),
   setSelectedSpot: (spot: Spot | null) => {
     set({ selectedSpot: spot });

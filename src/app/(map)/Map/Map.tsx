@@ -11,8 +11,20 @@ import { supabase } from '@/src/lib/supabase';
 function Map() {
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const { mapView, debouncedFetchSpots, selectedSpot, setSelectedSpot, view, setMapInstance } = useStore();
+  const { mapView, debouncedFetchSpots, selectedSpot, setSelectedSpot, setMapInstance } = useStore();
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [mapStyle, setMapStyle] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchMapStyle = async () => {
+      const response = await fetch('/api/map-style');
+      const style = await response.json();
+      console.log(style);
+      setMapStyle(style);
+    };
+
+    fetchMapStyle();
+  }, []);
 
   const defaultCenter: [number, number] = [57.0, 15.0]; // Slightly south of the center of Sweden
   const defaultZoom = 6;
@@ -24,7 +36,7 @@ function Map() {
 
     map.current = new maplibregl.Map({
       container: mapContainer,
-      style: 'http://localhost:3000/map/style/style.json', // style URL
+      style: mapStyle, // style URL
       center: center || defaultCenter,
       zoom: zoom || defaultZoom,
       minZoom: 4,
@@ -105,6 +117,28 @@ function Map() {
       });
     }
   }, [selectedSpot]);
+
+  useEffect(() => {
+    if (!map.current || !isMapLoaded) return;
+
+    const updateVisibleSpots = () => {
+      const bounds = map.current?.getBounds();
+      if (bounds) {
+        debouncedFetchSpots(bounds);
+      }
+    };
+
+    map.current.on('moveend', updateVisibleSpots);
+    map.current.on('zoomend', updateVisibleSpots);
+
+    // Initial update
+    updateVisibleSpots();
+
+    return () => {
+      map.current?.off('moveend', updateVisibleSpots);
+      map.current?.off('zoomend', updateVisibleSpots);
+    };
+  }, [isMapLoaded, debouncedFetchSpots]);
 
   return (
     <div ref={setMapContainer} className="w-full h-full">
