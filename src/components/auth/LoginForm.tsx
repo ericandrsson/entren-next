@@ -1,25 +1,59 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { Separator } from '@/src/components/ui/separator'
-import { Lock } from 'lucide-react'
+import { Lock, AlertTriangle } from 'lucide-react'
 import { supabase } from '@/src/lib/supabase'
+import { Checkbox } from '@/src/components/ui/checkbox'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
-  const router = useRouter()
+  const [password, setPassword] = useState('')
+  const [formState, setFormState] = useState<'initial' | 'password' | 'create'>('initial')
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false)
+  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [emailExists, setEmailExists] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const checkEmailExists = async (email: string) => {
+    try {
+      const { data, error } = await supabase.rpc('email_exists', { email })
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error checking email:', error)
+      return false
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement email link sending logic
-    console.log('Sending login link to:', email)
+    if (formState === 'create') {    
+      const exists = await checkEmailExists(email)
+      if (exists) {
+        setEmailExists(true)
+        return
+      }
+      console.log('Creating account:', email, password, subscribeNewsletter, acceptTerms)
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) {
+        console.error('Error creating account:', error)
+      } else {
+        // Handle successful account creation
+        console.log('Account created successfully')
+      }
+    } else if (showPassword) {
+      // Implement password login logic
+      console.log('Logging in with password:', email, password)
+    } else {
+      // Implement OTP login logic
+      await signInWithOtp()
+    }
   }
 
   const signInWithOtp = async () => {
-    // TODO: Implement OTP login logic
     try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
@@ -28,37 +62,106 @@ export default function LoginForm() {
         },
       });
       if (error) throw error;
-      // Handle successful OTP sign-in
       console.log('OTP sign-in successful', data);
     } catch (error) {
       console.error('Error signing in with OTP:', error);
-      // Handle error (e.g., show error message to user)
     }
   };
 
+  const togglePasswordLogin = () => {
+    setShowPassword(!showPassword)
+    setFormState(showPassword ? 'initial' : 'password')
+  }
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+    setEmailExists(false)
+  }
+
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold text-primary mb-6">Logga in</h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Fyll i dina inloggningsuppgifter
-      </p>
+      <h2 className="text-2xl font-bold text-primary mb-6">
+        {formState === 'create' ? 'Skapa konto på Entren' : 'Logga in'}
+      </h2>
+      {!showPassword && formState !== 'create' && (
+        <>
+          <p className="text-sm text-muted-foreground mb-2">Fyll i dina inloggningsuppgifter</p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Logga in eller skapa konto utan lösenord - fyll i din e-postadress så skickar vi en länk.
+          </p>
+        </>
+      )}
+      {(showPassword || formState === 'create') && (
+        <p className="text-sm text-muted-foreground mb-4">
+          {formState === 'create' ? 'Fyll i dina uppgifter' : 'Fyll i dina inloggningsuppgifter'}
+        </p>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
-            E-post
+            {formState === 'create' ? 'E-postadress' : 'E-post'}
           </label>
           <Input
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="din@epost.se"
+            onChange={handleEmailChange}
             required
-            className="mt-1"
+            className={`bg-white mt-1 ${emailExists ? 'border-red-500' : ''}`}
           />
+          {emailExists && (
+            <div className="flex items-center mt-2 text-red-500">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              <span className="text-sm">E-postadressen finns redan registrerad.</span>
+            </div>
+          )}
         </div>
-        <Button type="submit" className="w-full bg-primary text-primary-foreground" onClick={signInWithOtp}>
-          Skicka länk till min e-postadress
+        {(showPassword || formState === 'create') && (
+          <div>
+            <label htmlFor="password" className="text-sm font-medium text-muted-foreground">
+              {formState === 'create' ? 'Välj lösenord' : 'Lösenord'}
+            </label>
+            <Input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="bg-white mt-1"
+            />
+          </div>
+        )}
+        {formState === 'create' && (
+          <>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="newsletter"
+                checked={subscribeNewsletter}
+                onCheckedChange={(checked) => setSubscribeNewsletter(checked as boolean)}
+              />
+              <label htmlFor="newsletter" className="text-sm text-muted-foreground">
+                Ja tack! Jag vill prenumerera på Entrens nyhetsbrev och få personanpassat innehåll och relevanta erbjudanden från Entren och dess partners, i enlighet med Entrens personuppgiftspolicy.
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="terms"
+                checked={acceptTerms}
+                onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                required
+              />
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
+                Jag godkänner användarvillkor för Entrenkonto
+              </label>
+            </div>
+          </>
+        )}
+        <Button type="submit" className="w-full bg-primary text-primary-foreground">
+          {formState === 'create' 
+            ? 'Skapa konto' 
+            : showPassword 
+              ? 'Logga in'
+              : 'Skicka länk till min e-postadress'}
         </Button>
       </form>
       <p className="text-xs text-muted-foreground mt-4">
@@ -87,11 +190,32 @@ export default function LoginForm() {
       <Button
         variant="outline"
         className="bg-white text-primary w-full mt-3 flex items-center justify-center shadow-lg"
-        onClick={() => router.push('/login-password')}
+        onClick={togglePasswordLogin}
       >
         <Lock className="h-4 w-4 mr-2" />
-        Logga in med lösenord
+        {showPassword ? 'Logga in utan lösenord' : 'Logga in med lösenord'}
       </Button>
+      {formState !== 'create' && (
+        <Button
+          variant="link"
+          className="w-full mt-3"
+          onClick={() => setFormState('create')}
+        >
+          Skapa konto
+        </Button>
+      )}
+      {formState === 'create' && (
+        <Button
+          variant="link"
+          className="w-full mt-3"
+          onClick={() => {
+            setFormState('initial')
+            setShowPassword(false)
+          }}
+        >
+          Jag har redan ett konto
+        </Button>
+      )}
       <p className="text-xs text-center text-muted-foreground mt-6">
         Så hanterar vi dina{' '}
         <a href="#" className="text-primary hover:underline">

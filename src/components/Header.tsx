@@ -8,9 +8,11 @@ export default function Header() {
         <Link href="/" className="text-2xl font-bold text-primary">
           Entren
         </Link>
-        <Button variant="default" className="text-white">
-          Logga in
-        </Button>
+        <Link href="/login">
+          <Button variant="default" className="text-white">
+            Logga in
+          </Button>
+        </Link>
       </div>
     </header>
   );

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@/src/styles/global.css";
-import "leaflet/dist/leaflet.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import CookieBanner from "./_components/CookieBanner";
 import Header  from "../components/Header";
