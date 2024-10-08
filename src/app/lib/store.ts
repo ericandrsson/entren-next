@@ -157,6 +157,7 @@ export const useStore = create<Store>((set, get) => ({
 
   // New actions for entrances
   fetchSpotEntrances: async (spotId: number) => {
+    const supabase = createClient();
     set({ isEntrancesLoading: true });
     try {
       const { data, error } = await supabase
@@ -168,7 +169,6 @@ export const useStore = create<Store>((set, get) => ({
         console.error("Error fetching spot entrances:", error);
         return;
       }
-      console.log(data);
       set({ selectedSpotEntrances: data as SpotEntrance[], isEntrancesLoading: false });
     } catch (error) {
       console.error("Error fetching spot entrances:", error);

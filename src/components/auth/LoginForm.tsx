@@ -1,5 +1,5 @@
 'use client'
-
+import { revalidatePath } from 'next/cache'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -98,6 +98,7 @@ export default function LoginForm() {
         description: "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
         variant: "default",
       }))
+      revalidatePath('/')
       router.push('/')
     }
   }
