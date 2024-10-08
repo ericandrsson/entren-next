@@ -3,104 +3,51 @@
 @tailwind utilities;
 
 @layer base {
+
   :root  {
-    --background: 357 0% 95%;
-    --foreground: 357 0% 10%;
-    --card: 357 0% 90%;
-    --card-foreground: 357 0% 15%;
-    --popover: 357 0% 95%;
-    --popover-foreground: 357 95% 10%;
-    --primary: 357 96.1% 69.8%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 357 10% 70%;
+    --background: 357 100% 95%;
+    --foreground: 357 5% 0%;
+    --card: 357 50% 90%;
+    --card-foreground: 357 5% 10%;
+    --popover: 357 100% 95%;
+    --popover-foreground: 357 100% 0%;
+    --primary: 357 60.9% 57.8%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 357 30% 70%;
     --secondary-foreground: 0 0% 0%;
-    --muted: 319 10% 85%;
-    --muted-foreground: 357 0% 40%;
-    --accent: 319 10% 80%;
-    --accent-foreground: 357 0% 15%;
-    --destructive: 0 50% 49%;
-    --destructive-foreground: 357 0% 90%;
-    --border: 357 20% 50%;
-    --input: 357 20% 49%;
-    --ring: 357 96.1% 69.8%;
+    --muted: 319 30% 85%;
+    --muted-foreground: 357 5% 35%;
+    --accent: 319 30% 80%;
+    --accent-foreground: 357 5% 10%;
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 357 5% 90%;
+    --border: 357 30% 50%;
+    --input: 357 30% 80%;
+    --ring: 357 60.9% 57.8%;
     --radius: 0.5rem;
   }
   .dark  {
-    --background: 357 10% 10%;
-    --foreground: 357 0% 90%;
-    --card: 357 0% 10%;
-    --card-foreground: 357 0% 90%;
-    --popover: 357 10% 5%;
-    --popover-foreground: 357 0% 90%;
-    --primary: 357 96.1% 69.8%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 357 10% 20%;
+    --background: 357 50% 5%;
+    --foreground: 357 5% 90%;
+    --card: 357 50% 0%;
+    --card-foreground: 357 5% 90%;
+    --popover: 357 50% 5%;
+    --popover-foreground: 357 5% 90%;
+    --primary: 357 60.9% 57.8%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 357 30% 10%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 319 10% 25%;
-    --muted-foreground: 357 0% 60%;
-    --accent: 319 10% 25%;
-    --accent-foreground: 357 0% 90%;
-    --destructive: 0 50% 49%;
-    --destructive-foreground: 357 0% 90%;
-    --border: 357 20% 49%;
-    --input: 357 20% 49%;
-    --ring: 357 96.1% 69.8%;
+    --muted: 319 30% 15%;
+    --muted-foreground: 357 5% 60%;
+    --accent: 319 30% 15%;
+    --accent-foreground: 357 5% 90%;
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 357 5% 90%;
+    --border: 357 30% 18%;
+    --input: 357 30% 18%;
+    --ring: 357 60.9% 57.8%;
     --radius: 0.5rem;
   }
   
-}
-
-/* Add this at the end of the file */
-.cursor-pointer-map {
-  cursor: pointer;
-}
-
-.leaflet-pane {
-  z-index: 1;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 10;
-}
-
-[data-radix-popper-content-wrapper] {
-  z-index: 1000 !important;
-}
-
-.custom-popup .leaflet-popup-content-wrapper {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.custom-popup .leaflet-popup-content {
-  margin: 0;
-  padding: 0;
-}
-
-/* Add this new class */
-.leaflet-grab {
-  cursor: pointer;
-}
-
-/* Add this new class */
-.leaflet-dragging .leaflet-grab {
-  cursor: grabbing;
-  cursor: -moz-grabbing;
-  cursor: -webkit-grabbing;
-}
-
-/* Cursor styles for Leaflet map */
-.leaflet-container {
-  cursor: default !important;
-}
-
-.leaflet-dragging .leaflet-container {
-  cursor: grabbing !important;
-}
-
-.leaflet-clickable {
-  cursor: pointer !important;
+  
 }

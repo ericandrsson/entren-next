@@ -4,7 +4,7 @@ import "@/src/styles/global.css";
 import "leaflet/dist/leaflet.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import CookieBanner from "./_components/CookieBanner";
-import { Header } from "./_components/Header";
+import Header  from "../components/Header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

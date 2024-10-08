@@ -10,7 +10,6 @@ interface LocationButtonProps {
 }
 
 function LocationButton({ map }: LocationButtonProps) {
-  console.log(map)
   return (
     <Button
       onClick={() => {}}

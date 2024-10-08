@@ -167,6 +167,7 @@ export const useStore = create<Store>((set, get) => ({
         console.error("Error fetching spot entrances:", error);
         return;
       }
+      console.log(data);
       set({ selectedSpotEntrances: data as SpotEntrance[], isEntrancesLoading: false });
     } catch (error) {
       console.error("Error fetching spot entrances:", error);
