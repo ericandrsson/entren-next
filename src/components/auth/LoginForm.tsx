@@ -2,26 +2,53 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { Separator } from '@/src/components/ui/separator'
 import { Lock, AlertTriangle } from 'lucide-react'
-import { supabase } from '@/utils/supabase/server';
+import { supabase } from '@/utils/supabase/server'
 import { Checkbox } from '@/src/components/ui/checkbox'
 import { useToast } from "@/src/hooks/use-toast"
-import { revalidatePath } from 'next/cache'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/src/components/ui/form"
+
+// Define the form schema
+const formSchema = z.object({
+  email: z.string().email({ message: "Ogiltig e-postadress" }),
+  password: z.string().min(6, { message: "Lösenord måste vara minst 6 tecken" }).optional(),
+  subscribeNewsletter: z.boolean().optional(),
+  acceptTerms: z.boolean().optional(),
+})
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [formState, setFormState] = useState<'initial' | 'password' | 'create'>('initial')
-  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false)
-  const [acceptTerms, setAcceptTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [emailExists, setEmailExists] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
+  // Initialize the form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      subscribeNewsletter: false,
+      acceptTerms: false,
+    },
+  })
+
+  // Check if email exists
   const checkEmailExists = async (email: string) => {
     try {
       const { data, error } = await supabase.rpc('email_exists', { email })
@@ -33,51 +60,68 @@ export default function LoginForm() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (formState === 'create') {    
-      const exists = await checkEmailExists(email)
-      if (exists) {
-        setEmailExists(true)
-        return
-      }
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) {
-        console.error('Error creating account:', error)
-        toast({
-          title: "Fel vid skapande av konto",
-          description: "Det gick inte att skapa kontot. Försök igen senare.",
-          variant: "destructive",
-        })
-      } else {
-        localStorage.setItem('accountCreatedToast', JSON.stringify({
-          title: "Konto skapat",
-          description: "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
-          variant: "default",
-        }))
-        router.push('/')
-      }
+  // Handle form submission
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (formState === 'create') {
+      await handleSignUp(values)
     } else if (showPassword) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) {
-        console.error('Error logging in:', error)
-        toast({
-          title: "Fel vid inloggning",
-          description: "Det gick inte att logga in. Försök igen senare.",
-          variant: "destructive",
-        })
-      } else {
-        router.push('/')
-      }
+      await handlePasswordLogin(values)
     } else {
-      console.log("signing in with otp")
+      await handleOtpLogin(values)
     }
   }
 
-  const signInWithOtp = async () => {
+  // Handle sign up
+  const handleSignUp = async (values: z.infer<typeof formSchema>) => {
+    const exists = await checkEmailExists(values.email)
+    if (exists) {
+      setEmailExists(true)
+      return
+    }
+    const { error } = await supabase.auth.signUp({ 
+      email: values.email, 
+      password: values.password as string 
+    })
+    if (error) {
+      console.error('Error creating account:', error)
+      toast({
+        title: "Fel vid skapande av konto",
+        description: "Det gick inte att skapa kontot. Försök igen senare.",
+        variant: "destructive",
+      })
+    } else {
+      localStorage.setItem('accountCreatedToast', JSON.stringify({
+        title: "Konto skapat",
+        description: "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
+        variant: "default",
+      }))
+      router.push('/')
+    }
+  }
+
+  // Handle password login
+  const handlePasswordLogin = async (values: z.infer<typeof formSchema>) => {
+    const { error } = await supabase.auth.signInWithPassword({ 
+      email: values.email, 
+      password: values.password as string 
+    })
+    if (error) {
+      console.error('Error logging in:', error)
+      toast({
+        title: "Fel vid inloggning",
+        description: "Det gick inte att logga in. Försök igen senare.",
+        variant: "destructive",
+      })
+    } else {
+      router.push('/')
+    }
+  }
+
+  // Handle OTP login
+  const handleOtpLogin = async (values: z.infer<typeof formSchema>) => {
     try {
       const { data, error } = await supabase.auth.signInWithOtp({
-        email: email,
+        email: values.email,
         options: {
           emailRedirectTo: "/",
         },
@@ -97,16 +141,12 @@ export default function LoginForm() {
         variant: "destructive",
       })
     }
-  };
+  }
 
+  // Toggle password login
   const togglePasswordLogin = () => {
     setShowPassword(!showPassword)
     setFormState(showPassword ? 'initial' : 'password')
-  }
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    setEmailExists(false)
   }
 
   return (
@@ -127,74 +167,105 @@ export default function LoginForm() {
           {formState === 'create' ? 'Fyll i dina uppgifter' : 'Fyll i dina inloggningsuppgifter'}
         </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
-            {formState === 'create' ? 'E-postadress' : 'E-post'}
-          </label>
-          <Input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-            className={`bg-white mt-1 ${emailExists ? 'border-red-500' : ''}`}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>E-postadress</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    type="email" 
+                    className={`bg-white ${emailExists ? 'border-red-500' : ''}`}
+                  />
+                </FormControl>
+                {emailExists && (
+                  <div className="flex items-center mt-2 text-red-500">
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <span className="text-sm">E-postadressen finns redan registrerad.</span>
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {emailExists && (
-            <div className="flex items-center mt-2 text-red-500">
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              <span className="text-sm">E-postadressen finns redan registrerad.</span>
-            </div>
-          )}
-        </div>
-        {(showPassword || formState === 'create') && (
-          <div>
-            <label htmlFor="password" className="text-sm font-medium text-muted-foreground">
-              {formState === 'create' ? 'Välj lösenord' : 'Lösenord'}
-            </label>
-            <Input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="bg-white mt-1"
+
+          {(showPassword || formState === 'create') && (
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{formState === 'create' ? 'Välj lösenord' : 'Lösenord'}</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" className="bg-white" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        )}
-        {formState === 'create' && (
-          <>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="newsletter"
-                checked={subscribeNewsletter}
-                onCheckedChange={(checked) => setSubscribeNewsletter(checked as boolean)}
+          )}
+
+          {formState === 'create' && (
+            <>
+              <FormField
+                control={form.control}
+                name="subscribeNewsletter"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Ja tack! Jag vill prenumerera på Entrens nyhetsbrev
+                      </FormLabel>
+                      <FormDescription>
+                        Få personanpassat innehåll och relevanta erbjudanden från Entren och dess partners, i enlighet med Entrens personuppgiftspolicy.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
               />
-              <label htmlFor="newsletter" className="text-sm text-muted-foreground">
-                Ja tack! Jag vill prenumerera på Entrens nyhetsbrev och få personanpassat innehåll och relevanta erbjudanden från Entren och dess partners, i enlighet med Entrens personuppgiftspolicy.
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={acceptTerms}
-                onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-                required
+
+              <FormField
+                control={form.control}
+                name="acceptTerms"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        required
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Jag godkänner användarvillkor för Entrenkonto
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
               />
-              <label htmlFor="terms" className="text-sm text-muted-foreground">
-                Jag godkänner användarvillkor för Entrenkonto
-              </label>
-            </div>
-          </>
-        )}
-        <Button type="submit" className="w-full bg-primary text-primary-foreground">
-          {formState === 'create' 
-            ? 'Skapa konto' 
-            : showPassword 
-              ? 'Logga in'
-              : 'Skicka länk till min e-postadress'}
-        </Button>
-      </form>
+            </>
+          )}
+
+          <Button type="submit" className="w-full bg-primary text-primary-foreground">
+            {formState === 'create' 
+              ? 'Skapa konto' 
+              : showPassword 
+                ? 'Logga in'
+                : 'Skicka länk till min e-postadress'}
+          </Button>
+        </form>
+      </Form>
       <p className="text-xs text-muted-foreground mt-4">
         Genom att använda tjänsten godkänner du{' '}
         <a href="#" className="text-primary hover:underline">
