@@ -5,7 +5,6 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '@/src/app/lib/store';
 import MapControls from './MapControls';
-import { Spot } from '@/src/types/custom.types';
 import { supabase } from '@/src/lib/supabase';
 
 function Map() {
@@ -13,18 +12,6 @@ function Map() {
   const map = useRef<maplibregl.Map | null>(null);
   const { mapView, debouncedFetchSpots, selectedSpot, setSelectedSpot, setMapInstance } = useStore();
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [mapStyle, setMapStyle] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchMapStyle = async () => {
-      const response = await fetch('/api/map-style');
-      const style = await response.json();
-      console.log(style);
-      setMapStyle(style);
-    };
-
-    fetchMapStyle();
-  }, []);
 
   const defaultCenter: [number, number] = [57.0, 15.0]; // Slightly south of the center of Sweden
   const defaultZoom = 6;
@@ -36,7 +23,16 @@ function Map() {
 
     map.current = new maplibregl.Map({
       container: mapContainer,
-      style: mapStyle, // style URL
+      style: '/api/map-style', // Points to the dynamic style API route
+      transformRequest: (url, resourceType) => {
+        if (resourceType === 'Style' && url.startsWith('/api/map-style')) {
+          return {
+            url,
+            headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}` },
+          };
+        }
+        return { url };
+      },
       center: center || defaultCenter,
       zoom: zoom || defaultZoom,
       minZoom: 4,
@@ -54,7 +50,7 @@ function Map() {
     map.current.on('load', () => {
       map.current?.addSource('detailedSpots', {
         type: 'vector',
-        url: 'http://localhost:3010/detailed_spots_view',
+        url: 'http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io//detailed_spots_view',
       });
       
       map.current?.addLayer({
@@ -80,6 +76,45 @@ function Map() {
           'text-halo-color': 'rgba(255, 255, 255, 0.75)'
         }
       });
+
+
+      map.current?.addSource('local_sweden_osm_poi', {
+        type: 'vector',
+        url: 'http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io/local_sweden_osm_poi',
+      });
+
+      map.current?.addLayer({
+        id: 'local_sweden_osm_poi_circle',
+        type: 'circle',
+        source: 'local_sweden_osm_poi',
+        'source-layer': 'local_sweden_osm_poi',
+        paint: {
+          'circle-color': 'red',
+          'circle-radius': 5,
+          'circle-opacity': 0.3
+        },
+        minzoom: 10 // Only show when zoomed in
+      });
+
+      map.current?.addLayer({
+        id: 'local_sweden_osm_poi',
+        type: 'symbol',
+        source: 'local_sweden_osm_poi',
+        'source-layer': 'local_sweden_osm_poi',
+        layout: {
+          'text-field': '{name}',
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 12,
+          'text-offset': [0, 0.1],
+          'text-anchor': 'top',
+        },
+        paint: {
+          'text-color': 'rgba(255, 0, 0, 0.5)',
+          'text-halo-width': 1,
+          'text-halo-color': 'rgba(255, 255, 255, 0.5)'
+        },
+        minzoom: 10 // Only show when zoomed in
+      });
       
       
       map.current?.on('click', 'detailed_spots_view', async (e) => {
@@ -88,8 +123,7 @@ function Map() {
           const geometry = e.features?.[0]?.geometry;
           if (geometry && 'coordinates' in geometry) {
             const properties = e.features?.[0]?.properties ?? {};
-            console.log(properties);
-            const { data: spot, error } = await supabase
+            const { data: spot } = await supabase
             .from('detailed_spots_view')
             .select('*')
             .eq('spot_id', properties.spot_id)
@@ -102,6 +136,9 @@ function Map() {
       setMapInstance(map.current);
       setIsMapLoaded(true);
     });
+
+
+
 
     return () => {
       map.current?.remove();

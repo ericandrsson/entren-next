@@ -36,7 +36,7 @@ export default function ListContent() {
             : "Inga platser hittades i det aktuella kartområdet. Zooma ut eller flytta kartan för att se fler platser."}
         </p>
       ) : (
-        spots.map((spot) => <SpotCard key={spot.id} spot={spot} />)
+        spots.map((spot) => <SpotCard key={spot.spot_id} spot={spot} />)
       )}
     </div>
   );

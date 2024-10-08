@@ -3,16 +3,14 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/src/components/ui/input";
 import FilterButton from "./FilterButton";
-import { Spot } from "@/src/types";
+
 import { useDebounce } from "@/src/app/lib/hooks";
-import { useStore } from "@/src/app/lib/store";
-import { pb } from "@/src/lib/pocketbase";
+import { Spot } from "@/src/types/custom.types";
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Spot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { setMapView } = useStore();
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   async function handleSearch(term: string) {
@@ -23,27 +21,7 @@ export default function SearchBar() {
 
     setIsLoading(true);
     try {
-      const resultList = await pb.collection("spots").getList(1, 10, {
-        filter: `name ~ "${term}" || description ~ "${term}"`,
-        sort: "-created",
-      });
-      setSearchResults(
-        resultList.items.map(
-          (item) =>
-            ({
-              id: item.id,
-              name: item.name,
-              lat: item.lat,
-              lng: item.lng,
-              category: item.category,
-              created: item.created,
-              description: item.description,
-              user: item.user,
-              isVerified: item.isVerified,
-              image: item.image,
-            } as Spot)
-        )
-      );
+      setSearchResults([]);
     } catch (error) {
       console.error("Error searching spots:", error);
       setSearchResults([]);
@@ -53,7 +31,7 @@ export default function SearchBar() {
   }
 
   function handleSelectSpot(spot: Spot) {
-    setMapView({ center: [spot.lat, spot.long], zoom: 16 });
+    console.log(spot);
     setSearchTerm("");
     setSearchResults([]);
     //openSpotSheet(spot);
@@ -83,7 +61,7 @@ export default function SearchBar() {
         <ul className="absolute top-full left-0 right-0 bg-white shadow-md mt-1 max-h-60 overflow-y-auto">
           {searchResults.map((spot) => (
             <li
-              key={spot.id}
+              key={spot.spot_id}
               className="p-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => handleSelectSpot(spot)}
             >

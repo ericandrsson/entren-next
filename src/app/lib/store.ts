@@ -16,6 +16,7 @@ type Store = {
   isMobile: boolean;
   isListCollapsed: boolean;
   setView: (view: "list" | "map" | "both") => void;
+  setVisibleSpots: (spots: Spot[]) => void; // Add this line
   setIsFilterOpen: (isOpen: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
   setIsListCollapsed: (isCollapsed: boolean) => void;
@@ -57,7 +58,6 @@ type Store = {
   visibleSpots: Spot[];
 
   // New action for setting visible spots
-  setVisibleSpots: (spots: Spot[]) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
@@ -66,7 +66,9 @@ export const useStore = create<Store>((set, get) => ({
   isFilterOpen: false,
   isMobile: false,
   isListCollapsed: false,
+  visibleSpots: [], // Add this line
   setView: (view) => set({ view }),
+  setVisibleSpots: (spots) => set({ visibleSpots: spots }), // Add this line
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) =>
     set({ isMobile, view: isMobile ? "list" : "both" }),
@@ -117,7 +119,7 @@ export const useStore = create<Store>((set, get) => ({
   debouncedFetchSpots: debounce(async (bounds: maplibregl.LngLatBounds | null) => {
     if (!bounds) return;
     const spots = await get().fetchSpots({ bounds });
-    get().setVisibleSpots(spots);
+    set({ visibleSpots: spots }); // Use set directly instead of get().setVisibleSpots
   }, 100),
   setSelectedSpot: (spot: Spot | null) => {
     set({ selectedSpot: spot });

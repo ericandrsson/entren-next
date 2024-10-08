@@ -42,4 +42,6 @@ certificates
 /node_modules
 /.next/
 /out/
-osm_martin_setup/tiles/*
+
+openmaptiles_tiles/
+osm_postgis_setup/

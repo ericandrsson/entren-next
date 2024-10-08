@@ -1,18 +1,28 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import path from 'path';
+import { promises as fs } from 'fs';
 
-import tiles from '@/public/map/style/tiles.json';
-import mapStyle from '@/public/map/style/style.json';
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('authorization');
+  const token = authHeader && authHeader.split(' ')[1];
 
-export async function GET() {
-  const modifiedTiles = JSON.parse(JSON.stringify(tiles));
-  const modifiedStyle = JSON.parse(JSON.stringify(mapStyle));
+  // Validate the token (replace 'your-secret-token' with your actual token or validation logic)
+  if (!token || token !== process.env.NEXT_PUBLIC_AUTH_TOKEN) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  // Replace placeholders with environment variables
-  modifiedTiles.tiles = [process.env.NEXT_PUBLIC_BASE_TILES_URL || ''];
-  console.log(modifiedTiles.tiles);
-  modifiedStyle.sources.openmaptiles.url = modifiedTiles.url;
-  modifiedStyle.glyphs = process.env.NEXT_PUBLIC_GLYPHS_URL || '';
-  modifiedStyle.sprite = process.env.NEXT_PUBLIC_SPRITE_URL || '';
+  const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+  const tileServerUrl = process.env.NEXT_PUBLIC_TILE_SERVER_URL || 'http://localhost:3000';
+
+  // Load the style.json template from the server-only directory
+  const tilesJsonPath = path.join(process.cwd(), 'src', 'lib', 'map', 'style.json');
+  const styleJsonContent = await fs.readFile(tilesJsonPath, 'utf8');
+  const modifiedStyle = JSON.parse(styleJsonContent);
+
+  // Modify the style object
+  modifiedStyle.sources.openmaptiles.url = `${baseUrl}/api/map-tiles`;
+  modifiedStyle.glyphs = `${tileServerUrl}/font/{fontstack}/{range}`;
+  modifiedStyle.sprite = `${tileServerUrl}/sprite/sprites`;
 
   return NextResponse.json(modifiedStyle);
 }

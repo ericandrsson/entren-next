@@ -1,7 +1,5 @@
 {
-    "tiles": [
-      "http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io/sweden/{z}/{x}/{y}"
-    ],
+    "tiles": [""],
     "name": "OpenMapTiles",
     "format": "pbf",
     "basename": "tiles.mbtiles",

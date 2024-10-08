@@ -16,8 +16,8 @@
       "type": "vector"
     }
   },
-  "glyphs": "http://localhost:3010/font/{fontstack}/{range}",
-  "sprite": "http://localhost:3010/sprite/sprites",
+  "glyphs": "http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io/font/{fontstack}/{range}",
+  "sprite": "http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io/sprite/sprites",
   "layers": [
     {
       "id": "background",
