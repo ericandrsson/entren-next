@@ -21,7 +21,7 @@ export default function MapView() {
       </div>
       // Conditionally render PlaceDetail on desktop when a spot is selected
       {!isMobile && selectedSpot && (
-        <div className="absolute bottom-4 left-4 z-10 max-w-sm">
+        <div className="absolute bottom-8 left-8 z-10 max-w-sm">
           <PlaceDetail />
         </div>
       )}

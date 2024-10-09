@@ -132,7 +132,7 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
           {place.verified && (
             <div className="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
               <Shield className="w-4 h-4 mr-1" />
-              <span>Verified by a user</span>
+              <span>Verified</span>
             </div>
           )}
         </div>
