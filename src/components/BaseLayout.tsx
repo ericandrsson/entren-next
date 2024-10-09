@@ -1,33 +1,30 @@
 import { Toaster } from "@/src/components/ui/toaster";
 import "@/src/styles/global.css";
-import type { Metadata } from "next";
 import localFont from "next/font/local";
-import CookieBanner from "../components/CookieBanner";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import CookieBanner from "./CookieBanner";
+import Footer from "./Footer";
+import Header from "./Header";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "../app/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "../app/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "Entren",
-  description:
-    "Entren is a platform for finding and sharing local events and places.",
-};
-
-export default function RootLayout({
-  children,
-}: {
+interface BaseLayoutProps {
   children: React.ReactNode;
-}) {
+  showFooter?: boolean;
+}
+
+export default function BaseLayout({
+  children,
+  showFooter = true,
+}: BaseLayoutProps) {
   return (
     <html lang="en">
       <head>
@@ -44,7 +41,7 @@ export default function RootLayout({
         <main className="flex-grow overflow-y-auto">{children}</main>
         <Toaster />
         <CookieBanner />
-        <Footer />
+        {showFooter && <Footer />}
       </body>
     </html>
   );
