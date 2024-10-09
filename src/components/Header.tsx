@@ -1,10 +1,17 @@
+"use client";
+
 import UserAuthButton from "@/src/components/auth/UserAuthButton";
 import Image from "next/image";
 import Link from "next/link";
+import { useHeader } from "../contexts/HeaderContext";
 
 export default function Header() {
+  const { isSticky } = useHeader();
+
   return (
-    <header className="w-full bg-background shadow-sm sticky top-0 z-50">
+    <header
+      className={`w-full bg-background shadow-sm z-50 ${isSticky ? "sticky top-0" : ""}`}
+    >
       <div className="mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <Image

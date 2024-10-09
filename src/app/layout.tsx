@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { HeaderProvider } from "../contexts/HeaderContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,19 +35,19 @@ export default function RootLayout({
         <meta name="theme-color" content="#f1f3f4" />
         <meta
           name="viewport"
-          content={
-            "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-          }
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <div className="flex flex-col h-screen">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
+      >
+        <HeaderProvider>
           <Header />
-          <main className="flex-grow overflow-hidden">{children}</main>
+          <main className="flex-grow overflow-y-auto">{children}</main>
           <Toaster />
           <CookieBanner />
           <Footer />
-        </div>
+        </HeaderProvider>
       </body>
     </html>
   );

@@ -24,6 +24,13 @@
     --input: 210 16% 95%; /* Input Background */
     --ring: 348 77% 60%; /* Energetic Red for focus rings */
     --radius: 0.5rem;
+
+    /* Footer Colors */
+    --footer-background: 348 77% 60%; /* Energetic Red */
+    --footer-foreground: 0 0% 100%; /* White Text for Footer */
+    --footer-link: 197 55% 70%; /* Sky Blue for Footer Links */
+    --footer-link-hover: 39 100% 63%; /* Sun Yellow on Link Hover */
+    --footer-border: 192 15% 80%; /* Soft Gray for Dividers/Borders */
   }
   .dark {
     --background: 210 28% 10%; /* Dark Navy Background */
@@ -46,5 +53,18 @@
     --input: 210 28% 20%; /* Input Background */
     --ring: 348 77% 60%; /* Energetic Red for focus */
     --radius: 0.5rem;
+
+    /* Dark Mode Footer Colors */
+    --footer-background: 210 28% 10%; /* Dark Navy Footer Background */
+    --footer-foreground: 192 15% 90%; /* Light Text for Footer */
+    --footer-link: 197 55% 70%; /* Sky Blue for Links in Footer */
+    --footer-link-hover: 39 100% 50%; /* Deep Orange for Link Hover */
+    --footer-border: 192 15% 40%; /* Muted Dark Gray for Footer Border */
+  }
+}
+
+@layer utilities {
+  .bg-footer-background {
+    background-color: var(--footer-background);
   }
 }
