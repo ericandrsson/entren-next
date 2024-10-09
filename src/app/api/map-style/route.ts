@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const tilesJsonPath = path.join(
     process.cwd(),
     "src",
-    "lib",
+    "libs",
     "map",
     "style.json",
   );

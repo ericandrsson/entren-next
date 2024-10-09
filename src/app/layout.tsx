@@ -39,10 +39,10 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <div className="flex flex-col h-screen">
           <Header />
-          {children}
-          <Footer />
+          <main className="flex-grow overflow-hidden">{children}</main>
           <Toaster />
           <CookieBanner />
+          <Footer />
         </div>
       </body>
     </html>

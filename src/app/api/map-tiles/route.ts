@@ -10,7 +10,7 @@ export async function GET() {
   const tilesJsonPath = path.join(
     process.cwd(),
     "src",
-    "lib",
+    "libs",
     "map",
     "tiles.json",
   );
