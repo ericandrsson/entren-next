@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/src/components/ui/button";
-import { cn } from "@/src/lib/utils";
+import { cn } from "@/src/libs/utils";
 import { CookieIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 

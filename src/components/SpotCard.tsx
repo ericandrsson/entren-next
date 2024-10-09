@@ -13,7 +13,7 @@ export default function SpotCard({ spot }: SpotCardProps) {
       className="flex bg-white shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300 w-full"
       onClick={() => openSpotSheet(spot)}
     >
-      <div className="relative w-1/3 h-32 flex-shrink-0 overflow-hidden">
+      <div className="w-1/3 h-32 flex-shrink-0 overflow-hidden">
         {/* Temporarily hiding the image
         <Image
           src={getSpotImageUrl(spot.image, spot.id) || "/placeholder.png"}
