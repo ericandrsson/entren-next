@@ -77,20 +77,22 @@ function Map() {
           "source-layer": "detailed_spots_view",
           layout: {
             "icon-image": "{category_name}",
-            "icon-size": 0.5, // Reduced icon size for better clarity
+            "icon-size": 0.65, // Slightly increased icon size for prominence
             "icon-anchor": "bottom",
             "text-field": "{name}",
             "text-font": ["Noto Sans Bold"],
-            "text-size": 12, // Reduced text size for better balance
+            "text-size": 14, // Slightly increased text size to enhance readability
             "text-offset": [0, 0.1],
             "text-anchor": "top",
             "icon-allow-overlap": true,
             "text-allow-overlap": true,
+            "text-padding": 2, // Adding text padding for more visual space around text
           },
           paint: {
-            "icon-opacity": 0.9, // Slightly reduce opacity to soften the icon
+            "icon-opacity": 1, // Set icon opacity to 1 to make it fully visible
             "text-halo-width": 1, // Add a halo to the text for better readability
             "text-halo-color": "rgba(255, 255, 255, 0.75)",
+            "text-color": "#348f50", // Choose a color from your theme for text to align with your branding (e.g., a green that complements other elements)
           },
         });
 
@@ -106,7 +108,7 @@ function Map() {
           "source-layer": "local_sweden_osm_poi",
           paint: {
             "circle-color": "red",
-            "circle-radius": 5,
+            "circle-radius": 10,
             "circle-opacity": 0.3,
           },
           minzoom: 10, // Only show when zoomed in
@@ -138,16 +140,34 @@ function Map() {
             const geometry = e.features?.[0]?.geometry;
             if (geometry && "coordinates" in geometry) {
               const properties = e.features?.[0]?.properties ?? {};
+              console.log(properties);
+              // Set icon size only for the clicked spot
+
               const { data: spot } = await supabase
                 .from("detailed_spots_view")
                 .select("*")
                 .eq("spot_id", properties.spot_id)
                 .single();
-              setSelectedSpot(spot);
+              console.log(spot);
+              if (spot) {
+                setSelectedSpot(spot);
+              }
             }
           }
         });
 
+        map.current?.on("click", "local_sweden_osm_poi", async (e) => {
+          console.log("local_sweden_osm_poi");
+          if (map.current) {
+            map.current.getCanvas().style.cursor = "pointer";
+            const geometry = e.features?.[0]?.geometry;
+            console.log(geometry);
+            if (geometry && "coordinates" in geometry) {
+              const properties = e.features?.[0]?.properties ?? {};
+              console.log(properties);
+            }
+          }
+        });
         setMapInstance(map.current);
         setIsMapLoaded(true);
 
@@ -160,6 +180,7 @@ function Map() {
       return () => {
         resizeObserver.disconnect();
         if (map.current) {
+          console.log("removing map");
           map.current.remove();
           map.current = null;
         }

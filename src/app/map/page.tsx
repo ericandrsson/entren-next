@@ -4,7 +4,7 @@ import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
-import ListContent from "../../components/ListContent";
+import ListView from "../../components/ListView";
 import MapView from "../../components/map/Map";
 import SearchBar from "../../components/SearchBar";
 
@@ -59,7 +59,7 @@ export default function Page() {
             ${!isMobile && "border-r"}`}
         >
           <div className="p-4">
-            <ListContent />
+            <ListView />
           </div>
         </div>
 

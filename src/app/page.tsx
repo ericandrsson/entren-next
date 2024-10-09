@@ -4,7 +4,7 @@ import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
-import ListContent from "../components/ListContent";
+import ListView from "../components/ListView";
 import MapView from "../components/map/Map";
 import SearchBar from "../components/SearchBar";
 
@@ -59,7 +59,7 @@ export default function Page() {
             ${!isMobile && "border-r"}`}
         >
           <div className="p-4">
-            <ListContent />
+            <ListView />
           </div>
         </div>
 
@@ -81,7 +81,7 @@ export default function Page() {
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10">
             <ViewToggleButton />
           </div>
         )}

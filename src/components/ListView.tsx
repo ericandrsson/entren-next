@@ -3,7 +3,7 @@ import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
 import SpotCard from "./SpotCard";
 
-export default function ListContent() {
+export default function ListView() {
   const spots = useStore((state) => state.spots);
   const isLoading = useStore((state) => state.isLoading);
   const view = useStore((state) => state.view);
@@ -20,7 +20,7 @@ export default function ListContent() {
   if (debouncedIsLoading) {
     return (
       <div className="space-y-4">
-        {[...Array(6)].map((_, index) => (
+        {[...Array(2)].map((_, index) => (
           <Skeleton key={index} className="h-40 w-full rounded-lg" />
         ))}
       </div>

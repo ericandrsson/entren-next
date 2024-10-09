@@ -61,7 +61,7 @@ export const useStore = create<Store>((set, get) => ({
   isStickyHeader: false,
   isFilterOpen: false,
   isMobile: false,
-  isListCollapsed: false,
+  isListCollapsed: true,
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
@@ -80,6 +80,8 @@ export const useStore = create<Store>((set, get) => ({
   setIsLoading: (isLoading) => set({ isLoading }),
   fetchSpots: async (params) => {
     set({ isLoading: true });
+    return;
+    [];
     try {
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
@@ -126,9 +128,16 @@ export const useStore = create<Store>((set, get) => ({
           center: [spot.long!, spot.lat!],
           zoom: 16,
           essential: true,
+          speed: 1,
         });
+        mapInstance.setLayoutProperty("detailed_spots_view", "icon-size", [
+          "case",
+          ["==", ["get", "spot_id"], spot.spot_id],
+          1, // Size for the clicked spot
+          0.65, // Default size for other spots
+        ]);
+        get().fetchSpotEntrances(spot.spot_id!);
       }
-      get().fetchSpotEntrances(spot.spot_id!);
     } else {
       set({ selectedSpotEntrances: [] });
     }
