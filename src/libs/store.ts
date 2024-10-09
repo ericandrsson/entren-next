@@ -1,4 +1,7 @@
 // Start of Selection
+import { registerMapEvents } from "@/src/libs/map/events";
+import { addDetailedSpotsLayer } from "@/src/libs/map/layers";
+import { addDetailedSpotsSource } from "@/src/libs/map/sources";
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
@@ -53,6 +56,9 @@ type Store = {
   // Visible spots
   visibleSpots: Spot[];
   setVisibleSpots: (spots: Spot[]) => void;
+
+  // New method for loading map sources and layers
+  onMapLoad: (map: maplibregl.Map) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
@@ -186,4 +192,16 @@ export const useStore = create<Store>((set, get) => ({
   // Visible spots
   visibleSpots: [],
   setVisibleSpots: (spots) => set({ visibleSpots: spots }),
+
+  onMapLoad: (map) => {
+    // Adds the sources and layers
+    console.log("onMapLoad");
+    addDetailedSpotsSource(map);
+    addDetailedSpotsLayer(map);
+    //addLocalSwedenOsmPoiSource(map);
+    //addLocalSwedenOsmPoiLayer(map);
+
+    // Registers map events such as click events on spots
+    registerMapEvents(map);
+  },
 }));

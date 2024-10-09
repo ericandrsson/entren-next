@@ -5,7 +5,7 @@ import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
 import ListView from "../components/ListView";
-import MapView from "../components/map/Map";
+import MapView from "../components/map/MapView";
 import SearchBar from "../components/SearchBar";
 
 export default function Page() {
