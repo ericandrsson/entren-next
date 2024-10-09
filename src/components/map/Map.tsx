@@ -1,6 +1,6 @@
 "use client";
 
-import { useStore } from "@/src/app/lib/store";
+import { useStore } from "@/src/libs/store";
 import { createClient } from "@/utils/supabase/client";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";

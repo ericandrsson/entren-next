@@ -1,5 +1,5 @@
-import { useStore } from "@/src/app/lib/store";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
 import SpotCard from "./SpotCard";
 

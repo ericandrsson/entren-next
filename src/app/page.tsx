@@ -1,8 +1,8 @@
 "use client";
 
-import { useStore } from "@/src/app/lib/store";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
+import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
 import ListContent from "../components/ListContent";
 import MapView from "../components/map/Map";

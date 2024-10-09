@@ -1,5 +1,5 @@
-import { useStore } from "@/src/app/lib/store";
 import { Button } from "@/src/components/ui/button";
+import { useStore } from "@/src/libs/store";
 import { List, MapPin } from "lucide-react";
 
 export default function ViewToggleButton() {

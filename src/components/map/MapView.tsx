@@ -1,6 +1,6 @@
-import { useStore } from "@/src/app/lib/store";
 import { Button } from "@/src/components/ui/button";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { useStore } from "@/src/libs/store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 

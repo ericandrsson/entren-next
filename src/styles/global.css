@@ -27,10 +27,6 @@
 
     /* Footer Colors */
     --footer-background: 348 77% 60%; /* Energetic Red */
-    --footer-foreground: 0 0% 100%; /* White Text for Footer */
-    --footer-link: 197 55% 70%; /* Sky Blue for Footer Links */
-    --footer-link-hover: 39 100% 63%; /* Sun Yellow on Link Hover */
-    --footer-border: 192 15% 80%; /* Soft Gray for Dividers/Borders */
   }
   .dark {
     --background: 210 28% 10%; /* Dark Navy Background */
@@ -78,11 +74,5 @@
   }
   h5 {
     @apply text-lg;
-  }
-}
-
-@layer utilities {
-  .bg-footer-background {
-    background-color: var(--footer-background);
   }
 }

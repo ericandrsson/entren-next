@@ -1,4 +1,4 @@
-import { useStore } from "@/src/app/lib/store";
+import { useStore } from "@/src/libs/store";
 import { Spot } from "@/src/types/custom.types";
 
 interface SpotCardProps {
