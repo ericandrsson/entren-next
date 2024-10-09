@@ -201,7 +201,6 @@ export const useStore = create<Store>((set, get) => ({
 
   onMapLoad: (map) => {
     // Adds the sources and layers
-    console.log("onMapLoad");
     addDetailedSpotsSource(map);
     addDetailedSpotsLayer(map);
     addLocalSwedenOsmPoiSource(map);
