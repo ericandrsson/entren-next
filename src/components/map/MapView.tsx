@@ -1,3 +1,4 @@
+import PlaceDetail from "@/src/components/PlaceDetail"; // Import PlaceDetail component
 import { Button } from "@/src/components/ui/button";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useStore } from "@/src/libs/store";
@@ -10,13 +11,20 @@ const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
 });
 
 export default function MapView() {
-  const { isListCollapsed, toggleListCollapse, isMobile } = useStore();
+  const { isListCollapsed, toggleListCollapse, isMobile, selectedSpot } =
+    useStore();
 
   return (
     <div className="p-4 h-full relative">
       <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
         <MapWithNoSSR />
       </div>
+      // Conditionally render PlaceDetail on desktop when a spot is selected
+      {!isMobile && selectedSpot && (
+        <div className="absolute bottom-4 left-4 z-10 max-w-sm">
+          <PlaceDetail />
+        </div>
+      )}
       {!isMobile && (
         <Button
           variant="outline"

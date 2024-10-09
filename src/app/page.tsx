@@ -5,8 +5,8 @@ import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
 import ListView from "../components/ListView";
-import ActionToolBar from "../components/toolbar/Toolbar";
 import MapView from "../components/map/MapView";
+import ActionToolBar from "../components/toolbar/Toolbar";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();

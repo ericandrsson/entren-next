@@ -138,7 +138,7 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
         </div>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[calc(100vh-200px)]">
+        <ScrollArea>
           <div className="space-y-6">
             <section aria-labelledby="entrances-heading">
               <h2 id="entrances-heading" className="text-lg font-semibold mb-2">
@@ -246,4 +246,3 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
       )}
     </Card>
   );
-}

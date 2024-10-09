@@ -1,13 +1,7 @@
 // Start of Selection
 import { registerMapEvents } from "@/src/libs/map/events";
-import {
-  addDetailedSpotsLayer,
-  addLocalSwedenOsmPoiLayer,
-} from "@/src/libs/map/layers";
-import {
-  addDetailedSpotsSource,
-  addLocalSwedenOsmPoiSource,
-} from "@/src/libs/map/sources";
+import { addDetailedSpotsLayer } from "@/src/libs/map/layers";
+import { addDetailedSpotsSource } from "@/src/libs/map/sources";
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
@@ -134,12 +128,6 @@ export const useStore = create<Store>((set, get) => ({
     if (spot) {
       const { mapInstance } = get();
       if (mapInstance) {
-        mapInstance.flyTo({
-          center: [spot.long!, spot.lat!],
-          zoom: 16,
-          essential: true,
-          speed: 1,
-        });
         mapInstance.setLayoutProperty("detailed_spots_view", "icon-size", [
           "case",
           ["==", ["get", "spot_id"], spot.spot_id],
@@ -203,8 +191,8 @@ export const useStore = create<Store>((set, get) => ({
     // Adds the sources and layers
     addDetailedSpotsSource(map);
     addDetailedSpotsLayer(map);
-    addLocalSwedenOsmPoiSource(map);
-    addLocalSwedenOsmPoiLayer(map);
+    //addLocalSwedenOsmPoiSource(map);
+    //addLocalSwedenOsmPoiLayer(map);
 
     // Registers map events such as click events on spots
     registerMapEvents(map);
