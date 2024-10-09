@@ -1,7 +1,13 @@
 // Start of Selection
 import { registerMapEvents } from "@/src/libs/map/events";
-import { addDetailedSpotsLayer } from "@/src/libs/map/layers";
-import { addDetailedSpotsSource } from "@/src/libs/map/sources";
+import {
+  addDetailedSpotsLayer,
+  addLocalSwedenOsmPoiLayer,
+} from "@/src/libs/map/layers";
+import {
+  addDetailedSpotsSource,
+  addLocalSwedenOsmPoiSource,
+} from "@/src/libs/map/sources";
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
@@ -198,8 +204,8 @@ export const useStore = create<Store>((set, get) => ({
     console.log("onMapLoad");
     addDetailedSpotsSource(map);
     addDetailedSpotsLayer(map);
-    //addLocalSwedenOsmPoiSource(map);
-    //addLocalSwedenOsmPoiLayer(map);
+    addLocalSwedenOsmPoiSource(map);
+    addLocalSwedenOsmPoiLayer(map);
 
     // Registers map events such as click events on spots
     registerMapEvents(map);
