@@ -19,7 +19,6 @@ export default function MapView() {
       <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
         <MapWithNoSSR />
       </div>
-      // Conditionally render PlaceDetail on desktop when a spot is selected
       {!isMobile && selectedSpot && (
         <div className="absolute bottom-8 left-8 z-10 max-w-sm">
           <PlaceDetail />

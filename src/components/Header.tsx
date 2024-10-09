@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header
-      className={`w-full bg-background shadow-sm z-50 ${isStickyHeader ? "sticky top-0" : ""}`}
+      className={`w-full bg-background shadow-sm z-50 ${isStickyHeader ? "" : ""}`}
     >
       <div className="mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">

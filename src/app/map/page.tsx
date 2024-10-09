@@ -1,12 +1,12 @@
 "use client";
 
+import ListView from "@/src/components/ListView";
+import MapView from "@/src/components/map/MapView";
+import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
-import ListView from "../../components/ListView";
-import MapView from "../../components/map/Map";
-import SearchBar from "../../components/SearchBar";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
@@ -40,7 +40,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col h-screen">
-      <SearchBar />
+      <ActionToolBar />
 
       {/* Main Content Area */}
       <div className="flex-grow overflow-hidden flex relative">
@@ -81,7 +81,7 @@ export default function Page() {
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10">
             <ViewToggleButton />
           </div>
         )}

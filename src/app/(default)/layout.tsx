@@ -1,18 +1,18 @@
+import CookieBanner from "@/src/components/CookieBanner";
+import Footer from "@/src/components/Footer";
+import Header from "@/src/components/Header";
 import { Toaster } from "@/src/components/ui/toaster";
 import "@/src/styles/global.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import CookieBanner from "../components/CookieBanner";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "../fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
