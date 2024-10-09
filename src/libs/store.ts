@@ -1,3 +1,4 @@
+// Start of Selection
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
@@ -18,7 +19,6 @@ type Store = {
   isListCollapsed: boolean;
   setView: (view: "list" | "map" | "both") => void;
   setIsStickyHeader: (sticky: boolean) => void;
-  setVisibleSpots: (spots: Spot[]) => void; // Add this line
   setIsFilterOpen: (isOpen: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
   setIsListCollapsed: (isCollapsed: boolean) => void;
@@ -29,12 +29,6 @@ type Store = {
   isLoading: boolean;
   selectedSpot: Spot | null;
   isSheetOpen: boolean;
-
-  // Map-related state
-  mapInstance: maplibregl.Map | null;
-  mapView: { center: [number, number]; zoom: number };
-
-  // Spot actions
   setSpots: (spots: Spot[]) => void;
   setIsLoading: (isLoading: boolean) => void;
   fetchSpots: (params?: FetchParams) => Promise<Spot[]>;
@@ -43,36 +37,33 @@ type Store = {
   openSpotSheet: (spot: Spot) => void;
   closeSpotSheet: () => void;
 
-  // Map actions
+  // Map-related state
+  mapInstance: maplibregl.Map | null;
+  mapView: { center: [number, number]; zoom: number };
   setMapInstance: (map: maplibregl.Map | null) => void;
   setMapView: (view: { center: [number, number]; zoom: number }) => void;
   fitBounds: (bounds: maplibregl.LngLatBounds) => void;
 
-  // New properties for entrances
+  // Entrances-related state
   selectedSpotEntrances: SpotEntrance[];
   isEntrancesLoading: boolean;
-
-  // New actions for entrances
   fetchSpotEntrances: (spotId: number) => Promise<void>;
   setSelectedSpotEntrances: (entrances: SpotEntrance[]) => void;
 
-  // New state for visible spots
+  // Visible spots
   visibleSpots: Spot[];
-
-  // New action for setting visible spots
+  setVisibleSpots: (spots: Spot[]) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
   // UI state
   view: "both",
-  isFilterOpen: false,
   isStickyHeader: false,
+  isFilterOpen: false,
   isMobile: false,
   isListCollapsed: false,
-  visibleSpots: [], // Add this line
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
-  setVisibleSpots: (spots) => set({ visibleSpots: spots }), // Add this line
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) =>
     set({ isMobile, view: isMobile ? "list" : "both" }),
@@ -85,12 +76,6 @@ export const useStore = create<Store>((set, get) => ({
   isLoading: true,
   selectedSpot: null,
   isSheetOpen: false,
-
-  // Map-related state
-  mapInstance: null,
-  mapView: { center: [0, 0], zoom: 2 },
-
-  // Spot actions
   setSpots: (spots) => set({ spots }),
   setIsLoading: (isLoading) => set({ isLoading }),
   fetchSpots: async (params) => {
@@ -128,7 +113,7 @@ export const useStore = create<Store>((set, get) => ({
     async (bounds: maplibregl.LngLatBounds | null) => {
       if (!bounds) return;
       const spots = await get().fetchSpots({ bounds });
-      set({ visibleSpots: spots }); // Use set directly instead of get().setVisibleSpots
+      set({ visibleSpots: spots });
     },
     100,
   ),
@@ -151,7 +136,9 @@ export const useStore = create<Store>((set, get) => ({
   openSpotSheet: (spot: Spot) => set({ selectedSpot: spot, isSheetOpen: true }),
   closeSpotSheet: () => set({ isSheetOpen: false }),
 
-  // Map actions
+  // Map-related state
+  mapInstance: null,
+  mapView: { center: [0, 0], zoom: 2 },
   setMapInstance: (map: maplibregl.Map | null) => set({ mapInstance: map }),
   setMapView: (view) => set({ mapView: view }),
   fitBounds: (bounds: maplibregl.LngLatBounds) => {
@@ -161,11 +148,9 @@ export const useStore = create<Store>((set, get) => ({
     }
   },
 
-  // New state for entrances
+  // Entrances-related state
   selectedSpotEntrances: [],
   isEntrancesLoading: false,
-
-  // New actions for entrances
   fetchSpotEntrances: async (spotId: number) => {
     const supabase = createClient();
     set({ isEntrancesLoading: true });
@@ -190,4 +175,8 @@ export const useStore = create<Store>((set, get) => ({
   },
   setSelectedSpotEntrances: (entrances: SpotEntrance[]) =>
     set({ selectedSpotEntrances: entrances }),
+
+  // Visible spots
+  visibleSpots: [],
+  setVisibleSpots: (spots) => set({ visibleSpots: spots }),
 }));
