@@ -4,47 +4,47 @@
 
 @layer base {
   :root {
-    --background: 357 100% 95%;
-    --foreground: 357 5% 0%;
-    --card: 357 50% 90%;
-    --card-foreground: 357 5% 10%;
-    --popover: 357 100% 95%;
-    --popover-foreground: 357 100% 0%;
-    --primary: 357 60.9% 57.8%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 357 30% 70%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 319 30% 85%;
-    --muted-foreground: 357 5% 35%;
-    --accent: 319 30% 80%;
-    --accent-foreground: 357 5% 10%;
-    --destructive: 0 100% 30%;
-    --destructive-foreground: 357 5% 90%;
-    --border: 357 30% 50%;
-    --input: 357 30% 80%;
-    --ring: 357 60.9% 57.8%;
+    --background: 192 15% 95%; /* Light Gray Background */
+    --foreground: 210 16% 10%; /* Dark Gray Text */
+    --card: 192 15% 98%; /* Card Background */
+    --card-foreground: 210 16% 15%; /* Card Text */
+    --popover: 192 15% 98%; /* Popover Background */
+    --popover-foreground: 210 16% 15%; /* Popover Text */
+    --primary: 348 77% 60%; /* Energetic Red */
+    --primary-foreground: 0 0% 100%; /* White for contrast */
+    --secondary: 197 44% 70%; /* Sky Blue */
+    --secondary-foreground: 210 16% 10%; /* Dark Gray Text */
+    --muted: 192 15% 90%; /* Light Gray for muted elements */
+    --muted-foreground: 210 16% 20%; /* Darker Gray */
+    --accent: 39 100% 63%; /* Sun Yellow for accent */
+    --accent-foreground: 210 16% 10%; /* Dark Gray for readability */
+    --destructive: 14 100% 50%; /* Deep Orange for warnings */
+    --destructive-foreground: 0 0% 100%; /* White for contrast */
+    --border: 210 16% 80%; /* Light Gray for borders */
+    --input: 210 16% 95%; /* Input Background */
+    --ring: 348 77% 60%; /* Energetic Red for focus rings */
     --radius: 0.5rem;
   }
   .dark {
-    --background: 357 50% 5%;
-    --foreground: 357 5% 90%;
-    --card: 357 50% 0%;
-    --card-foreground: 357 5% 90%;
-    --popover: 357 50% 5%;
-    --popover-foreground: 357 5% 90%;
-    --primary: 357 60.9% 57.8%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 357 30% 10%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 319 30% 15%;
-    --muted-foreground: 357 5% 60%;
-    --accent: 319 30% 15%;
-    --accent-foreground: 357 5% 90%;
-    --destructive: 0 100% 30%;
-    --destructive-foreground: 357 5% 90%;
-    --border: 357 30% 18%;
-    --input: 357 30% 18%;
-    --ring: 357 60.9% 57.8%;
+    --background: 210 28% 10%; /* Dark Navy Background */
+    --foreground: 192 15% 90%; /* Light Text on Dark Background */
+    --card: 210 28% 15%; /* Slightly lighter for Cards */
+    --card-foreground: 192 15% 90%; /* Light Text */
+    --popover: 210 28% 10%; /* Same as Background */
+    --popover-foreground: 192 15% 90%; /* Light Text */
+    --primary: 348 77% 60%; /* Energetic Red */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 197 44% 50%; /* Darker Sky Blue */
+    --secondary-foreground: 0 0% 100%; /* White */
+    --muted: 210 28% 20%; /* Muted Dark Gray */
+    --muted-foreground: 192 15% 70%; /* Light Gray Text */
+    --accent: 39 100% 50%; /* Deep Orange for accent */
+    --accent-foreground: 192 15% 90%; /* Light Text */
+    --destructive: 14 100% 40%; /* Darker Deep Orange */
+    --destructive-foreground: 192 15% 90%; /* Light Text */
+    --border: 210 28% 25%; /* Dark Border */
+    --input: 210 28% 20%; /* Input Background */
+    --ring: 348 77% 60%; /* Energetic Red for focus */
     --radius: 0.5rem;
   }
 }
