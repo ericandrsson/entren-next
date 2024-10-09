@@ -162,25 +162,20 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md p-6">
-      <h2 className="text-2xl font-bold text-primary mb-6">
-        {formState === "create" ? "Skapa konto på Entren" : "Logga in"}
-      </h2>
-      {!showPassword && formState !== "create" && (
-        <>
-          <p className="text-sm text-muted-foreground mb-2">
-            Fyll i dina inloggningsuppgifter
-          </p>
-          <p className="text-sm text-muted-foreground mb-4">
-            Logga in eller skapa konto utan lösenord - fyll i din e-postadress
-            så skickar vi en länk.
-          </p>
-        </>
+      <h1 className="font-bold text-primary mb-4">Logga in</h1>
+      {formState === "create" ? (
+        <h3 className="font-semibold text-muted-foreground mb-4">
+          Skapa konto på Entren
+        </h3>
+      ) : (
+        <h3 className="font-semibold text-muted-foreground mb-4">
+          Fyll i dina uppgifter
+        </h3>
       )}
-      {(showPassword || formState === "create") && (
+      {!showPassword && formState !== "create" && (
         <p className="text-sm text-muted-foreground mb-4">
-          {formState === "create"
-            ? "Fyll i dina uppgifter"
-            : "Fyll i dina inloggningsuppgifter"}
+          Logga in eller skapa konto utan lösenord - fyll i din e-postadress så
+          skickar vi en länk.
         </p>
       )}
       <Form {...form}>
