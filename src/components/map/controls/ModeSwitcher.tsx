@@ -1,5 +1,5 @@
-import React from "react";
 import { Eye, PenTool } from "lucide-react";
+import React from "react";
 
 interface ModeSwitcherProps {
   currentMode: "view" | "contribute";

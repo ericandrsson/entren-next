@@ -55,7 +55,7 @@ export default function CookieConsent({
         !isOpen
           ? "transition-[opacity,transform] translate-y-8 opacity-0"
           : "transition-[opacity,transform] translate-y-0 opacity-100",
-        hide && "hidden"
+        hide && "hidden",
       )}
     >
       <div className="dark:bg-card bg-background rounded-md m-3 border border-border shadow-lg">
@@ -73,8 +73,8 @@ export default function CookieConsent({
               <br />
               <span className="text-xs">
                 By clicking &quot;
-                <span className="font-medium opacity-80">Accept</span>&quot;, you
-                agree to our use of cookies.
+                <span className="font-medium opacity-80">Accept</span>&quot;,
+                you agree to our use of cookies.
               </span>
               <br />
               <a href="#" className="text-xs underline">
@@ -100,7 +100,7 @@ export default function CookieConsent({
         !isOpen
           ? "transition-[opacity,transform] translate-y-8 opacity-0"
           : "transition-[opacity,transform] translate-y-0 opacity-100",
-        hide && "hidden"
+        hide && "hidden",
       )}
     >
       <div className="m-3 dark:bg-card bg-background border border-border rounded-lg">

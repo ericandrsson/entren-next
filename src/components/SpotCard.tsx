@@ -27,7 +27,9 @@ export default function SpotCard({ spot }: SpotCardProps) {
       <div className="p-4 flex flex-col justify-between flex-grow w-2/3">
         <div>
           <h3 className="font-semibold text-lg mb-1">{spot.name}</h3>
-          <p className="text-sm text-gray-600 mb-2">Address not yet available</p>
+          <p className="text-sm text-gray-600 mb-2">
+            Address not yet available
+          </p>
         </div>
       </div>
     </div>

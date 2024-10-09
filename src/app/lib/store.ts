@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import debounce from "lodash/debounce";
-import maplibregl from 'maplibre-gl';
-import { createClient } from '@/utils/supabase/client';
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
+import { createClient } from "@/utils/supabase/client";
+import debounce from "lodash/debounce";
+import maplibregl from "maplibre-gl";
+import { create } from "zustand";
 
 interface FetchParams {
   bounds?: maplibregl.LngLatBounds;
@@ -96,12 +96,15 @@ export const useStore = create<Store>((set, get) => ({
         const ne = params.bounds.getNorthEast();
         const sw = params.bounds.getSouthWest();
         const supabase = createClient();
-        const { data, error } = await supabase.rpc("get_spots_in_bounding_box", {
-          min_lat: sw.lat,
-          min_long: sw.lng,
-          max_lat: ne.lat,
-          max_long: ne.lng,
-        });
+        const { data, error } = await supabase.rpc(
+          "get_spots_in_bounding_box",
+          {
+            min_lat: sw.lat,
+            min_long: sw.lng,
+            max_lat: ne.lat,
+            max_long: ne.lng,
+          },
+        );
 
         if (error) {
           console.error("Error fetching spots:", error);
@@ -117,11 +120,14 @@ export const useStore = create<Store>((set, get) => ({
     set({ isLoading: false });
     return [];
   },
-  debouncedFetchSpots: debounce(async (bounds: maplibregl.LngLatBounds | null) => {
-    if (!bounds) return;
-    const spots = await get().fetchSpots({ bounds });
-    set({ visibleSpots: spots }); // Use set directly instead of get().setVisibleSpots
-  }, 100),
+  debouncedFetchSpots: debounce(
+    async (bounds: maplibregl.LngLatBounds | null) => {
+      if (!bounds) return;
+      const spots = await get().fetchSpots({ bounds });
+      set({ visibleSpots: spots }); // Use set directly instead of get().setVisibleSpots
+    },
+    100,
+  ),
   setSelectedSpot: (spot: Spot | null) => {
     set({ selectedSpot: spot });
     if (spot) {
@@ -161,19 +167,23 @@ export const useStore = create<Store>((set, get) => ({
     set({ isEntrancesLoading: true });
     try {
       const { data, error } = await supabase
-        .from('detailed_spots_entrances')
-        .select('*')
-        .eq('spot_id', spotId);
+        .from("detailed_spots_entrances")
+        .select("*")
+        .eq("spot_id", spotId);
 
       if (error) {
         console.error("Error fetching spot entrances:", error);
         return;
       }
-      set({ selectedSpotEntrances: data as SpotEntrance[], isEntrancesLoading: false });
+      set({
+        selectedSpotEntrances: data as SpotEntrance[],
+        isEntrancesLoading: false,
+      });
     } catch (error) {
       console.error("Error fetching spot entrances:", error);
       set({ isEntrancesLoading: false });
     }
   },
-  setSelectedSpotEntrances: (entrances: SpotEntrance[]) => set({ selectedSpotEntrances: entrances }),
+  setSelectedSpotEntrances: (entrances: SpotEntrance[]) =>
+    set({ selectedSpotEntrances: entrances }),
 }));

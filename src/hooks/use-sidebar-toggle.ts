@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface SidebarState {
   isOpen: boolean;
@@ -6,6 +6,6 @@ interface SidebarState {
 }
 
 export const useSidebarToggle = create<SidebarState>((set) => ({
-  isOpen: false,  // Changed from true to false
+  isOpen: false, // Changed from true to false
   setIsOpen: () => set((state) => ({ isOpen: !state.isOpen })),
 }));

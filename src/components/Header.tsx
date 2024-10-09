@@ -1,5 +1,5 @@
-import Link from "next/link";
 import UserAuthButton from "@/src/components/auth/UserAuthButton";
+import Link from "next/link";
 
 export default function Header() {
   return (

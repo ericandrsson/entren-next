@@ -1,7 +1,7 @@
 import { useStore } from "@/src/app/lib/store";
-import SpotCard from "./SpotCard";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useEffect, useState } from "react";
+import SpotCard from "./SpotCard";
 
 export default function ListContent() {
   const spots = useStore((state) => state.spots);

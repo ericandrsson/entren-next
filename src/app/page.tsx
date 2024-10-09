@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import SearchBar from "./_components/SearchBar";
-import ListContent from "./_components/ListContent";
-import MapView from "./(map)/Map/MapView";
-import ViewToggleButton from "@/src/app/_components/ViewToggleButton";
 import { useStore } from "@/src/app/lib/store";
+import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
+import { useEffect } from "react";
+import ListContent from "../components/ListContent";
+import MapView from "../components/map/Map";
+import SearchBar from "../components/SearchBar";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
@@ -23,11 +23,11 @@ export default function Page() {
   }, [setIsMobile]);
 
   useEffect(() => {
-    const storedToast = localStorage.getItem('accountCreatedToast');
+    const storedToast = localStorage.getItem("accountCreatedToast");
     if (storedToast) {
       const toastData = JSON.parse(storedToast);
       toast(toastData);
-      localStorage.removeItem('accountCreatedToast');
+      localStorage.removeItem("accountCreatedToast");
     }
   }, [toast]);
 
@@ -46,8 +46,8 @@ export default function Page() {
                   ? "hidden"
                   : "w-full"
                 : isListCollapsed
-                ? "w-0"
-                : "w-1/3"
+                  ? "w-0"
+                  : "w-1/3"
             } 
             ${!isMobile && "border-r"}`}
         >
@@ -65,8 +65,8 @@ export default function Page() {
                   ? "hidden"
                   : "w-full"
                 : isListCollapsed
-                ? "w-full"
-                : "w-2/3"
+                  ? "w-full"
+                  : "w-2/3"
             }`}
         >
           <MapView />

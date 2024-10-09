@@ -1,8 +1,8 @@
-import dynamic from "next/dynamic";
-import { Button } from "@/src/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useStore } from "@/src/app/lib/store";
+import { Button } from "@/src/components/ui/button";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import dynamic from "next/dynamic";
 
 const MapWithNoSSR = dynamic(() => import("@/src/app/(map)/Map/Map"), {
   loading: () => <Skeleton className="w-full h-full rounded-lg" />,

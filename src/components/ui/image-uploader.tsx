@@ -1,6 +1,6 @@
+import { ImagePlus } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { ImagePlus } from "lucide-react";
 
 interface ImageUploaderProps {
   onImageSelected: (file: File) => void;
@@ -22,7 +22,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         setPreview(null);
       }
     },
-    [onImageSelected]
+    [onImageSelected],
   );
 
   const { getRootProps, getInputProps, fileRejections } = useDropzone({

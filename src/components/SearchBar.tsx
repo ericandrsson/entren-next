@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Input } from "@/src/components/ui/input";
-import FilterButton from "./FilterButton";
+import { useEffect, useState } from "react";
 
 import { useDebounce } from "@/src/app/lib/hooks";
 import { Spot } from "@/src/types/custom.types";
+import FilterButton from "./FilterButton";
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
