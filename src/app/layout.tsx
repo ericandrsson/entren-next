@@ -3,6 +3,7 @@ import "@/src/styles/global.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import CookieBanner from "../components/CookieBanner";
+import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 const geistSans = localFont({
@@ -39,13 +40,7 @@ export default function RootLayout({
         <div className="flex flex-col h-screen">
           <Header />
           {children}
-          <footer className="w-full bg-white shadow-sm mt-auto">
-            <div className="mx-auto px-4 py-4 flex justify-center items-center">
-              <p className="text-sm text-gray-600">
-                © 2024 Entren. All rights reserved.
-              </p>
-            </div>
-          </footer>
+          <Footer />
           <Toaster />
           <CookieBanner />
         </div>
