@@ -1,6 +1,5 @@
 import { useStore } from "@/src/libs/store";
 import { Spot } from "@/src/types/custom.types";
-import PlaceInfoCard from "@/src/components/PlaceInfoCard";
 
 interface SpotCardProps {
   spot: Spot;
@@ -33,7 +32,6 @@ export default function SpotCard({ spot }: SpotCardProps) {
           </p>
         </div>
       </div>
-      <PlaceInfoCard />
     </div>
   );
 }
