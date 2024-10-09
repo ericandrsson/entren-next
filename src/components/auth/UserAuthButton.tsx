@@ -2,31 +2,15 @@
 
 import { Button } from "@/src/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import UserAvatar from "./UserAvatar";
+import { useUser } from "@/src/hooks/useUser";
 
 export default function UserAuthButton() {
-  const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
+  const { user } = useUser();
 
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  return user ? (
-    <span className="text-sm">{user.email}</span>
-  ) : (
+  return user ? <UserAvatar /> : (
     <Link href="/login">
       <Button variant="default" className="text-white">
         Logga in
