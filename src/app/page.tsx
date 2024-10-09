@@ -10,6 +10,13 @@ import SearchBar from "../components/SearchBar";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
+  const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
+
+  useEffect(() => {
+    setIsStickyHeader(true);
+    return () => setIsStickyHeader(false);
+  }, [setIsStickyHeader]);
+
   const { toast } = useToast();
 
   useEffect(() => {
