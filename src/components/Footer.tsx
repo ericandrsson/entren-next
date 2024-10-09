@@ -1,8 +1,8 @@
 export default function Footer() {
   return (
     <footer className="w-full bg-background shadow-sm mt-auto z-100">
-      <div className="mx-auto px-4 py-4 flex justify-between items-center max-w-7xl">
-        <div className="flex space-x-4">
+      <div className="mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center max-w-7xl">
+        <div className="flex space-x-4 mb-2 sm:mb-0">
           <a
             href="/integritet"
             className="text-sm text-foreground hover:text-footer-link-hover"
@@ -22,7 +22,7 @@ export default function Footer() {
             Villkor
           </a>
         </div>
-        <p className="text-sm text-black">
+        <p className="text-sm text-black text-center sm:text-left">
           © 2024 Entren - en tjänst av{" "}
           <a
             href="https://www.fasterforward.se/"
