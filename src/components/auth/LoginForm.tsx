@@ -307,13 +307,17 @@ export default function LoginForm() {
       </div>
       <Button
         variant="outline"
-        className="bg-white text-gray-500 w-full flex items-center justify-center space-x-2"
+        className="bg-white text-gray-400 w-full flex items-center justify-center space-x-2"
         onClick={() => {
           // TODO: Implement Google sign-in
           console.log("Sign in with Google");
         }}
       >
-        <Lock className="h-5 w-5" />
+        <img
+          src="/images/google-icon.svg"
+          alt="Google icon"
+          className="h-4 w-4"
+        />
         <span>Fortsätt med Google</span>
       </Button>
       <Button
