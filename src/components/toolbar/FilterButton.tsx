@@ -1,7 +1,7 @@
 import { Button } from "@/src/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
+import { useStore } from "@/src/libs/store";
 import { Filter } from "lucide-react";
-import { useStore } from "../libs/store";
 
 export default function FilterButton() {
   const { setIsFilterOpen } = useStore();

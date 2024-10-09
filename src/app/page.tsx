@@ -5,8 +5,8 @@ import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { useEffect } from "react";
 import ListView from "../components/ListView";
+import ActionToolBar from "../components/toolbar/Toolbar";
 import MapView from "../components/map/MapView";
-import SearchBar from "../components/SearchBar";
 
 export default function Page() {
   const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
@@ -40,7 +40,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col h-screen">
-      <SearchBar />
+      <ActionToolBar />
 
       {/* Main Content Area */}
       <div className="flex-grow overflow-hidden flex relative">

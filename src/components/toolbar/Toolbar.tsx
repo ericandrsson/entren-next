@@ -3,9 +3,9 @@
 import { Input } from "@/src/components/ui/input";
 import { useEffect, useState } from "react";
 
+import FilterButton from "@/src/components/toolbar/FilterButton";
 import { useDebounce } from "@/src/libs/hooks";
 import { Spot } from "@/src/types/custom.types";
-import FilterButton from "./FilterButton";
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
