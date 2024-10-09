@@ -18,22 +18,16 @@ import Link from "next/link";
 export default function UserAvatar() {
   const { user } = useUser(); // Retrieve user from custom hook
 
-  const userInitials = user?.name
-    ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-    : "U";
+  const userInitials = "TEST";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar className="cursor-pointer">
-          {user?.avatarUrl ? (
+          {user?.user_metadata.avatar_url ? (
             <AvatarImage
-              src={user.avatarUrl}
-              alt={user.name || "User Avatar"}
+              src={user.user_metadata.avatar_url}
+              alt={user.user_metadata.name || "User Avatar"}
             />
           ) : (
             <AvatarFallback>{userInitials}</AvatarFallback>

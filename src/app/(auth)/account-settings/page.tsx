@@ -3,11 +3,12 @@
 import { Button } from "@/src/components/ui/button"; // Assuming a Button component from shadcn
 import { Input } from "@/src/components/ui/input"; // Assuming an Input component from shadcn
 import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 export default function AccountSettings() {
   const supabase = createClient();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 

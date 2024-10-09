@@ -4,7 +4,7 @@ import { useStore } from "@/src/libs/store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const MapWithNoSSR = dynamic(() => import("@/src/app/(map)/Map/Map"), {
+const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
   loading: () => <Skeleton className="w-full h-full rounded-lg" />,
   ssr: false,
 });

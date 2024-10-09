@@ -3,13 +3,15 @@
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { useUser } from "@/src/hooks/useUser"; // Custom hook to access user data
+import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/ui/dropdown-menu"; // If needed for additional settings
 
 export default function AccountSettings() {
   const { user, refreshUser } = useUser(); // Assuming refreshUser updates the user data
-  const [name, setName] = useState(user?.name || "");
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
+  const [name, setName] = useState(user?.user_metadata.name || "");
+  const [avatarUrl, setAvatarUrl] = useState(
+    user?.user_metadata.avatar_url || "",
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -19,6 +21,7 @@ export default function AccountSettings() {
     setError(null);
     setSuccess(null);
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.updateUser({
         data: { name, avatar_url: avatarUrl },
       });
@@ -37,9 +40,7 @@ export default function AccountSettings() {
     <div className="max-w-md mx-auto p-4">
       <h1 className="mb-4">Konto</h1>
       {error && (
-        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
       )}
       {success && (
         <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">

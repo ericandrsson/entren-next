@@ -80,8 +80,6 @@ export const useStore = create<Store>((set, get) => ({
   setIsLoading: (isLoading) => set({ isLoading }),
   fetchSpots: async (params) => {
     set({ isLoading: true });
-    return;
-    [];
     try {
       if (params?.bounds) {
         const ne = params.bounds.getNorthEast();
