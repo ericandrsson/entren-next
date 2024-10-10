@@ -33,6 +33,8 @@ export async function registerMapEvents(map: maplibregl.Map) {
       layers: ["placesLayer"],
     });
 
+
+
     const visiblePlaces = features.map((feature) => ({
       id: feature.properties?.id,
       name: feature.properties?.name,

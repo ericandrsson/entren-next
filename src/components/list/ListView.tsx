@@ -1,7 +1,7 @@
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
-import SpotCard from "./ListViewCard";
+import ListViewCard from "./ListViewCard";
 
 export default function ListContent() {
   const visiblePlaces = useStore((state) => state.visiblePlaces);
@@ -39,7 +39,7 @@ export default function ListContent() {
         </p>
       ) : (
         visiblePlaces.map((place) => (
-          <SpotCard key={place.place_id} spot={place} />
+          <ListViewCard key={place.place_id} spot={place} />
         ))
       )}
     </div>
