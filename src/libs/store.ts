@@ -11,14 +11,14 @@ interface FetchParams {
   searchQuery?: string;
 }
 
-type Store = {
+type StoreState = {
   // UI state
   view: "list" | "map";
   isStickyHeader: boolean;
   isFilterOpen: boolean;
   isMobile: boolean;
   isListCollapsed: boolean;
-  setView: (view: "list" | "map" | "both") => void;
+  setView: (view: "list" | "map") => void;
   setIsStickyHeader: (sticky: boolean) => void;
   setIsFilterOpen: (isOpen: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
@@ -35,7 +35,6 @@ type Store = {
   fetchPlaces: (params?: FetchParams) => Promise<Place[]>;
   setSelectedPlace: (place: Place | null) => void;
   openPlaceSheet: (place: Place) => void;
-  closePlaceSheet: () => void;
 
   // Map-related state
   mapInstance: maplibregl.Map | null;
@@ -55,15 +54,20 @@ type Store = {
 
   // New method for loading map sources and layers
   onMapLoad: (map: maplibregl.Map) => void;
+
+  // Detail state
+  isDetailOpen: boolean;
+  closeDetail: () => void;
 };
 
-export const useStore = create<Store>((set, get) => ({
+export const useStore = create<StoreState>((set, get) => ({
   // UI state
   view: "map", // Default to map view
   isStickyHeader: false,
   isFilterOpen: false,
   isMobile: false,
   isListCollapsed: false,
+  isDetailOpen: false,
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
@@ -112,24 +116,20 @@ export const useStore = create<Store>((set, get) => ({
   },
 
   setSelectedPlace: (place: Place | null) => {
-    set({ selectedPlace: place });
-    const { mapInstance } = get();
-    if (place && mapInstance) {
-      // Update icon size for the selected place
-      mapInstance.setLayoutProperty("detailed_places_view", "icon-size", [
-        "case",
-        ["==", ["get", "id"], place.place_id],
-        1, // Size for the selected place
-        0.65, // Default size for other places
-      ]);
-    } else {
-      // Reset entrances when no place is selected
-      set({ selectedPlaceEntrances: [] });
-    }
+    const isMobile = get().isMobile;
+    set({
+      selectedPlace: place,
+      isDetailOpen: place !== null,
+      view: isMobile && place ? "list" : get().view,
+    });
   },
+
+  closeDetail: () => {
+    set({ selectedPlace: null, isDetailOpen: false });
+  },
+
   openPlaceSheet: (place: Place) =>
     set({ selectedPlace: place, isSheetOpen: true }),
-  closePlaceSheet: () => set({ isSheetOpen: false }),
 
   // Map-related state
   mapInstance: null,

@@ -1,5 +1,5 @@
 import { useStore } from "@/src/libs/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ListViewCard from "./ListViewCard";
 
 export default function ListContent() {
@@ -7,16 +7,6 @@ export default function ListContent() {
   const isLoading = useStore((state) => state.isLoading);
   const view = useStore((state) => state.view);
   const [debouncedIsLoading, setDebouncedIsLoading] = useState(isLoading);
-
-  console.log(visiblePlaces.length);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedIsLoading(isLoading);
-    }, 500); // 300ms debounce delay
-
-    return () => clearTimeout(timer);
-  }, [isLoading]);
 
   return (
     <div className="space-y-4">

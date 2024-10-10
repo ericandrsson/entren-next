@@ -7,7 +7,7 @@ import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Page() {
   const {
@@ -16,10 +16,11 @@ export default function Page() {
     isListCollapsed,
     setIsMobile,
     selectedPlace,
+    isDetailOpen,
+    closeDetail,
     setView,
   } = useStore();
   const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     setIsStickyHeader(true);
@@ -27,16 +28,6 @@ export default function Page() {
   }, [setIsStickyHeader]);
 
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (selectedPlace) {
-      setIsDrawerOpen(true);
-    }
-  }, [selectedPlace]);
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -103,11 +94,13 @@ export default function Page() {
         >
           <MapView />
         </div>
+
+        {/* PlaceDetailDrawer for mobile */}
         {isMobile && selectedPlace && (
           <PlaceDetailDrawer
             place={selectedPlace}
-            isOpen={isDrawerOpen}
-            onClose={handleCloseDrawer}
+            isOpen={isDetailOpen}
+            onClose={closeDetail}
           />
         )}
 

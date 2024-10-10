@@ -1,23 +1,14 @@
+import { useStore } from "@/src/libs/store";
 import { Place } from "@/src/types/custom.types";
-import { useState } from "react";
-import PlaceDetailDrawer from "../place/PlaceDetailDrawer";
 
 export default function ListViewCard({ place }: { place: Place }) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const handleOpenDrawer = () => {
-    setIsDrawerOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
+  const { setSelectedPlace } = useStore();
 
   return (
     <>
       <div
         className="flex bg-white shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300 w-full"
-        onClick={handleOpenDrawer}
+        onClick={() => setSelectedPlace(place)}
       >
         <div className="w-1/3 h-32 flex-shrink-0 overflow-hidden">
           {/* Temporarily hiding the image
@@ -39,11 +30,6 @@ export default function ListViewCard({ place }: { place: Place }) {
           </div>
         </div>
       </div>
-      <PlaceDetailDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
-        place={place}
-      />
     </>
   );
 }
