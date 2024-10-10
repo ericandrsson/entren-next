@@ -1,6 +1,6 @@
 // Start of Selection
 import { registerMapEvents } from "@/src/libs/map/events";
-import { addDetailedSpotsLayer } from "@/src/libs/map/layers";
+import { addPlacesLayer } from "@/src/libs/map/layers";
 import { addDetailedSpotsSource } from "@/src/libs/map/sources";
 import { Spot, SpotEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
@@ -36,7 +36,7 @@ type Store = {
   setIsLoading: (isLoading: boolean) => void;
   fetchSpots: (params?: FetchParams) => Promise<Spot[]>;
   debouncedFetchSpots: (bounds: maplibregl.LngLatBounds | null) => void;
-  setSelectedSpot: (spot: Spot | null) => void;
+  setSelectedPlace: (spot: Spot | null) => void;
   openSpotSheet: (spot: Spot) => void;
   closeSpotSheet: () => void;
 
@@ -123,7 +123,7 @@ export const useStore = create<Store>((set, get) => ({
     },
     100,
   ),
-  setSelectedSpot: (spot: Spot | null) => {
+  setSelectedPlace: (spot: Spot | null) => {
     set({ selectedSpot: spot });
     if (spot) {
       const { mapInstance } = get();
@@ -190,7 +190,7 @@ export const useStore = create<Store>((set, get) => ({
   onMapLoad: (map) => {
     // Adds the sources and layers
     addDetailedSpotsSource(map);
-    addDetailedSpotsLayer(map);
+    addPlacesLayer(map);
     //addLocalSwedenOsmPoiSource(map);
     //addLocalSwedenOsmPoiLayer(map);
 

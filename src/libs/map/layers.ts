@@ -1,13 +1,13 @@
 import maplibregl from "maplibre-gl";
 
-export function addDetailedSpotsLayer(map: maplibregl.Map) {
+export function addPlacesLayer(map: maplibregl.Map) {
   map.addLayer({
-    id: "detailed_spots_view",
+    id: "placesLayer",
     type: "symbol",
-    source: "detailedSpots",
-    "source-layer": "detailed_spots_view",
+    source: "placesSource",
+    "source-layer": "map_places_view",
     layout: {
-      "icon-image": "{category_name}",
+      "icon-image": ["get", "category_name"],
       "icon-size": 0.65,
       "icon-anchor": "bottom",
       "text-field": "{name}",
@@ -30,34 +30,14 @@ export function addDetailedSpotsLayer(map: maplibregl.Map) {
 
 export function addLocalSwedenOsmPoiLayer(map: maplibregl.Map) {
   map.addLayer({
-    id: "local_sweden_osm_poi_circle",
+    id: "placesOsmLayer",
     type: "circle",
-    source: "local_sweden_osm_poi",
-    "source-layer": "local_sweden_osm_poi",
+    source: "placesOsmSource",
+    "source-layer": "map_places_osm_view",
     paint: {
       "circle-color": "red",
       "circle-radius": 10,
       "circle-opacity": 0.3,
-    },
-    minzoom: 10,
-  });
-
-  map.addLayer({
-    id: "local_sweden_osm_poi",
-    type: "symbol",
-    source: "local_sweden_osm_poi",
-    "source-layer": "local_sweden_osm_poi",
-    layout: {
-      "text-field": "{name}",
-      "text-font": ["Noto Sans Regular"],
-      "text-size": 12,
-      "text-offset": [0, 0.1],
-      "text-anchor": "top",
-    },
-    paint: {
-      "text-color": "rgba(255, 0, 0, 0.5)",
-      "text-halo-width": 1,
-      "text-halo-color": "rgba(255, 255, 255, 0.5)",
     },
     minzoom: 10,
   });

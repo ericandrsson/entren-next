@@ -2,46 +2,45 @@ import { useStore } from "@/src/libs/store";
 import { createClient } from "@/utils/supabase/client";
 
 export async function registerMapEvents(map: maplibregl.Map) {
-  map.on("click", "detailed_spots_view", async (e) => {
+  map.on("click", "placesLayer", async (e) => {
     handleDetailedSpotsViewClick(e);
   });
 
-  map.on("click", "local_sweden_osm_poi", async (e) => {
+  map.on("click", "placesOsmLayer", async (e) => {
     handleUnverifiedSpotClick(e);
   });
 
-  // Added event listeners for cursor management
-  map.on("mouseenter", "detailed_spots_view", () => {
+  map.on("mouseenter", "placesLayer", () => {
     map.getCanvas().style.cursor = "pointer";
   });
 
-  map.on("mouseenter", "local_sweden_osm_poi", () => {
+  map.on("mouseenter", "placesOsmLayer", () => {
     map.getCanvas().style.cursor = "pointer";
   });
 
-  map.on("mouseleave", "detailed_spots_view", () => {
+  map.on("mouseleave", "placesLayer", () => {
     map.getCanvas().style.cursor = "";
   });
 
-  map.on("mouseleave", "local_sweden_osm_poi", () => {
+  map.on("mouseleave", "placesOsmLayer", () => {
     map.getCanvas().style.cursor = "";
   });
 }
 
 async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
-  const { setSelectedSpot } = useStore.getState();
+  const { setSelectedPlace } = useStore.getState();
   const geometry = e.features?.[0]?.geometry;
   if (geometry && "coordinates" in geometry) {
     const properties = e.features?.[0]?.properties ?? {};
     const supabase = createClient();
-    const { data: spot } = await supabase
-      .from("detailed_spots_view")
+    const { data: place } = await supabase
+      .from("detailed_places_view")
       .select("*")
-      .eq("spot_id", properties.spot_id)
+      .eq("place_id", properties.id)
       .single();
-    console.log(spot);
-    if (spot) {
-      setSelectedSpot(spot);
+    console.log(place);
+    if (place) {
+      setSelectedPlace(place);
     }
   }
 }

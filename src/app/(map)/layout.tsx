@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <meta name="theme-color" content="#f1f3f4" />
         <meta
@@ -37,10 +37,10 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col h-full overflow-hidden`}
       >
         <Header />
-        <main className="flex-grow overflow-y-auto">{children}</main>
+        <main className="flex-grow overflow-hidden">{children}</main>
         <Toaster />
         <CookieBanner />
       </body>

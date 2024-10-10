@@ -23,7 +23,7 @@ export default function Header() {
           />
           <div className="flex flex-col">
             <Link href="/" className="text-2xl font-bold text-primary">
-              Entren
+              Entrén
             </Link>
             <span className="text-xs text-muted-foreground">
               en tjänst av{" "}

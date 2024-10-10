@@ -1,15 +1,15 @@
 import maplibregl from "maplibre-gl";
 
 export function addDetailedSpotsSource(map: maplibregl.Map) {
-  map.addSource("detailedSpots", {
+  map.addSource("placesSource", {
     type: "vector",
-    url: "http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io//detailed_spots_view",
+    url: `${process.env.NEXT_PUBLIC_TILE_SERVER_URL}/map_places_view`,
   });
 }
 
 export function addLocalSwedenOsmPoiSource(map: maplibregl.Map) {
-  map.addSource("local_sweden_osm_poi", {
+  map.addSource("placesOsmSource", {
     type: "vector",
-    url: "http://p4o0gckwc0wokcgoscws0c0s.135.181.108.171.sslip.io/local_sweden_osm_poi",
+    url: `${process.env.NEXT_PUBLIC_TILE_SERVER_URL}/map_places_osm_view`,
   });
 }

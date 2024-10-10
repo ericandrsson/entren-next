@@ -23,7 +23,7 @@ export default function Footer() {
           </a>
         </div>
         <p className="text-sm text-black text-center sm:text-left">
-          © 2024 Entren - en tjänst av{" "}
+          © 2024 Entrén - en tjänst av{" "}
           <a
             href="https://www.fasterforward.se/"
             className="text-primary hover:text-footer-link-hover"

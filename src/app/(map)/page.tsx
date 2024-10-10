@@ -39,14 +39,14 @@ export default function Page() {
   }, [toast]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <ActionToolBar />
 
       {/* Main Content Area */}
       <div className="flex-grow overflow-hidden flex relative">
         {/* List View */}
         <div
-          className={`h-full overflow-y-auto transition-all duration-300 ease-in-out
+          className={`h-full overflow-hidden transition-all duration-300 ease-in-out
             ${
               isMobile
                 ? view === "map"
@@ -58,7 +58,7 @@ export default function Page() {
             } 
             ${!isMobile && "border-r"}`}
         >
-          <div className="p-4">
+          <div className="h-full overflow-auto p-4">
             <ListView />
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function Page() {
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
             <ViewToggleButton />
           </div>
         )}
