@@ -34,6 +34,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      entrance_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          description_sv: string | null
+          id: number
+          is_active: boolean
+          name: string
+          name_sv: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          description_sv?: string | null
+          id: number
+          is_active?: boolean
+          name: string
+          name_sv: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          description_sv?: string | null
+          id?: number
+          is_active?: boolean
+          name?: string
+          name_sv?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       place_categories: {
         Row: {
           created_at: string
@@ -165,8 +198,8 @@ export type Database = {
           created_at: string | null
           id: number
           location: unknown | null
-          name: string | null
           place_id: number
+          type_id: number
           updated_at: string | null
         }
         Insert: {
@@ -174,8 +207,8 @@ export type Database = {
           created_at?: string | null
           id?: number
           location?: unknown | null
-          name?: string | null
           place_id: number
+          type_id: number
           updated_at?: string | null
         }
         Update: {
@@ -183,8 +216,8 @@ export type Database = {
           created_at?: string | null
           id?: number
           location?: unknown | null
-          name?: string | null
           place_id?: number
+          type_id?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -430,7 +463,12 @@ export type Database = {
           accessibility_info: Json | null
           entrance_created_at: string | null
           entrance_id: number | null
-          entrance_name: string | null
+          entrance_type_created_at: string | null
+          entrance_type_description: string | null
+          entrance_type_description_sv: string | null
+          entrance_type_id: number | null
+          entrance_type_name: string | null
+          entrance_type_name_sv: string | null
           entrance_updated_at: string | null
           lat: number | null
           long: number | null
@@ -544,6 +582,10 @@ export type Database = {
           category_name: string
           parent_category_name: string
         }[]
+      }
+      update_place_categories: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

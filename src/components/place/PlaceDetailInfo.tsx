@@ -6,6 +6,7 @@ import {
   CollapsibleTrigger,
 } from "@/src/components/ui/collapsible";
 import { ScrollArea } from "@/src/components/ui/scroll-area";
+import { Skeleton } from "@/src/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +31,7 @@ import {
   PlaceEntranceImage,
   PlaceEntranceWithImages,
 } from "../../types/custom.types";
+import { PhotoDialog } from "./PhotoDetailsDialog";
 
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
@@ -46,21 +48,23 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
   const [selectedPhoto, setSelectedPhoto] = useState<PlaceEntranceImage | null>(
     null,
   );
+  const [loadingImages, setLoadingImages] = useState<boolean>(false);
 
   const fetchEntranceImages = useCallback(async (entranceId: number) => {
+    setLoadingImages(true);
     const supabase = createClient();
     const { data, error } = await supabase
       .from("place_entrance_images")
       .select("*")
       .eq("entrance_id", entranceId);
 
-    console.log("querying ", entranceId);
-
     if (error) {
       console.error("Error fetching entrance images:", error);
+      setLoadingImages(false);
       return [];
     }
 
+    setLoadingImages(false);
     return (data as PlaceEntranceImage[]) || [];
   }, []);
 
@@ -73,18 +77,12 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
         .eq("place_id", place.place_id);
 
       if (data) {
-        const entrancesWithImages = await Promise.all(
-          data.map(async (entrance) => {
-            const images = await fetchEntranceImages(entrance.entrance_id);
-            return { ...entrance, photos: images };
-          }),
-        );
-        setEntrances(entrancesWithImages as PlaceEntranceWithImages[]);
+        setEntrances(data as PlaceEntranceWithImages[]);
       }
     };
 
     fetchEntrances();
-  }, [place.place_id, fetchEntranceImages]);
+  }, [place.place_id]);
 
   const getAccessibilityIcon = (accessibility: "full" | "partial" | "none") => {
     switch (accessibility) {
@@ -96,6 +94,27 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
         return <X className="text-red-500" />;
     }
   };
+
+  const handleEntranceExpand = useCallback(
+    async (entranceId: number) => {
+      if (expandedEntrance === entranceId) {
+        setExpandedEntrance(null);
+      } else {
+        setExpandedEntrance(entranceId);
+        const entrance = entrances.find((e) => e.entrance_id === entranceId);
+        console.log("finding entrance", entrance);
+        if (entrance && !entrance.photos) {
+          const images = await fetchEntranceImages(entranceId);
+          setEntrances((prevEntrances) =>
+            prevEntrances.map((e) =>
+              e.entrance_id === entranceId ? { ...e, photos: images } : e,
+            ),
+          );
+        }
+      }
+    },
+    [expandedEntrance, entrances, fetchEntranceImages],
+  );
 
   return (
     <>
@@ -137,7 +156,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                       <Collapsible
                         open={expandedEntrance === entrance.entrance_id}
                         onOpenChange={() =>
-                          setExpandedEntrance(entrance.entrance_id)
+                          handleEntranceExpand(entrance.entrance_id!)
                         }
                       >
                         <CollapsibleTrigger asChild>
@@ -146,7 +165,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                             className="w-full justify-between"
                           >
                             <span className="flex items-center">
-                              {entrance.entrance_name}
+                              {entrance.entrance_type_name_sv}
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
@@ -180,8 +199,10 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                             }
                           </p>
                           <div className="grid grid-cols-1 gap-2 mb-2">
-                            {entrance.photos &&
-                              entrance.photos.map((photo) => (
+                            {loadingImages ? (
+                              <Skeleton className="w-full h-48" />
+                            ) : (
+                              entrance.photos?.map((photo) => (
                                 <Button
                                   key={photo.id}
                                   variant="ghost"
@@ -193,10 +214,11 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                                     alt={photo.description || ""}
                                     width={300}
                                     height={200}
-                                    className="rounded-md object-cover w-full"
+                                    className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
                                   />
                                 </Button>
-                              ))}
+                              ))
+                            )}
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
@@ -217,7 +239,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                 </Button>
                 <Button variant="outline" className="w-full">
                   <MapPin className="mr-2 h-4 w-4" />
-                  Open in Maps
+                  Öppna i Kartor
                 </Button>
               </div>
             </section>
@@ -225,28 +247,10 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
         </ScrollArea>
       </CardContent>
 
-      {selectedPhoto && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-4 rounded-lg max-w-3xl max-h-[90vh] overflow-auto">
-            <Image
-              src={selectedPhoto.image_url!}
-              alt={selectedPhoto.description || ""}
-              width={800}
-              height={600}
-              className="rounded-md object-contain"
-            />
-            <p className="mt-2 text-sm text-center">
-              {selectedPhoto.description || ""}
-            </p>
-            <Button
-              className="mt-4 w-full"
-              onClick={() => setSelectedPhoto(null)}
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
+      <PhotoDialog
+        photo={selectedPhoto}
+        onClose={() => setSelectedPhoto(null)}
+      />
     </>
   );
 }

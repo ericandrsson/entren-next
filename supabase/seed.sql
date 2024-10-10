@@ -464,6 +464,14 @@ INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
 -- Data for Name: places; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
+INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description" ,"description_sv" , "is_active") VALUES
+    (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär ingångspunkt för allmänhetens tillträde till anläggningen', true),
+    (2, 'Side Entrance', 'Sidentré', 'Secondary access point, typically located on the lateral side of the building', 'Sekundär ingångspunkt, vanligtvis belägen på byggnadens sida', true),
+    (3, 'Back Entrance', 'Baksidaingång', 'Access point situated at the rear of the establishment, often used for deliveries or as an alternative entry', 'Ingångspunkt belägen på baksidan av anläggningen, ofta använd för leveranser eller som alternativ ingång', true),
+    (4, 'Staff Entrance', 'Personalentré', 'Designated entry point for employees and authorized personnel', 'Särskild ingångspunkt för anställda och behörig personal', true),
+    (5, 'Garage Entrance', 'Garageingång', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Ingångspunkt som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true),
+    (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgångspunkt för användning vid nödsituationer eller evakueringar', true);
+
 INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at", "is_verified", "location", "category_id", "osm_tags", "user_id") VALUES
     (1, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', false, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
     (2, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', false, '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),
@@ -474,16 +482,16 @@ INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at
     (7, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', false, '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
 
 -- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("id", "place_id", "name", "location", "accessibility_info", "created_at", "updated_at") VALUES
-    (1, 1, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-    (2, 2, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (3, 2, 'Side Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
-    (4, 3, 'Farm Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-    (5, 4, 'Farm House Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
-    (6, 5, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
-    (7, 6, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-    (8, 7, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (9, 7, 'Outdoor Seating Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
+INSERT INTO "public"."place_entrances" ("id", "place_id", "type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
+    (1, 1, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (2, 2, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (3, 2, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
+    (4, 3, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (5, 4, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
+    (6, 5, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
+    (7, 6, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (8, 7, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (9, 7, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
 
 -- Insert sample images for place entrances
 INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_url", "created_at", "updated_at") VALUES
