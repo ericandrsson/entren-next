@@ -74,15 +74,27 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
       const { data } = await supabase
         .from("detailed_entrances_view")
         .select("*")
-        .eq("place_id", place.place_id);
+        .eq("place_id", place.place_id)
+        .order("entrance_type_id", { ascending: true });
 
       if (data) {
         setEntrances(data as PlaceEntranceWithImages[]);
+        // Expand the first entrance if there are any
+        if (data.length > 0) {
+          setExpandedEntrance(data[0].entrance_id!);
+          // Fetch images for the first entrance
+          const images = await fetchEntranceImages(data[0].entrance_id!);
+          setEntrances((prevEntrances) =>
+            prevEntrances.map((e, index) =>
+              index === 0 ? { ...e, photos: images } : e,
+            ),
+          );
+        }
       }
     };
 
     fetchEntrances();
-  }, [place.place_id]);
+  }, [place.place_id, fetchEntranceImages]);
 
   const getAccessibilityIcon = (accessibility: "full" | "partial" | "none") => {
     switch (accessibility) {
@@ -148,7 +160,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                   id="entrances-heading"
                   className="text-lg font-semibold mb-2"
                 >
-                  Entrances
+                  Entréer
                 </h2>
                 <ul className="space-y-4">
                   {entrances.map((entrance) => (
@@ -173,13 +185,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>
-                                      {
-                                        (
-                                          entrance.accessibility_info as {
-                                            details?: string;
-                                          }
-                                        )?.details
-                                      }
+                                      {entrance.entrance_type_description_sv}
                                     </p>
                                   </TooltipContent>
                                 </Tooltip>
