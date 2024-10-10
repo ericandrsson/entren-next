@@ -45,23 +45,22 @@ const getCategoryIcon = (category: string) => {
 export default function PlaceDetailInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
   const [entrances, setEntrances] = useState<PlaceEntranceWithImages[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<PlaceEntranceImage | null>(
-    null,
-  );
   const [loadingImages, setLoadingImages] = useState<boolean>(false);
-  const [selectedEntrancePhotos, setSelectedEntrancePhotos] = useState<PlaceEntranceImage[]>([]);
+  const [allPlacePhotos, setAllPlacePhotos] = useState<PlaceEntranceImage[]>(
+    [],
+  );
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
 
-  const fetchEntranceImages = useCallback(async (entranceId: number) => {
+  const fetchAllPlaceImages = useCallback(async (placeId: number) => {
     setLoadingImages(true);
     const supabase = createClient();
     const { data, error } = await supabase
       .from("place_entrance_images")
       .select("*")
-      .eq("entrance_id", entranceId);
+      .eq("place_id", placeId);
 
     if (error) {
-      console.error("Error fetching entrance images:", error);
+      console.error("Error fetching place images:", error);
       setLoadingImages(false);
       return [];
     }
@@ -71,7 +70,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
   }, []);
 
   useEffect(() => {
-    const fetchEntrances = async () => {
+    const fetchEntrancesAndImages = async () => {
       const supabase = createClient();
       const { data } = await supabase
         .from("detailed_entrances_view")
@@ -81,22 +80,17 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
 
       if (data) {
         setEntrances(data as PlaceEntranceWithImages[]);
-        // Expand the first entrance if there are any
         if (data.length > 0) {
           setExpandedEntrance(data[0].entrance_id!);
-          // Fetch images for the first entrance
-          const images = await fetchEntranceImages(data[0].entrance_id!);
-          setEntrances((prevEntrances) =>
-            prevEntrances.map((e, index) =>
-              index === 0 ? { ...e, photos: images } : e,
-            ),
-          );
         }
       }
+
+      const allImages = await fetchAllPlaceImages(place.place_id);
+      setAllPlacePhotos(allImages);
     };
 
-    fetchEntrances();
-  }, [place.place_id, fetchEntranceImages]);
+    fetchEntrancesAndImages();
+  }, [place.place_id, fetchAllPlaceImages]);
 
   const getAccessibilityIcon = (accessibility: "full" | "partial" | "none") => {
     switch (accessibility) {
@@ -115,23 +109,12 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
         setExpandedEntrance(null);
       } else {
         setExpandedEntrance(entranceId);
-        const entrance = entrances.find((e) => e.entrance_id === entranceId);
-        console.log("finding entrance", entrance);
-        if (entrance && !entrance.photos) {
-          const images = await fetchEntranceImages(entranceId);
-          setEntrances((prevEntrances) =>
-            prevEntrances.map((e) =>
-              e.entrance_id === entranceId ? { ...e, photos: images } : e,
-            ),
-          );
-        }
       }
     },
-    [expandedEntrance, entrances, fetchEntranceImages],
+    [expandedEntrance],
   );
 
-  const handlePhotoClick = (photos: PlaceEntranceImage[], clickedPhotoIndex: number) => {
-    setSelectedEntrancePhotos(photos);
+  const handlePhotoClick = (clickedPhotoIndex: number) => {
     setSelectedPhotoIndex(clickedPhotoIndex);
   };
 
@@ -215,22 +198,33 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                             {loadingImages ? (
                               <Skeleton className="w-full h-48" />
                             ) : (
-                              entrance.photos?.map((photo, index) => (
-                                <Button
-                                  key={photo.id}
-                                  variant="ghost"
-                                  className="p-0 w-full h-auto"
-                                  onClick={() => handlePhotoClick(entrance.photos!, index)}
-                                >
-                                  <Image
-                                    src={photo.image_url!}
-                                    alt={photo.description || ""}
-                                    width={300}
-                                    height={200}
-                                    className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
-                                  />
-                                </Button>
-                              ))
+                              allPlacePhotos
+                                .filter(
+                                  (photo) =>
+                                    photo.entrance_id === entrance.entrance_id,
+                                )
+                                .map((photo, index) => (
+                                  <Button
+                                    key={photo.id}
+                                    variant="ghost"
+                                    className="p-0 w-full h-auto"
+                                    onClick={() =>
+                                      handlePhotoClick(
+                                        allPlacePhotos.findIndex(
+                                          (p) => p.id === photo.id,
+                                        ),
+                                      )
+                                    }
+                                  >
+                                    <Image
+                                      src={photo.image_url!}
+                                      alt={photo.description || ""}
+                                      width={300}
+                                      height={200}
+                                      className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
+                                    />
+                                  </Button>
+                                ))
                             )}
                           </div>
                         </CollapsibleContent>
@@ -261,10 +255,9 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
       </CardContent>
 
       <PhotoDialog
-        photos={selectedEntrancePhotos}
+        photos={allPlacePhotos}
         initialPhotoIndex={selectedPhotoIndex}
         onClose={() => {
-          setSelectedEntrancePhotos([]);
           setSelectedPhotoIndex(0);
         }}
       />

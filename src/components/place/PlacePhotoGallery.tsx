@@ -1,7 +1,7 @@
-import { useState } from "react";
-import Image from "next/image";
 import { Button } from "@/src/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import { PlaceEntranceImage } from "../../types/custom.types";
 
 interface PlacePhotoGalleryProps {
@@ -9,23 +9,26 @@ interface PlacePhotoGalleryProps {
   initialPhotoIndex: number;
 }
 
-export default function PlacePhotoGallery({ photos, initialPhotoIndex }: PlacePhotoGalleryProps) {
+export default function PlacePhotoGallery({
+  photos,
+  initialPhotoIndex,
+}: PlacePhotoGalleryProps) {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(initialPhotoIndex);
 
   const handlePrevious = () => {
     setCurrentPhotoIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : photos.length - 1
+      prevIndex > 0 ? prevIndex - 1 : photos.length - 1,
     );
   };
 
   const handleNext = () => {
     setCurrentPhotoIndex((prevIndex) =>
-      prevIndex < photos.length - 1 ? prevIndex + 1 : 0
+      prevIndex < photos.length - 1 ? prevIndex + 1 : 0,
     );
   };
 
   if (photos.length === 0) {
-    return <div>No photos available</div>;
+    return <div>Inga bilder finns tillgängliga</div>;
   }
 
   const currentPhoto = photos[currentPhotoIndex];
