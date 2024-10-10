@@ -99,7 +99,7 @@ function Map() {
     if (selectedPlace && map.current) {
       map.current.flyTo({
         center: [selectedPlace.long!, selectedPlace.lat!],
-        zoom: 16,
+        zoom: 12,
         essential: true,
       });
     }

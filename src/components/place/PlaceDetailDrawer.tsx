@@ -1,6 +1,6 @@
 import { Place } from "@/src/types/custom.types";
-import PlaceDetail from "../PlaceDetail";
 import { Drawer, DrawerContent } from "../ui/drawer";
+import PlaceDetailInfo from "./PlaceDetailInfo";
 
 export default function PlaceDetailDrawer({
   place,
@@ -13,9 +13,9 @@ export default function PlaceDetailDrawer({
 }) {
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent>
+      <DrawerContent className="bg-white">
         <div className="p-4">
-          <PlaceDetail place={place} />
+          <PlaceDetailInfo place={place} />
         </div>
       </DrawerContent>
     </Drawer>
