@@ -211,7 +211,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
               <div className="space-y-2">
                 <Button variant="outline" className="w-full">
                   <Flag className="mr-2 h-4 w-4" />
-                  Report a Problem
+                  Rapportera ett problem
                 </Button>
                 <Button variant="outline" className="w-full">
                   <MapPin className="mr-2 h-4 w-4" />

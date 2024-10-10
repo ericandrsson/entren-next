@@ -10,10 +10,10 @@ import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { view, isMobile, isListCollapsed, setIsMobile, selectedPlace } =
-    useStore();
+  const { view, isMobile, isListCollapsed, setIsMobile, selectedPlace, setView } = useStore();
   const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   useEffect(() => {
     setIsStickyHeader(true);
     return () => setIsStickyHeader(false);
@@ -33,13 +33,19 @@ export default function Page() {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 960);
+      const newIsMobile = window.innerWidth <= 960;
+      setIsMobile(newIsMobile);
+      
+      // Adjust view only if switching to mobile and current view is "both"
+      if (newIsMobile && view === "both") {
+        setView("map");
+      }
     };
     checkIsMobile();
     window.addEventListener("resize", checkIsMobile);
 
     return () => window.removeEventListener("resize", checkIsMobile);
-  }, [setIsMobile]);
+  }, [setIsMobile, view, setView]);
 
   useEffect(() => {
     const storedToast = localStorage.getItem("accountCreatedToast");

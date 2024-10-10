@@ -15,7 +15,7 @@ interface FetchParams {
 
 type Store = {
   // UI state
-  view: "list" | "map" | "both";
+  view: "list" | "map";
   isStickyHeader: boolean;
   isFilterOpen: boolean;
   isMobile: boolean;
@@ -63,7 +63,7 @@ type Store = {
 
 export const useStore = create<Store>((set, get) => ({
   // UI state
-  view: "both",
+  view: "map", // Default to map view
   isStickyHeader: false,
   isFilterOpen: false,
   isMobile: false,
@@ -71,8 +71,7 @@ export const useStore = create<Store>((set, get) => ({
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
-  setIsMobile: (isMobile) =>
-    set({ isMobile, view: isMobile ? "list" : "both" }),
+  setIsMobile: (isMobile) => set({ isMobile }),
   setIsListCollapsed: (isCollapsed) => set({ isListCollapsed: isCollapsed }),
   toggleListCollapse: () =>
     set((state) => ({ isListCollapsed: !state.isListCollapsed })),
