@@ -54,6 +54,8 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
       .select("*")
       .eq("entrance_id", entranceId);
 
+    console.log("querying ", entranceId);
+
     if (error) {
       console.error("Error fetching entrance images:", error);
       return [];

@@ -474,30 +474,28 @@ INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at
     (7, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', false, '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
 
 -- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("place_id", "name", "location", "accessibility_info", "created_at", "updated_at") VALUES
-    -- Entrances for Hagestad västra (Bus stop)
-    (1, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+INSERT INTO "public"."place_entrances" ("id", "place_id", "name", "location", "accessibility_info", "created_at", "updated_at") VALUES
+    (1, 1, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (2, 2, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (3, 2, 'Side Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
+    (4, 3, 'Farm Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (5, 4, 'Farm House Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
+    (6, 5, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
+    (7, 6, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (8, 7, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (9, 7, 'Outdoor Seating Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
 
-    -- Entrances for Ahls rökeri (Restaurant)
-    (2, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (2, 'Side Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
-
-    -- Entrance for Tygapil (Farm)
-    (3, 'Farm Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-
-    -- Entrance for Hedvigsdals Nygård (Farm)
-    (4, 'Farm House Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
-
-    -- Entrance for TEST (previously Nyhem)
-    (5, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
-
-    -- Entrance for Margretevall (Bus stop)
-    (6, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-
-    -- Entrances for Pinchos (Restaurant)
-    (7, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (7, 'Outdoor Seating Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
---
+-- Insert sample images for place entrances
+INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_url", "created_at", "updated_at") VALUES
+    (1, 1, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
+    (2, 2, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
+    (2, 3, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
+    (3, 4, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
+    (4, 5, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
+    (5, 6, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
+    (6, 7, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
+    (7, 8, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
+    (7, 9, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
 -- Data for Name: place_entrances; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 

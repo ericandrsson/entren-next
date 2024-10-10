@@ -151,8 +151,6 @@ CREATE UNIQUE INDEX place_categories_pkey ON public.place_categories USING btree
 
 CREATE UNIQUE INDEX place_entrances_pkey ON public.place_entrances USING btree (id);
 
-CREATE UNIQUE INDEX place_entrance_images_image_url_key ON public.place_entrance_images USING btree (image_url);
-
 CREATE UNIQUE INDEX place_entrance_images_pkey ON public.place_entrance_images USING btree (id);
 
 CREATE UNIQUE INDEX places_osm_id_key ON public.places USING btree (osm_id);
@@ -202,8 +200,6 @@ alter table "public"."place_entrances" validate constraint "place_entrances_plac
 alter table "public"."place_entrance_images" add constraint "place_entrance_images_entrance_id_fkey" FOREIGN KEY (entrance_id) REFERENCES place_entrances(id) not valid;
 
 alter table "public"."place_entrance_images" validate constraint "place_entrance_images_entrance_id_fkey";
-
-alter table "public"."place_entrance_images" add constraint "place_entrance_images_image_url_key" UNIQUE using index "place_entrance_images_image_url_key";
 
 alter table "public"."place_entrance_images" add constraint "place_entrance_images_place_id_fkey" FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE not valid;
 
