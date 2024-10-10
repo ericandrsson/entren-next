@@ -1,6 +1,6 @@
 "use client";
 
-import ListView from "@/src/components/ListView";
+import ListView from "@/src/components/list/ListView";
 import MapView from "@/src/components/map/MapView";
 import PlaceDetailDrawer from "@/src/components/place/PlaceDetailDrawer";
 import ActionToolBar from "@/src/components/toolbar/Toolbar";
@@ -10,7 +10,14 @@ import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { view, isMobile, isListCollapsed, setIsMobile, selectedPlace, setView } = useStore();
+  const {
+    view,
+    isMobile,
+    isListCollapsed,
+    setIsMobile,
+    selectedPlace,
+    setView,
+  } = useStore();
   const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -35,7 +42,7 @@ export default function Page() {
     const checkIsMobile = () => {
       const newIsMobile = window.innerWidth <= 960;
       setIsMobile(newIsMobile);
-      
+
       // Adjust view only if switching to mobile and current view is "both"
       if (newIsMobile && view === "both") {
         setView("map");

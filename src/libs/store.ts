@@ -1,10 +1,8 @@
-// Start of Selection
 import { registerMapEvents } from "@/src/libs/map/events";
 import { addPlacesLayer } from "@/src/libs/map/layers";
 import { addDetailedSpotsSource } from "@/src/libs/map/sources";
 import { Place, PlaceEntrance } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
-import debounce from "lodash/debounce";
 import maplibregl from "maplibre-gl";
 import { create } from "zustand";
 
@@ -35,7 +33,6 @@ type Store = {
   setPlaces: (places: Place[]) => void;
   setIsLoading: (isLoading: boolean) => void;
   fetchPlaces: (params?: FetchParams) => Promise<Place[]>;
-  debouncedFetchPlaces: (bounds: maplibregl.LngLatBounds | null) => void;
   setSelectedPlace: (place: Place | null) => void;
   openPlaceSheet: (place: Place) => void;
   closePlaceSheet: () => void;
@@ -50,7 +47,6 @@ type Store = {
   // Entrances-related state
   selectedPlaceEntrances: PlaceEntrance[];
   isEntrancesLoading: boolean;
-  fetchPlaceEntrances: (placeId: number) => Promise<void>;
   setSelectedPlaceEntrances: (entrances: PlaceEntrance[]) => void;
 
   // Visible places
@@ -67,7 +63,7 @@ export const useStore = create<Store>((set, get) => ({
   isStickyHeader: false,
   isFilterOpen: false,
   isMobile: false,
-  isListCollapsed: true,
+  isListCollapsed: false,
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
@@ -114,14 +110,7 @@ export const useStore = create<Store>((set, get) => ({
     set({ isLoading: false });
     return [];
   },
-  debouncedFetchPlaces: debounce(
-    async (bounds: maplibregl.LngLatBounds | null) => {
-      if (!bounds) return;
-      const places = await get().fetchPlaces({ bounds });
-      set({ visiblePlaces: places });
-    },
-    100,
-  ),
+
   setSelectedPlace: (place: Place | null) => {
     set({ selectedPlace: place });
     const { mapInstance } = get();
@@ -157,34 +146,12 @@ export const useStore = create<Store>((set, get) => ({
   // Entrances-related state
   selectedPlaceEntrances: [],
   isEntrancesLoading: false,
-  fetchPlaceEntrances: async (placeId: number) => {
-    const supabase = createClient();
-    set({ isEntrancesLoading: true });
-    try {
-      const { data, error } = await supabase
-        .from("detailed_places_entrances")
-        .select("*")
-        .eq("place_id", placeId);
-
-      if (error) {
-        console.error("Error fetching place entrances:", error);
-        return;
-      }
-      set({
-        selectedPlaceEntrances: data as PlaceEntrance[],
-        isEntrancesLoading: false,
-      });
-    } catch (error) {
-      console.error("Error fetching place entrances:", error);
-      set({ isEntrancesLoading: false });
-    }
-  },
   setSelectedPlaceEntrances: (entrances: PlaceEntrance[]) =>
     set({ selectedPlaceEntrances: entrances }),
 
   // Visible places
   visiblePlaces: [],
-  setVisiblePlaces: (places: Place[]) => set({ visiblePlaces: places }),
+  setVisiblePlaces: (places) => set({ visiblePlaces: places }),
 
   onMapLoad: (map: maplibregl.Map) => {
     // Adds the sources and layers

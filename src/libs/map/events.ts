@@ -1,4 +1,5 @@
 import { useStore } from "@/src/libs/store";
+import { Place } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 
 export async function registerMapEvents(map: maplibregl.Map) {
@@ -24,6 +25,22 @@ export async function registerMapEvents(map: maplibregl.Map) {
 
   map.on("mouseleave", "placesOsmLayer", () => {
     map.getCanvas().style.cursor = "";
+  });
+
+  // Add a moveend event listener to update visible places
+  map.on("moveend", () => {
+    const features = map.queryRenderedFeatures(undefined, {
+      layers: ["placesLayer"],
+    });
+
+    const visiblePlaces = features.map((feature) => ({
+      id: feature.properties?.id,
+      name: feature.properties?.name,
+      category: feature.properties?.category_name,
+    }));
+
+    const { setVisiblePlaces } = useStore.getState();
+    setVisiblePlaces(visiblePlaces as Place[]);
   });
 }
 

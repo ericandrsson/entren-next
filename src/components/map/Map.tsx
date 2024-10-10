@@ -8,13 +8,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 function Map() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const {
-    mapView,
-    debouncedFetchPlaces,
-    selectedPlace,
-    setMapInstance,
-    onMapLoad,
-  } = useStore();
+  const { mapView, selectedPlace, setMapInstance, onMapLoad } = useStore();
 
   const defaultCenter: [number, number] = [57.0, 15.0]; // Slightly south of the center of Sweden
   const defaultZoom = 6;
@@ -86,14 +80,7 @@ function Map() {
       window.removeEventListener("resize", handleResize);
       map.current?.remove();
     };
-  }, [
-    mapContainerRef.current,
-    center,
-    zoom,
-    setMapInstance,
-    debouncedFetchPlaces,
-    handleResize,
-  ]);
+  }, [mapContainerRef.current, center, zoom, setMapInstance, handleResize]);
 
   useEffect(() => {
     if (selectedPlace && map.current) {
