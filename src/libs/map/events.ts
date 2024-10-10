@@ -27,22 +27,40 @@ export async function registerMapEvents(map: maplibregl.Map) {
     map.getCanvas().style.cursor = "";
   });
 
-  // Add a moveend event listener to update visible places
-  map.on("moveend", () => {
+  // Update the moveend event listener
+  map.on("moveend", async () => {
     const features = map.queryRenderedFeatures(undefined, {
       layers: ["placesLayer"],
     });
 
+    const visiblePlaceIds = features
+      .map((feature) => feature.properties?.id)
+      .filter(Boolean);
 
+    if (visiblePlaceIds.length === 0) {
+      const { setVisiblePlaces } = useStore.getState();
+      setVisiblePlaces([]);
+      return;
+    }
 
-    const visiblePlaces = features.map((feature) => ({
-      id: feature.properties?.id,
-      name: feature.properties?.name,
-      category: feature.properties?.category_name,
-    }));
-
+    const supabase = createClient();
     const { setVisiblePlaces } = useStore.getState();
-    setVisiblePlaces(visiblePlaces as Place[]);
+
+    try {
+      const { data: visiblePlaces, error } = await supabase
+        .from("detailed_places_view")
+        .select("*")
+        .in("place_id", visiblePlaceIds);
+
+      if (error) {
+        console.error("Error fetching visible places:", error);
+        return;
+      }
+
+      setVisiblePlaces(visiblePlaces as Place[]);
+    } catch (error) {
+      console.error("Error in moveend event handler:", error);
+    }
   });
 }
 

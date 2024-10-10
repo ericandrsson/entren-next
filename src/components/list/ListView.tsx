@@ -1,4 +1,3 @@
-import { Skeleton } from "@/src/components/ui/skeleton";
 import { useStore } from "@/src/libs/store";
 import { useEffect, useState } from "react";
 import ListViewCard from "./ListViewCard";
@@ -19,16 +18,6 @@ export default function ListContent() {
     return () => clearTimeout(timer);
   }, [isLoading]);
 
-  if (debouncedIsLoading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(6)].map((_, index) => (
-          <Skeleton key={index} className="h-40 w-full rounded-lg" />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {visiblePlaces.length === 0 ? (
@@ -39,26 +28,9 @@ export default function ListContent() {
         </p>
       ) : (
         visiblePlaces.map((place) => (
-          <ListViewCard key={place.place_id} spot={place} />
+          <ListViewCard key={place.place_id} place={place} />
         ))
       )}
-    </div>
-  );
-}
-
-export function ListView() {
-  const visiblePlaces = useStore((state) => state.visiblePlaces);
-
-  return (
-    <div>
-      <h2>Visible Places</h2>
-      <ul>
-        {visiblePlaces.map((place) => (
-          <li key={place.id}>
-            {place.name} - {place.category}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
