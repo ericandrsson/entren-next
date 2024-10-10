@@ -49,6 +49,8 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
     null,
   );
   const [loadingImages, setLoadingImages] = useState<boolean>(false);
+  const [selectedEntrancePhotos, setSelectedEntrancePhotos] = useState<PlaceEntranceImage[]>([]);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
 
   const fetchEntranceImages = useCallback(async (entranceId: number) => {
     setLoadingImages(true);
@@ -127,6 +129,11 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
     },
     [expandedEntrance, entrances, fetchEntranceImages],
   );
+
+  const handlePhotoClick = (photos: PlaceEntranceImage[], clickedPhotoIndex: number) => {
+    setSelectedEntrancePhotos(photos);
+    setSelectedPhotoIndex(clickedPhotoIndex);
+  };
 
   return (
     <>
@@ -208,12 +215,12 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
                             {loadingImages ? (
                               <Skeleton className="w-full h-48" />
                             ) : (
-                              entrance.photos?.map((photo) => (
+                              entrance.photos?.map((photo, index) => (
                                 <Button
                                   key={photo.id}
                                   variant="ghost"
                                   className="p-0 w-full h-auto"
-                                  onClick={() => setSelectedPhoto(photo)}
+                                  onClick={() => handlePhotoClick(entrance.photos!, index)}
                                 >
                                   <Image
                                     src={photo.image_url!}
@@ -254,8 +261,12 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
       </CardContent>
 
       <PhotoDialog
-        photo={selectedPhoto}
-        onClose={() => setSelectedPhoto(null)}
+        photos={selectedEntrancePhotos}
+        initialPhotoIndex={selectedPhotoIndex}
+        onClose={() => {
+          setSelectedEntrancePhotos([]);
+          setSelectedPhotoIndex(0);
+        }}
       />
     </>
   );
