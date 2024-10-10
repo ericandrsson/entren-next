@@ -476,27 +476,27 @@ INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at
 -- Insert hardcoded place entrances
 INSERT INTO "public"."place_entrances" ("place_id", "name", "location", "accessibility_info", "created_at", "updated_at") VALUES
     -- Entrances for Hagestad västra (Bus stop)
-    (1, 'Bus Stop Entrance', ST_SetSRID(ST_MakePoint(14.1614, 55.3876), 4326), '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (1, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrances for Ahls rökeri (Restaurant)
-    (2, 'Main Entrance', ST_SetSRID(ST_MakePoint(14.1235, 55.3561), 4326), '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (2, 'Side Entrance', ST_SetSRID(ST_MakePoint(14.1236, 55.3562), 4326), '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
+    (2, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (2, 'Side Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrance for Tygapil (Farm)
-    (3, 'Farm Entrance', ST_SetSRID(ST_MakePoint(14.1805, 55.3715), 4326), '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (3, 'Farm Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrance for Hedvigsdals Nygård (Farm)
-    (4, 'Farm House Entrance', ST_SetSRID(ST_MakePoint(14.0915, 55.3785), 4326), '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
+    (4, 'Farm House Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrance for TEST (previously Nyhem)
-    (5, 'Main Entrance', ST_SetSRID(ST_MakePoint(14.0325, 55.4015), 4326), '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
+    (5, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrance for Margretevall (Bus stop)
-    (6, 'Bus Stop Entrance', ST_SetSRID(ST_MakePoint(14.0895, 55.3645), 4326), '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (6, 'Bus Stop Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
 
     -- Entrances for Pinchos (Restaurant)
-    (7, 'Main Entrance', ST_SetSRID(ST_MakePoint(17.3065, 62.3905), 4326), '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
-    (7, 'Outdoor Seating Entrance', ST_SetSRID(ST_MakePoint(17.3066, 62.3906), 4326), '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
+    (7, 'Main Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (7, 'Outdoor Seating Entrance', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
 --
 -- Data for Name: place_entrances; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --

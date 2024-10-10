@@ -24,6 +24,7 @@ export default function MapView() {
           <PlaceDetail place={selectedPlace} />
         </div>
       )}
+
       {!isMobile && (
         <Button
           variant="outline"

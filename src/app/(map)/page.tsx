@@ -2,22 +2,34 @@
 
 import ListView from "@/src/components/ListView";
 import MapView from "@/src/components/map/MapView";
+import PlaceDetailDrawer from "@/src/components/place/PlaceDetailDrawer";
 import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { view, isMobile, isListCollapsed, setIsMobile } = useStore();
+  const { view, isMobile, isListCollapsed, setIsMobile, selectedPlace } =
+    useStore();
   const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   useEffect(() => {
     setIsStickyHeader(true);
     return () => setIsStickyHeader(false);
   }, [setIsStickyHeader]);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (selectedPlace) {
+      setIsDrawerOpen(true);
+    }
+  }, [selectedPlace]);
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+  };
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -78,6 +90,13 @@ export default function Page() {
         >
           <MapView />
         </div>
+        {isMobile && selectedPlace && (
+          <PlaceDetailDrawer
+            place={selectedPlace}
+            isOpen={isDrawerOpen}
+            onClose={handleCloseDrawer}
+          />
+        )}
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
