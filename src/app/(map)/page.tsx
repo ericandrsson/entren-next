@@ -14,7 +14,7 @@ export default function Page() {
   const {
     view,
     isMobile,
-    isListCollapsed,
+    isListVisible,
     setIsMobile,
     selectedPlace,
     isDetailOpen,
@@ -91,7 +91,7 @@ export default function Page() {
                 ? view === "map"
                   ? "hidden"
                   : "w-full"
-                : isListCollapsed
+                : isListVisible
                   ? "w-0"
                   : "w-1/3"
             } 
@@ -110,7 +110,7 @@ export default function Page() {
                 ? view === "list"
                   ? "hidden"
                   : "w-full"
-                : isListCollapsed
+                : isListVisible
                   ? "w-full"
                   : "w-2/3"
             }`}

@@ -17,24 +17,22 @@ type StoreState = {
   isStickyHeader: boolean;
   isFilterOpen: boolean;
   isMobile: boolean;
-  isListCollapsed: boolean;
+  isListVisible: boolean;
   setView: (view: "list" | "map") => void;
   setIsStickyHeader: (sticky: boolean) => void;
   setIsFilterOpen: (isOpen: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
-  setIsListCollapsed: (isCollapsed: boolean) => void;
+  setisListVisible: (isCollapsed: boolean) => void;
   toggleListCollapse: () => void;
 
   // Place-related state
   places: Place[];
   isLoading: boolean;
   selectedPlace: Place | null;
-  isSheetOpen: boolean;
   setPlaces: (places: Place[]) => void;
   setIsLoading: (isLoading: boolean) => void;
   fetchPlaces: (params?: FetchParams) => Promise<Place[]>;
   setSelectedPlace: (place: Place | null) => void;
-  openPlaceSheet: (place: Place) => void;
 
   // Map-related state
   mapInstance: maplibregl.Map | null;
@@ -61,7 +59,9 @@ type StoreState = {
 
   // User location state
   userLocation: { latitude: number; longitude: number } | null;
-  setUserLocation: (location: { latitude: number; longitude: number } | null) => void;
+  setUserLocation: (
+    location: { latitude: number; longitude: number } | null,
+  ) => void;
 };
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -70,21 +70,20 @@ export const useStore = create<StoreState>((set, get) => ({
   isStickyHeader: false,
   isFilterOpen: false,
   isMobile: false,
-  isListCollapsed: false,
+  isListVisible: false,
   isDetailOpen: false,
   setView: (view) => set({ view }),
   setIsStickyHeader: (sticky) => set({ isStickyHeader: sticky }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) => set({ isMobile }),
-  setIsListCollapsed: (isCollapsed) => set({ isListCollapsed: isCollapsed }),
+  setisListVisible: (isCollapsed) => set({ isListVisible: isCollapsed }),
   toggleListCollapse: () =>
-    set((state) => ({ isListCollapsed: !state.isListCollapsed })),
+    set((state) => ({ isListVisible: !state.isListVisible })),
 
   // Place-related state
   places: [],
   isLoading: true,
   selectedPlace: null,
-  isSheetOpen: false,
   setPlaces: (places) => set({ places }),
   setIsLoading: (isLoading) => set({ isLoading }),
   fetchPlaces: async (params?: FetchParams) => {
@@ -131,9 +130,6 @@ export const useStore = create<StoreState>((set, get) => ({
   closeDetail: () => {
     set({ selectedPlace: null, isDetailOpen: false });
   },
-
-  openPlaceSheet: (place: Place) =>
-    set({ selectedPlace: place, isSheetOpen: true }),
 
   // Map-related state
   mapInstance: null,

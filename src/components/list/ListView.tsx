@@ -8,12 +8,13 @@ export default function ListView() {
   const visiblePlaces = useStore((state) => state.visiblePlaces);
   const isMobile = useStore((state) => state.isMobile);
   const view = useStore((state) => state.view);
+  const isListVisible = useStore((state) => state.isListVisible);
   const userLocation = useStore((state) => state.userLocation);
   const setVisiblePlaces = useStore((state) => state.setVisiblePlaces);
 
   useEffect(() => {
     async function fetchNearestPlaces() {
-      if (visiblePlaces.length === 0 && userLocation) {
+      if (visiblePlaces.length === 0 && userLocation && !isListVisible) {
         const { data, error } = await supabase.rpc("get_nearest_places", {
           user_lat: userLocation.latitude,
           user_long: userLocation.longitude,
