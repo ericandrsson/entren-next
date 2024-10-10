@@ -29,16 +29,15 @@ export async function registerMapEvents(map: maplibregl.Map) {
 
 async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
   const { setSelectedPlace } = useStore.getState();
-  const geometry = e.features?.[0]?.geometry;
-  if (geometry && "coordinates" in geometry) {
-    const properties = e.features?.[0]?.properties ?? {};
+  const properties = e.features?.[0]?.properties ?? {};
+  if (properties.id) {
     const supabase = createClient();
     const { data: place } = await supabase
       .from("detailed_places_view")
       .select("*")
       .eq("place_id", properties.id)
       .single();
-    console.log(place);
+
     if (place) {
       setSelectedPlace(place);
     }
@@ -48,5 +47,4 @@ async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
 async function handleUnverifiedSpotClick(e: maplibregl.MapLayerMouseEvent) {
   const geometry = e.features?.[0]?.geometry;
   const properties = e.features?.[0]?.properties ?? {};
-  console.log(properties);
 }

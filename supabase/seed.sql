@@ -465,15 +465,38 @@ INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
 --
 
 INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at", "is_verified", "location", "category_id", "osm_tags", "user_id") VALUES
-	(1020, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', false, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
-	(1027, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', false, '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),
-	(1024, 7502121104, 'Tygapil', '2024-10-05 11:47:18.16393+00', '2024-10-05 11:47:18.16393+00', false, '0101000020E6100000609335EA212E2C40E8FDDA55A3B34B40', 26, '{"name": "Tygapil", "place": "farm"}', NULL),
-	(1025, 7502121105, 'Hedvigsdals Nygård', '2024-10-05 11:48:02.746676+00', '2024-10-05 11:48:02.746676+00', false, '0101000020E61000009A417C60C7172C40DC9843F751B44B40', 26, '{"name": "Hedvigsdals Nygård", "place": "farm"}', NULL),
-	(1028, 7502347738, 'TEST', '2024-10-05 11:52:34.664154+00', '2024-10-05 11:52:34.664154+00', false, '0101000020E61000004689A768F6062C402CA0504F1FB94B40', 26, '{"name": "Nyhem", "place": "farm"}', NULL),
-	(1026, 3337049639, 'Margretevall', '2024-10-05 11:49:10.938963+00', '2024-10-05 11:49:10.938963+00', false, '0101000020E61000006FB72407EC162C40CC2555DB4DB24B40', 26, '{"bus": "yes", "name": "Margretevall", "source": "Mapillary", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
-	(1036, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', false, '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
+    (1, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', false, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
+    (2, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', false, '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),
+    (3, 7502121104, 'Tygapil', '2024-10-05 11:47:18.16393+00', '2024-10-05 11:47:18.16393+00', false, '0101000020E6100000609335EA212E2C40E8FDDA55A3B34B40', 26, '{"name": "Tygapil", "place": "farm"}', NULL),
+    (4, 7502121105, 'Hedvigsdals Nygård', '2024-10-05 11:48:02.746676+00', '2024-10-05 11:48:02.746676+00', false, '0101000020E61000009A417C60C7172C40DC9843F751B44B40', 26, '{"name": "Hedvigsdals Nygård", "place": "farm"}', NULL),
+    (5, 7502347738, 'TEST', '2024-10-05 11:52:34.664154+00', '2024-10-05 11:52:34.664154+00', false, '0101000020E61000004689A768F6062C402CA0504F1FB94B40', 26, '{"name": "Nyhem", "place": "farm"}', NULL),
+    (6, 3337049639, 'Margretevall', '2024-10-05 11:49:10.938963+00', '2024-10-05 11:49:10.938963+00', false, '0101000020E61000006FB72407EC162C40CC2555DB4DB24B40', 26, '{"bus": "yes", "name": "Margretevall", "source": "Mapillary", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
+    (7, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', false, '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
 
+-- Insert hardcoded place entrances
+INSERT INTO "public"."place_entrances" ("place_id", "name", "location", "accessibility_info", "created_at", "updated_at") VALUES
+    -- Entrances for Hagestad västra (Bus stop)
+    (1, 'Bus Stop Entrance', ST_SetSRID(ST_MakePoint(14.1614, 55.3876), 4326), '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
 
+    -- Entrances for Ahls rökeri (Restaurant)
+    (2, 'Main Entrance', ST_SetSRID(ST_MakePoint(14.1235, 55.3561), 4326), '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (2, 'Side Entrance', ST_SetSRID(ST_MakePoint(14.1236, 55.3562), 4326), '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
+
+    -- Entrance for Tygapil (Farm)
+    (3, 'Farm Entrance', ST_SetSRID(ST_MakePoint(14.1805, 55.3715), 4326), '{"has_ramp": false, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+
+    -- Entrance for Hedvigsdals Nygård (Farm)
+    (4, 'Farm House Entrance', ST_SetSRID(ST_MakePoint(14.0915, 55.3785), 4326), '{"has_ramp": false, "door_width": 1.0, "automatic_door": false}', NOW(), NOW()),
+
+    -- Entrance for TEST (previously Nyhem)
+    (5, 'Main Entrance', ST_SetSRID(ST_MakePoint(14.0325, 55.4015), 4326), '{"has_ramp": true, "door_width": 1.1, "automatic_door": false}', NOW(), NOW()),
+
+    -- Entrance for Margretevall (Bus stop)
+    (6, 'Bus Stop Entrance', ST_SetSRID(ST_MakePoint(14.0895, 55.3645), 4326), '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+
+    -- Entrances for Pinchos (Restaurant)
+    (7, 'Main Entrance', ST_SetSRID(ST_MakePoint(17.3065, 62.3905), 4326), '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
+    (7, 'Outdoor Seating Entrance', ST_SetSRID(ST_MakePoint(17.3066, 62.3906), 4326), '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
 --
 -- Data for Name: place_entrances; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
@@ -599,5 +622,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 --
 -- PostgreSQL database dump complete
 --
+
 
 RESET ALL;

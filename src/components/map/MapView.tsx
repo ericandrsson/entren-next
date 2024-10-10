@@ -11,7 +11,7 @@ const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
 });
 
 export default function MapView() {
-  const { isListCollapsed, toggleListCollapse, isMobile, selectedSpot } =
+  const { isListCollapsed, toggleListCollapse, isMobile, selectedPlace } =
     useStore();
 
   return (
@@ -19,9 +19,9 @@ export default function MapView() {
       <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
         <MapWithNoSSR />
       </div>
-      {!isMobile && selectedSpot && (
+      {!isMobile && selectedPlace && (
         <div className="absolute bottom-8 left-8 z-10 max-w-sm">
-          <PlaceDetail />
+          <PlaceDetail place={selectedPlace} />
         </div>
       )}
       {!isMobile && (

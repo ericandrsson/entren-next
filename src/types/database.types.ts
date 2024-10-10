@@ -65,14 +65,14 @@ export type Database = {
             columns: ["parent_category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "place_categories_parent_category_fkey"
             columns: ["parent_category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "place_categories_parent_category_fkey"
@@ -245,14 +245,14 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "tag_category_mapping_place_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "tag_category_mapping_place_category_id_fkey"
@@ -313,14 +313,14 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "places_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "places_category_id_fkey"
@@ -466,6 +466,7 @@ export type Database = {
         Row: {
           category_id: number | null
           category_name: string | null
+          category_name_sv: string | null
           created_at: string | null
           lat: number | null
           location: unknown | null
@@ -475,6 +476,7 @@ export type Database = {
           osm_tags: Json | null
           parent_category_id: number | null
           parent_category_name: string | null
+          parent_category_name_sv: string | null
           place_id: number | null
           updated_at: string | null
           user_id: string | null

@@ -10,8 +10,8 @@ function Map() {
   const map = useRef<maplibregl.Map | null>(null);
   const {
     mapView,
-    debouncedFetchSpots,
-    selectedSpot,
+    debouncedFetchPlaces,
+    selectedPlace,
     setMapInstance,
     onMapLoad,
   } = useStore();
@@ -91,19 +91,19 @@ function Map() {
     center,
     zoom,
     setMapInstance,
-    debouncedFetchSpots,
+    debouncedFetchPlaces,
     handleResize,
   ]);
 
   useEffect(() => {
-    if (selectedSpot && map.current) {
+    if (selectedPlace && map.current) {
       map.current.flyTo({
-        center: [selectedSpot.long!, selectedSpot.lat!],
+        center: [selectedPlace.long!, selectedPlace.lat!],
         zoom: 16,
         essential: true,
       });
     }
-  }, [selectedSpot]);
+  }, [selectedPlace]);
 
   // Add a new useEffect to handle layout changes
   useEffect(() => {

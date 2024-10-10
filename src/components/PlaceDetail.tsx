@@ -17,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
+import { createClient } from "@/utils/supabase/client";
 import {
   AlertTriangle,
   Check,
@@ -28,67 +29,12 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
-
-type Photo = {
-  id: string;
-  url: string;
-  alt: string;
-};
-
-type Entrance = {
-  id: string;
-  name: string;
-  accessibility: "full" | "partial" | "none";
-  details: string;
-  photos: Photo[];
-};
-
-type Place = {
-  id: string;
-  name: string;
-  address: string;
-  category: string;
-  entrances: Entrance[];
-  verified: boolean;
-};
-
-// Mock data
-const mockPlace: Place = {
-  id: "1",
-  name: "Central Park Cafe",
-  address: "123 Park Avenue, New York, NY 10022",
-  category: "Coffee Shop",
-  entrances: [
-    {
-      id: "main",
-      name: "Main Entrance",
-      accessibility: "full",
-      details: "Wide doors with automatic opener, no steps.",
-      photos: [
-        {
-          id: "1",
-          url: "/placeholder.svg?height=200&width=300",
-          alt: "Main entrance view",
-        },
-      ],
-    },
-    {
-      id: "side",
-      name: "Side Entrance",
-      accessibility: "partial",
-      details: "One small step, narrow door.",
-      photos: [
-        {
-          id: "2",
-          url: "/placeholder.svg?height=200&width=300",
-          alt: "Side entrance view",
-        },
-      ],
-    },
-  ],
-  verified: true,
-};
+import { useCallback, useEffect, useState } from "react";
+import {
+  Place,
+  PlaceEntranceImage,
+  PlaceEntranceWithImages,
+} from "../types/custom.types";
 
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
@@ -99,9 +45,49 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
-  const [expandedEntrance, setExpandedEntrance] = useState<string | null>(null);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+export default function PlaceDetail({ place }: { place: Place }) {
+  const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
+  const [entrances, setEntrances] = useState<PlaceEntranceWithImages[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<PlaceEntranceImage | null>(
+    null,
+  );
+
+  const fetchEntranceImages = useCallback(async (entranceId: number) => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("place_entrance_images")
+      .select("*")
+      .eq("entrance_id", entranceId);
+
+    if (error) {
+      console.error("Error fetching entrance images:", error);
+      return [];
+    }
+
+    return (data as PlaceEntranceImage[]) || [];
+  }, []);
+
+  useEffect(() => {
+    const fetchEntrances = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("detailed_entrances_view")
+        .select("*")
+        .eq("place_id", place.place_id);
+
+      if (data) {
+        const entrancesWithImages = await Promise.all(
+          data.map(async (entrance) => {
+            const images = await fetchEntranceImages(entrance.entrance_id);
+            return { ...entrance, photos: images };
+          }),
+        );
+        setEntrances(entrancesWithImages as PlaceEntranceWithImages[]);
+      }
+    };
+
+    fetchEntrances();
+  }, [place.place_id, fetchEntranceImages]);
 
   const getAccessibilityIcon = (accessibility: "full" | "partial" | "none") => {
     switch (accessibility) {
@@ -119,91 +105,109 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex items-start space-x-2">
-            {getCategoryIcon(place.category)}
+            {getCategoryIcon(place.category_name || "unknown")}
             <div>
               <CardTitle className="text-2xl font-bold">{place.name}</CardTitle>
               <div className="flex items-center space-x-2">
-                <p className="text-muted-foreground">{place.category}</p>
+                <p className="text-muted-foreground">
+                  {place.category_name_sv}
+                </p>
                 <span className="text-muted-foreground">•</span>
-                <p className="text-sm text-muted-foreground">{place.address}</p>
+                <p className="text-sm text-muted-foreground">placeholder</p>
               </div>
             </div>
           </div>
-          {place.verified && (
-            <div className="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
-              <Shield className="w-4 h-4 mr-1" />
-              <span>Verified</span>
-            </div>
-          )}
+          <div className="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
+            <Shield className="w-4 h-4 mr-1" />
+            <span>Verifierad</span>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
         <ScrollArea>
           <div className="space-y-6">
-            <section aria-labelledby="entrances-heading">
-              <h2 id="entrances-heading" className="text-lg font-semibold mb-2">
-                Entrances
-              </h2>
-              <ul className="space-y-4">
-                {place.entrances.map((entrance) => (
-                  <li key={entrance.id}>
-                    <Collapsible
-                      open={expandedEntrance === entrance.id}
-                      onOpenChange={() =>
-                        setExpandedEntrance(
-                          expandedEntrance === entrance.id ? null : entrance.id,
-                        )
-                      }
-                    >
-                      <CollapsibleTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-between"
-                        >
-                          <span className="flex items-center">
-                            {entrance.name}
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Info className="w-4 h-4 ml-2 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{entrance.details}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </span>
-                          {getAccessibilityIcon(entrance.accessibility)}
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="p-2">
-                        <p className="text-sm mb-2 font-medium">
-                          {entrance.details}
-                        </p>
-                        <div className="grid grid-cols-1 gap-2 mb-2">
-                          {entrance.photos.map((photo) => (
-                            <Button
-                              key={photo.id}
-                              variant="ghost"
-                              className="p-0 w-full h-auto"
-                              onClick={() => setSelectedPhoto(photo)}
-                            >
-                              <Image
-                                src={photo.url}
-                                alt={photo.alt}
-                                width={300}
-                                height={200}
-                                className="rounded-md object-cover w-full"
-                              />
-                            </Button>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {entrances.length > 0 && (
+              <section aria-labelledby="entrances-heading">
+                <h2
+                  id="entrances-heading"
+                  className="text-lg font-semibold mb-2"
+                >
+                  Entrances
+                </h2>
+                <ul className="space-y-4">
+                  {entrances.map((entrance) => (
+                    <li key={entrance.entrance_id}>
+                      <Collapsible
+                        open={expandedEntrance === entrance.entrance_id}
+                        onOpenChange={() =>
+                          setExpandedEntrance(entrance.entrance_id)
+                        }
+                      >
+                        <CollapsibleTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full justify-between"
+                          >
+                            <span className="flex items-center">
+                              {entrance.entrance_name}
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Info className="w-4 h-4 ml-2 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      {
+                                        (
+                                          entrance.accessibility_info as {
+                                            details?: string;
+                                          }
+                                        )?.details
+                                      }
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </span>
+                            {getAccessibilityIcon("full")}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="p-2">
+                          <p className="text-sm mb-2 font-medium">
+                            {
+                              (
+                                entrance.accessibility_info as {
+                                  details?: string;
+                                }
+                              )?.details
+                            }
+                          </p>
+                          <div className="grid grid-cols-1 gap-2 mb-2">
+                            {entrance.photos &&
+                              entrance.photos.map((photo) => (
+                                <Button
+                                  key={photo.id}
+                                  variant="ghost"
+                                  className="p-0 w-full h-auto"
+                                  onClick={() => setSelectedPhoto(photo)}
+                                >
+                                  <Image
+                                    src={photo.image_url!}
+                                    alt={photo.description || ""}
+                                    width={300}
+                                    height={200}
+                                    className="rounded-md object-cover w-full"
+                                  />
+                                </Button>
+                              ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             <section aria-labelledby="actions-heading">
               <h2 id="actions-heading" className="sr-only">
@@ -228,13 +232,15 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-4 rounded-lg max-w-3xl max-h-[90vh] overflow-auto">
             <Image
-              src={selectedPhoto.url}
-              alt={selectedPhoto.alt}
+              src={selectedPhoto.image_url!}
+              alt={selectedPhoto.description || ""}
               width={800}
               height={600}
               className="rounded-md object-contain"
             />
-            <p className="mt-2 text-sm text-center">{selectedPhoto.alt}</p>
+            <p className="mt-2 text-sm text-center">
+              {selectedPhoto.description || ""}
+            </p>
             <Button
               className="mt-4 w-full"
               onClick={() => setSelectedPhoto(null)}
@@ -246,3 +252,4 @@ export default function PlaceDetail({ place = mockPlace }: { place?: Place }) {
       )}
     </Card>
   );
+}

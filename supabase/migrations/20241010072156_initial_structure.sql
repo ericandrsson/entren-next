@@ -294,24 +294,58 @@ create or replace view "public"."detailed_entrances_view" as  SELECT se.id AS en
      JOIN places s ON ((s.id = se.place_id)));
 
 
-create or replace view "public"."detailed_places_view" as  SELECT s.id AS place_id,
-    s.name,
-    s.osm_id,
-    s.osm_tags,
-    st_y((s.location)::geometry) AS lat,
-    st_x((s.location)::geometry) AS long,
-    s.location,
-    s.created_at,
-    s.updated_at,
-    s.user_id,
+create or replace view "public"."detailed_places_view" as  SELECT p.id AS place_id,
+    p.name,
+    p.osm_id,
+    p.osm_tags,
+    st_y((p.location)::geometry) AS lat,
+    st_x((p.location)::geometry) AS long,
+    p.location,
+    p.created_at,
+    p.updated_at,
+    p.user_id,
     c.name AS category_name,
+    c.name_sv AS category_name_sv,
     c.id AS category_id,
     pc.id AS parent_category_id,
-    pc.name AS parent_category_name
-   FROM (((places s
-     LEFT JOIN place_categories c ON ((s.category_id = c.id)))
+    pc.name AS parent_category_name,
+    pc.name_sv AS parent_category_name_sv
+   FROM (((places p
+     LEFT JOIN place_categories c ON ((p.category_id = c.id)))
      LEFT JOIN place_categories pc ON ((c.parent_category_id = pc.id)))
-     LEFT JOIN users u ON ((s.user_id = u.id)));
+     LEFT JOIN users u ON ((p.user_id = u.id)));
+
+CREATE OR REPLACE FUNCTION public.update_place_categories()
+RETURNS void
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+    place_record RECORD;
+    new_category_id INTEGER;
+BEGIN
+    FOR place_record IN SELECT id, osm_id, osm_tags, category_id FROM places WHERE osm_id IS NOT NULL AND osm_tags IS NOT NULL
+    LOOP
+        -- Convert JSONB to HSTORE and get the new category ID
+        SELECT get_category_id_from_osm_tags(
+            hstore(array_agg(key), array_agg(value))
+        ) INTO new_category_id
+        FROM jsonb_each_text(place_record.osm_tags);
+
+        -- Update the place if the category has changed
+        IF new_category_id IS NOT NULL AND new_category_id != place_record.category_id THEN
+            UPDATE places
+            SET category_id = new_category_id,
+                updated_at = NOW()
+            WHERE id = place_record.id;
+
+            RAISE NOTICE 'Updated category for place ID % from % to %', place_record.id, place_record.category_id, new_category_id;
+        END IF;
+    END LOOP;
+
+    RAISE NOTICE 'Place categories update completed.';
+END;
+$function$
+;
 
 
 CREATE OR REPLACE FUNCTION public.email_exists(email character varying)

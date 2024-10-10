@@ -31,7 +31,6 @@ export default function SearchBar() {
   }
 
   function handleSelectSpot(spot: Spot) {
-    console.log(spot);
     setSearchTerm("");
     setSearchResults([]);
     //openSpotSheet(spot);
