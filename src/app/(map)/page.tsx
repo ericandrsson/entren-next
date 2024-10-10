@@ -7,6 +7,7 @@ import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
+import { requestUserLocation } from "@/src/libs/utils";
 import { useEffect } from "react";
 
 export default function Page() {
@@ -19,24 +20,46 @@ export default function Page() {
     isDetailOpen,
     closeDetail,
     setView,
+    userLocation,
+    setUserLocation,
   } = useStore();
   const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsStickyHeader(true);
     return () => setIsStickyHeader(false);
   }, [setIsStickyHeader]);
 
-  const { toast } = useToast();
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      const userLocation = await requestUserLocation();
+      if (!userLocation) {
+        toast({
+          title: "Location Error",
+          description: "Unable to get your location. Using default view.",
+          variant: "destructive",
+        });
+      } else {
+        setUserLocation({
+          latitude: userLocation[0],
+          longitude: userLocation[1],
+        });
+      }
+    };
+
+    fetchUserLocation();
+  }, [userLocation, toast]);
 
   useEffect(() => {
     const checkIsMobile = () => {
       const newIsMobile = window.innerWidth <= 960;
       setIsMobile(newIsMobile);
 
-      // Adjust view only if switching to mobile and current view is "both"
-      if (newIsMobile && view === "both") {
-        setView("map");
+      // Adjust view only if switching to mobile and current view is "map" or "list"
+      if (newIsMobile && (view === "map" || view === "list")) {
+        setView(view);
       }
     };
     checkIsMobile();

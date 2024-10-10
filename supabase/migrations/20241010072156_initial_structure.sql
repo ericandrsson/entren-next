@@ -481,8 +481,9 @@ END;$function$
 
 
 CREATE OR REPLACE FUNCTION public.get_nearest_places(
-    user_location geometry,
-    limit_count integer,
+    user_lat double precision,
+    user_long double precision,
+    limit_count integer DEFAULT 10,
     max_distance_meters double precision DEFAULT 10000 -- Default 10km
 )
 RETURNS TABLE(
@@ -501,8 +502,13 @@ RETURNS TABLE(
 )
 LANGUAGE plpgsql
 AS $function$
+DECLARE
+    user_location geometry;
 BEGIN
     PERFORM set_config('search_path', 'public, extensions', false);
+
+    -- Create a point geometry from the input latitude and longitude
+    user_location := ST_SetSRID(ST_MakePoint(user_long, user_lat), 4326);
 
     RETURN QUERY
     SELECT 
@@ -528,8 +534,6 @@ BEGIN
     LIMIT limit_count;
 END;
 $function$;
-
-
 
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()

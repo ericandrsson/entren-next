@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/components/ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { PlaceEntranceImage } from "../../types/custom.types";
 import PlacePhotoGallery from "./PlacePhotoGallery";
 
@@ -26,8 +27,12 @@ export function PhotoDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Photo Details</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <VisuallyHidden.Root>
+            <DialogTitle>Photo Details</DialogTitle>
+            <DialogDescription>
+              Gallery of place entrance images
+            </DialogDescription>
+          </VisuallyHidden.Root>
         </DialogHeader>
         <PlacePhotoGallery
           photos={photos}

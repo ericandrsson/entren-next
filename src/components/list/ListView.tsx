@@ -1,10 +1,38 @@
 import { useStore } from "@/src/libs/store";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect } from "react";
 import ListViewCard from "./ListViewCard";
 
-export default function ListContent() {
+export default function ListView() {
+  const supabase = createClient();
   const visiblePlaces = useStore((state) => state.visiblePlaces);
   const isMobile = useStore((state) => state.isMobile);
   const view = useStore((state) => state.view);
+  const userLocation = useStore((state) => state.userLocation);
+  const setVisiblePlaces = useStore((state) => state.setVisiblePlaces);
+
+  useEffect(() => {
+    async function fetchNearestPlaces() {
+      if (visiblePlaces.length === 0 && userLocation) {
+        const { data, error } = await supabase.rpc("get_nearest_places", {
+          user_lat: userLocation.latitude,
+          user_long: userLocation.longitude,
+          limit_count: 10,
+          max_distance_meters: 10000000,
+        });
+
+        console.log("data", data);
+
+        if (error) {
+          console.error("Error fetching nearest places:", error);
+        } else if (data) {
+          setVisiblePlaces(data);
+        }
+      }
+    }
+
+    fetchNearestPlaces();
+  }, [userLocation, supabase, setVisiblePlaces]);
 
   return (
     <div className="space-y-4">

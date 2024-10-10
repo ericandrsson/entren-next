@@ -12,8 +12,7 @@ function Map() {
 
   const defaultCenter: [number, number] = [57.0, 15.0]; // Slightly south of the center of Sweden
   const defaultZoom = 6;
-
-  const { center, zoom } = mapView;
+  const { userLocation } = useStore();
 
   // Function to handle resize
   const handleResize = useCallback(() => {
@@ -40,8 +39,10 @@ function Map() {
           }
           return { url };
         },
-        center: center || defaultCenter,
-        zoom: zoom || defaultZoom,
+        center: userLocation
+          ? [userLocation.longitude, userLocation.latitude]
+          : defaultCenter,
+        zoom: userLocation ? 12 : defaultZoom,
         minZoom: 4,
         maxZoom: 20,
         bounds: [
@@ -80,7 +81,7 @@ function Map() {
       window.removeEventListener("resize", handleResize);
       map.current?.remove();
     };
-  }, [mapContainerRef.current, center, zoom, setMapInstance, handleResize]);
+  }, [mapContainerRef.current, setMapInstance, handleResize]);
 
   useEffect(() => {
     if (selectedPlace && map.current) {

@@ -50,7 +50,7 @@ type StoreState = {
 
   // Visible places
   visiblePlaces: Place[];
-  setVisiblePlaces: (places: Place[]) => void;
+  setVisiblePlaces: (places: any[]) => void; // Update the type according to your place object structure
 
   // New method for loading map sources and layers
   onMapLoad: (map: maplibregl.Map) => void;
@@ -58,6 +58,10 @@ type StoreState = {
   // Detail state
   isDetailOpen: boolean;
   closeDetail: () => void;
+
+  // User location state
+  userLocation: { latitude: number; longitude: number } | null;
+  setUserLocation: (location: { latitude: number; longitude: number } | null) => void;
 };
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -163,4 +167,8 @@ export const useStore = create<StoreState>((set, get) => ({
     // Registers map events such as click events on places
     registerMapEvents(map);
   },
+
+  // User location state
+  userLocation: null,
+  setUserLocation: (location) => set({ userLocation: location }),
 }));
