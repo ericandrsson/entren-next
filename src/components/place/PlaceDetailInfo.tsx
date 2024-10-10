@@ -50,6 +50,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
     [],
   );
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
 
   const fetchAllPlaceImages = useCallback(async (placeId: number) => {
     setLoadingImages(true);
@@ -116,6 +117,12 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
 
   const handlePhotoClick = (clickedPhotoIndex: number) => {
     setSelectedPhotoIndex(clickedPhotoIndex);
+    setIsPhotoDialogOpen(true);
+  };
+
+  const handleClosePhotoDialog = () => {
+    setIsPhotoDialogOpen(false);
+    setSelectedPhotoIndex(0);
   };
 
   return (
@@ -257,9 +264,8 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
       <PhotoDialog
         photos={allPlacePhotos}
         initialPhotoIndex={selectedPhotoIndex}
-        onClose={() => {
-          setSelectedPhotoIndex(0);
-        }}
+        onClose={handleClosePhotoDialog}
+        isOpen={isPhotoDialogOpen}
       />
     </>
   );

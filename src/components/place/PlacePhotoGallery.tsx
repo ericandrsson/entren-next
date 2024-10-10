@@ -61,7 +61,7 @@ export default function PlacePhotoGallery({
       <div className="text-center mt-2">
         {currentPhoto.description && <p>{currentPhoto.description}</p>}
         <p className="text-sm text-muted-foreground">
-          Image {currentPhotoIndex + 1} of {photos.length}
+          Bild {currentPhotoIndex + 1} av {photos.length}
         </p>
       </div>
     </div>

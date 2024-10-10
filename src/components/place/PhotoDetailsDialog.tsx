@@ -13,17 +13,26 @@ interface PhotoDialogProps {
   photos: PlaceEntranceImage[];
   initialPhotoIndex: number;
   onClose: () => void;
+  isOpen: boolean;
 }
 
-export function PhotoDialog({ photos, initialPhotoIndex, onClose }: PhotoDialogProps) {
+export function PhotoDialog({
+  photos,
+  initialPhotoIndex,
+  onClose,
+  isOpen,
+}: PhotoDialogProps) {
   return (
-    <Dialog open={photos.length > 0} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Photo Details</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <PlacePhotoGallery photos={photos} initialPhotoIndex={initialPhotoIndex} />
+        <PlacePhotoGallery
+          photos={photos}
+          initialPhotoIndex={initialPhotoIndex}
+        />
         <Button onClick={onClose} className="mt-4">
           Stäng
         </Button>
