@@ -27,6 +27,17 @@ export async function registerMapEvents(map: maplibregl.Map) {
     map.getCanvas().style.cursor = "";
   });
 
+  // Add a click event for the entire map
+  map.on("click", (e) => {
+    const clickedLayer = map.queryRenderedFeatures(e.point, {
+      layers: ["placesLayer"],
+    });
+    if (clickedLayer.length === 0) {
+      const { setSelectedPlace } = useStore.getState();
+      setSelectedPlace(null);
+    }
+  });
+
   // Update the moveend event listener
   map.on("moveend", async () => {
     const features = map.queryRenderedFeatures(undefined, {

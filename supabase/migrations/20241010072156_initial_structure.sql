@@ -479,6 +479,59 @@ AS $function$BEGIN
 END;$function$
 ;
 
+
+CREATE OR REPLACE FUNCTION public.get_nearest_places(
+    user_location geometry,
+    limit_count integer,
+    max_distance_meters double precision DEFAULT 10000 -- Default 10km
+)
+RETURNS TABLE(
+    place_id integer,
+    osm_id bigint,
+    name text,
+    lat double precision,
+    long double precision,
+    distance_meters double precision,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    osm_tags jsonb,
+    user_id uuid,
+    category_name text,
+    parent_category_name text
+)
+LANGUAGE plpgsql
+AS $function$
+BEGIN
+    PERFORM set_config('search_path', 'public, extensions', false);
+
+    RETURN QUERY
+    SELECT 
+        v.place_id,
+        v.osm_id,
+        v.name::TEXT,
+        ST_Y(v.location::geometry) AS lat,
+        ST_X(v.location::geometry) AS long,
+        ST_Distance(v.location::geography, user_location::geography) AS distance_meters,
+        v.created_at,
+        v.updated_at,
+        v.osm_tags,
+        v.user_id,
+        v.category_name::TEXT,
+        v.parent_category_name::TEXT
+    FROM detailed_places_view v
+    WHERE ST_DWithin(
+        v.location::geography,
+        user_location::geography,
+        max_distance_meters
+    )
+    ORDER BY v.location::geography <-> user_location::geography
+    LIMIT limit_count;
+END;
+$function$;
+
+
+
+
 CREATE OR REPLACE FUNCTION public.handle_new_user()
  RETURNS trigger
  LANGUAGE plpgsql
