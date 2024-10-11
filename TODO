@@ -1,0 +1,1 @@
+Fix listview loading spots in views vs distance. In ListView.tsx

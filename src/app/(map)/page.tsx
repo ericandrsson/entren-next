@@ -37,9 +37,9 @@ export default function Page() {
       const userLocation = await requestUserLocation();
       if (!userLocation) {
         toast({
-          title: "Location Error",
-          description: "Unable to get your location. Using default view.",
-          variant: "destructive",
+          title: "Platsbestämning misslyckades",
+          description: "Det gick inte att bestämma din exakta plats.",
+          variant: "default",
         });
       } else {
         setUserLocation({
