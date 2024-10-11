@@ -1,6 +1,7 @@
 import { useStore } from "@/src/libs/store";
 import { Place } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
+import debounce from "lodash/debounce";
 
 export async function registerMapEvents(map: maplibregl.Map) {
   map.on("click", "placesLayer", async (e) => {
@@ -38,8 +39,12 @@ export async function registerMapEvents(map: maplibregl.Map) {
     }
   });
 
-  // Update the moveend event listener
-  map.on("moveend", async () => {
+  // Debounced function for handling moveend event
+  const debouncedMoveEnd = debounce(async () => {
+    const isListVisible = useStore.getState().isListVisible;
+    console.log(isListVisible);
+    if (!isListVisible) return; // Exit if list is not visible
+
     const features = map.queryRenderedFeatures(undefined, {
       layers: ["placesLayer"],
     });
@@ -48,11 +53,14 @@ export async function registerMapEvents(map: maplibregl.Map) {
       .map((feature) => feature.properties?.id)
       .filter(Boolean);
 
+    // If no places are visible, clear the visible places
     if (visiblePlaceIds.length === 0) {
       const { setVisiblePlaces } = useStore.getState();
       setVisiblePlaces([]);
       return;
     }
+
+    console.log("visiblePlaceIds", visiblePlaceIds);
 
     const supabase = createClient();
     const { setVisiblePlaces } = useStore.getState();
@@ -72,7 +80,10 @@ export async function registerMapEvents(map: maplibregl.Map) {
     } catch (error) {
       console.error("Error in moveend event handler:", error);
     }
-  });
+  }, 300); // 300ms delay, adjust as needed
+
+  // Update the moveend event listener to use the debounced function
+  map.on("moveend", debouncedMoveEnd);
 }
 
 async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
@@ -93,6 +104,5 @@ async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
 }
 
 async function handleUnverifiedSpotClick(e: maplibregl.MapLayerMouseEvent) {
-  const geometry = e.features?.[0]?.geometry;
-  const properties = e.features?.[0]?.properties ?? {};
+  console.log("Unverified spot clicked", e);
 }

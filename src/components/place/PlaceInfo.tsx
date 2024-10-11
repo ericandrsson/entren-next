@@ -31,7 +31,7 @@ import {
   PlaceEntranceImage,
   PlaceEntranceWithImages,
 } from "../../types/custom.types";
-import { PlacePhotoModal } from "./PlacePhotoModal";
+import PlacePhotoModal from "./PlacePhotoModal";
 
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
@@ -86,8 +86,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
         }
       }
 
-      const allImages = await fetchAllPlaceImages(place.place_id);
-      setAllPlacePhotos(allImages);
+      if (place.place_id) {
+        const allImages = await fetchAllPlaceImages(place.place_id);
+        setAllPlacePhotos(allImages);
+      }
     };
 
     fetchEntrancesAndImages();
@@ -210,7 +212,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
                                   (photo) =>
                                     photo.entrance_id === entrance.entrance_id,
                                 )
-                                .map((photo, index) => (
+                                .map((photo) => (
                                   <Button
                                     key={photo.id}
                                     variant="ghost"

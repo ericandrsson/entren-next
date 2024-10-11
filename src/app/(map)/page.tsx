@@ -47,12 +47,12 @@ export default function Page() {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      const newIsMobile = window.innerWidth <= 960;
-      setIsMobile(newIsMobile);
+      const isMobile = window.innerWidth <= 960;
+      setIsMobile(isMobile);
 
       // Adjust view only if switching to mobile and current view is "map" or "list"
-      if (newIsMobile && (view === "map" || view === "list")) {
-        setView(view);
+      if (isMobile) {
+        setView("list");
       }
     };
     checkIsMobile();

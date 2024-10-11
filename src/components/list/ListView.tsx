@@ -5,24 +5,24 @@ import ListViewCard from "./ListViewCard";
 
 export default function ListView() {
   const supabase = createClient();
-  const visiblePlaces = useStore((state) => state.visiblePlaces);
-  const isMobile = useStore((state) => state.isMobile);
-  const view = useStore((state) => state.view);
-  const isListVisible = useStore((state) => state.isListVisible);
-  const userLocation = useStore((state) => state.userLocation);
-  const setVisiblePlaces = useStore((state) => state.setVisiblePlaces);
+  const {
+    visiblePlaces,
+    isMobile,
+    view,
+    isListVisible,
+    userLocation,
+    setVisiblePlaces,
+  } = useStore();
 
   useEffect(() => {
     async function fetchNearestPlaces() {
-      if (visiblePlaces.length === 0 && userLocation && !isListVisible) {
+      if (visiblePlaces.length === 0 && userLocation && isListVisible) {
         const { data, error } = await supabase.rpc("get_nearest_places", {
           user_lat: userLocation.latitude,
           user_long: userLocation.longitude,
           limit_count: 10,
-          max_distance_meters: 10000000,
+          max_distance_meters: 100,
         });
-
-        console.log("data", data);
 
         if (error) {
           console.error("Error fetching nearest places:", error);

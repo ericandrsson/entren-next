@@ -17,7 +17,7 @@ interface PlacePhotoModalProps {
   isOpen: boolean;
 }
 
-export function PlacePhotoModal({
+export default function PlacePhotoModal({
   photos,
   initialPhotoIndex,
   onClose,
@@ -28,9 +28,9 @@ export function PlacePhotoModal({
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <VisuallyHidden.Root>
-            <DialogTitle>Photo Details</DialogTitle>
+            <DialogTitle>Bilddetaljer</DialogTitle>
             <DialogDescription>
-              Gallery of place entrance images
+              Galleri med bilder från entréerna till platsen
             </DialogDescription>
           </VisuallyHidden.Root>
         </DialogHeader>

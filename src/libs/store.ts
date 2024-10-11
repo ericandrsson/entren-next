@@ -4,11 +4,7 @@ import { addDetailedSpotsSource } from "@/src/libs/map/sources";
 import { Place, PlaceEntrance } from "@/src/types/custom.types";
 import maplibregl from "maplibre-gl";
 import { create } from "zustand";
-
-interface FetchParams {
-  bounds?: maplibregl.LngLatBounds;
-  searchQuery?: string;
-}
+import { addMapControls } from "./map/controls";
 
 type StoreState = {
   // UI state
@@ -87,6 +83,7 @@ export const useStore = create<StoreState>((set, get) => ({
   onMapLoad: (map) => {
     addDetailedSpotsSource(map);
     addPlacesLayer(map);
+    addMapControls(map);
     registerMapEvents(map);
   },
 

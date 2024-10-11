@@ -1,5 +1,10 @@
 import { Button } from "@/src/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/src/components/ui/sheet";
 import { useStore } from "@/src/libs/store";
 import { Filter } from "lucide-react";
 
@@ -8,6 +13,7 @@ export default function FilterButton() {
 
   return (
     <Sheet>
+      <SheetTitle>Filter</SheetTitle>
       <SheetTrigger asChild>
         <Button
           variant="outline"
