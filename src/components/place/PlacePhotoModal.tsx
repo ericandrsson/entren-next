@@ -10,19 +10,19 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { PlaceEntranceImage } from "../../types/custom.types";
 import PlacePhotoGallery from "./PlacePhotoGallery";
 
-interface PhotoDialogProps {
+interface PlacePhotoModalProps {
   photos: PlaceEntranceImage[];
   initialPhotoIndex: number;
   onClose: () => void;
   isOpen: boolean;
 }
 
-export function PhotoDialog({
+export function PlacePhotoModal({
   photos,
   initialPhotoIndex,
   onClose,
   isOpen,
-}: PhotoDialogProps) {
+}: PlacePhotoModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">

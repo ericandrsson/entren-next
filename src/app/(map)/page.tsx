@@ -2,7 +2,7 @@
 
 import ListView from "@/src/components/list/ListView";
 import MapView from "@/src/components/map/MapView";
-import PlaceDetailDrawer from "@/src/components/place/PlaceDetailDrawer";
+import PlaceInfoDrawer from "@/src/components/place/PlaceInfoDrawer";
 import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
@@ -17,8 +17,7 @@ export default function Page() {
     isListVisible,
     setIsMobile,
     selectedPlace,
-    isDetailOpen,
-    closeDetail,
+    setSelectedPlace,
     setView,
     userLocation,
     setUserLocation,
@@ -114,10 +113,10 @@ export default function Page() {
 
         {/* PlaceDetailDrawer for mobile */}
         {isMobile && selectedPlace && (
-          <PlaceDetailDrawer
+          <PlaceInfoDrawer
             place={selectedPlace}
-            isOpen={isDetailOpen}
-            onClose={closeDetail}
+            isOpen={!!selectedPlace}
+            onClose={() => setSelectedPlace(null)}
           />
         )}
 

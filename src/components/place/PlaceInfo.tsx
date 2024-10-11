@@ -31,7 +31,7 @@ import {
   PlaceEntranceImage,
   PlaceEntranceWithImages,
 } from "../../types/custom.types";
-import { PhotoDialog } from "./PhotoDetailsDialog";
+import { PlacePhotoModal } from "./PlacePhotoModal";
 
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
@@ -42,7 +42,7 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-export default function PlaceDetailInfo({ place }: { place: Place }) {
+export default function PlaceInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
   const [entrances, setEntrances] = useState<PlaceEntranceWithImages[]>([]);
   const [loadingImages, setLoadingImages] = useState<boolean>(false);
@@ -261,7 +261,7 @@ export default function PlaceDetailInfo({ place }: { place: Place }) {
         </ScrollArea>
       </CardContent>
 
-      <PhotoDialog
+      <PlacePhotoModal
         photos={allPlacePhotos}
         initialPhotoIndex={selectedPhotoIndex}
         onClose={handleClosePhotoDialog}

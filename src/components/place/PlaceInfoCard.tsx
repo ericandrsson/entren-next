@@ -1,11 +1,11 @@
 import { Card } from "@/src/components/ui/card";
 import { Place } from "../../types/custom.types";
-import PlaceDetailInfo from "./PlaceDetailInfo";
+import PlaceInfo from "./PlaceInfo";
 
-export default function PlaceDetailCard({ place }: { place: Place }) {
+export default function PlaceInfoCard({ place }: { place: Place }) {
   return (
     <Card className="w-full max-w-3xl mx-auto relative">
-      <PlaceDetailInfo place={place} />
+      <PlaceInfo place={place} />
     </Card>
   );
 }
