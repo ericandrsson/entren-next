@@ -12,7 +12,7 @@
       "url": ""
     },
     "attribution": {
-      "attribution": "\u003Ca href=\"https://www.openmaptiles.org/\" target=\"_blank\"\u003E&copy; OpenMapTiles\u003C/a\u003E \u003Ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003E&copy; OpenStreetMap contributors\u003C/a\u003E",
+      "attribution": "© <a href='https://www.openmaptiles.org/' target='_blank'>OpenMapTiles</a> | © <a href='https://www.openstreetmap.org/copyright' target='_blank'>OSM contributors</a>",
       "type": "vector"
     }
   },

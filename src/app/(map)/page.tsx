@@ -23,14 +23,8 @@ export default function Page() {
     userLocation,
     setUserLocation,
   } = useStore();
-  const setIsStickyHeader = useStore((state) => state.setIsStickyHeader);
 
   const { toast } = useToast();
-
-  useEffect(() => {
-    setIsStickyHeader(true);
-    return () => setIsStickyHeader(false);
-  }, [setIsStickyHeader]);
 
   useEffect(() => {
     const fetchUserLocation = async () => {
@@ -129,7 +123,7 @@ export default function Page() {
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
             <ViewToggleButton />
           </div>
         )}

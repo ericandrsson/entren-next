@@ -15,7 +15,7 @@ export default function ViewToggleButton() {
       {view === "list" ? (
         <>
           <MapPin className="h-4 w-4 mr-2" />
-          Visa på karta
+          Visa karta
         </>
       ) : (
         <>
