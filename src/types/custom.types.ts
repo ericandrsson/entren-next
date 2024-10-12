@@ -4,7 +4,8 @@ export type PlaceFromDB =
   Database["public"]["Views"]["detailed_places_view"]["Row"];
 export type PlaceEntranceFromDB =
   Database["public"]["Views"]["detailed_entrances_view"]["Row"];
-
+export type EntranceType =
+  Database["public"]["Tables"]["entrance_types"]["Row"];
 // Place
 export interface Place extends PlaceFromDB {}
 export interface PlaceEntrance extends PlaceEntranceFromDB {}

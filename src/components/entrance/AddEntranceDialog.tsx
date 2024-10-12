@@ -24,9 +24,12 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
+import { EntranceType } from "@/src/types/custom.types";
+import { getGPSCoordinates } from "@/src/utils/imageMetadata";
+import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, MapPin, Upload } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -34,8 +37,8 @@ const entranceSchema = z.object({
   entranceType: z.enum(["main", "side", "back", "ramp", "other"]),
   photo: z.instanceof(File).optional(),
   location: z.object({
-    lat: z.number().nullable(),
-    lng: z.number().nullable(),
+    lat: z.string().optional(),
+    lng: z.string().optional(),
   }),
   accessibilityDetails: z
     .string()
@@ -59,13 +62,33 @@ export default function AddEntranceDialog({
 }: AddEntranceDialogProps) {
   const [step, setStep] = useState(1);
   const [hasLocationMetadata, setHasLocationMetadata] = useState(false);
+  const [entranceTypes, setEntranceTypes] = useState<EntranceType[]>([]);
+
+  const fetchEntranceTypes = async () => {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("entrance_types")
+      .select("id, name_sv")
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching entrance types:", error);
+    } else {
+      setEntranceTypes(data || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchEntranceTypes();
+  }, []);
 
   const form = useForm<EntranceFormData>({
     resolver: zodResolver(entranceSchema),
     defaultValues: {
       entranceType: undefined,
       photo: undefined,
-      location: { lat: null, lng: null },
+      location: { lat: "", lng: "" },
       accessibilityDetails: "",
     },
   });
@@ -89,18 +112,28 @@ export default function AddEntranceDialog({
     }
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       form.setValue("photo", file);
-      // Simulating metadata extraction
-      setTimeout(() => {
-        const hasMetadata = Math.random() < 0.5; // 50% chance of having metadata
-        setHasLocationMetadata(hasMetadata);
-        if (hasMetadata) {
-          form.setValue("location", { lat: 59.3293, lng: 18.0686 });
+
+      try {
+        const coordinates = await getGPSCoordinates(file);
+        console.log("coords", coordinates);
+        if (coordinates.lat !== null && coordinates.lng !== null) {
+          setHasLocationMetadata(true);
+          form.setValue("location", {
+            lat: coordinates.lat.toString(),
+            lng: coordinates.lng.toString(),
+          });
+        } else {
+          console.log("No coordinates found");
+          setHasLocationMetadata(false);
         }
-      }, 1000);
+      } catch (error) {
+        console.error("Error extracting GPS data:", error);
+        setHasLocationMetadata(false);
+      }
     }
   };
 
@@ -137,11 +170,14 @@ export default function AddEntranceDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="main">Huvudentré</SelectItem>
-                          <SelectItem value="side">Sidoentré</SelectItem>
-                          <SelectItem value="back">Bakentré</SelectItem>
-                          <SelectItem value="ramp">Rampentré</SelectItem>
-                          <SelectItem value="other">Annan typ</SelectItem>
+                          {entranceTypes.map((type) => (
+                            <SelectItem
+                              key={type.id}
+                              value={type.id.toString()}
+                            >
+                              {type.name_sv}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -154,19 +190,21 @@ export default function AddEntranceDialog({
               {step === 2 && (
                 <div className="grid gap-2">
                   <Label>Lägg till en bild på entrén</Label>
-                  <div className="flex justify-center items-center h-[200px] bg-muted rounded-md">
+                  <div
+                    className="flex justify-center items-center h-[200px] bg-muted rounded-md cursor-pointer"
+                    onClick={() =>
+                      document.getElementById("photo-upload")?.click()
+                    }
+                  >
                     {form.watch("photo") ? (
                       <img
-                        src={URL.createObjectURL(form.watch("photo"))}
+                        src={URL.createObjectURL(form.watch("photo") as File)}
                         alt="Entrance"
                         className="max-h-full rounded-md"
                       />
                     ) : (
-                      <div className="text-center">
-                        <Camera className="mx-auto h-12 w-12 text-muted-foreground" />
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          Ingen bild uppladdad
-                        </p>
+                      <div className="text-center text-gray-500">
+                        Ingen bild uppladdad
                       </div>
                     )}
                   </div>
@@ -186,6 +224,7 @@ export default function AddEntranceDialog({
                       className="hidden"
                       onChange={handlePhotoUpload}
                     />
+
                     <Button type="button" variant="outline">
                       <Camera className="mr-2 h-4 w-4" /> Ta foto
                     </Button>
@@ -214,9 +253,7 @@ export default function AddEntranceDialog({
                               type="number"
                               placeholder="Latitude"
                               {...field}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -233,9 +270,7 @@ export default function AddEntranceDialog({
                               type="number"
                               placeholder="Longitude"
                               {...field}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                             />
                           </FormControl>
                           <FormMessage />
