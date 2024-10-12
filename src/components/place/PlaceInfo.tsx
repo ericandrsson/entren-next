@@ -16,15 +16,11 @@ import {
 import { createClient } from "@/utils/supabase/client";
 import {
   AlertCircle,
-  AlertTriangle,
-  Check,
   Coffee,
   Flag,
   Info,
   MapPin,
   PlusCircle,
-  Shield,
-  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -33,6 +29,7 @@ import {
   PlaceEntranceImage,
   PlaceEntranceWithImages,
 } from "../../types/custom.types";
+import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 
 const getCategoryIcon = (category: string) => {
@@ -53,6 +50,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
   );
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
 
   const fetchAllPlaceImages = useCallback(async (placeId: number) => {
     setLoadingImages(true);
@@ -97,17 +95,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
     fetchEntrancesAndImages();
   }, [place.place_id, fetchAllPlaceImages]);
 
-  const getAccessibilityIcon = (accessibility: "full" | "partial" | "none") => {
-    switch (accessibility) {
-      case "full":
-        return <Check className="text-green-500" />;
-      case "partial":
-        return <AlertTriangle className="text-orange-500" />;
-      case "none":
-        return <X className="text-red-500" />;
-    }
-  };
-
   const handleEntranceExpand = useCallback(
     async (entranceId: number) => {
       if (expandedEntrance === entranceId) {
@@ -129,6 +116,19 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setSelectedPhotoIndex(0);
   };
 
+  const handleAddEntrance = () => {
+    setIsAddEntranceDialogOpen(true);
+  };
+
+  const handleCloseAddEntranceDialog = () => {
+    setIsAddEntranceDialogOpen(false);
+  };
+
+  const handleSaveAndAddAnotherEntrance = () => {
+    // Logic to save the entrance and reset the form
+    // This will be implemented in the AddEntranceDialog component
+  };
+
   const renderEntranceSection = () => {
     if (place.has_entrances) {
       return (
@@ -137,17 +137,17 @@ export default function PlaceInfo({ place }: { place: Place }) {
             <h2 id="entrances-heading" className="text-lg font-semibold">
               Entréer
             </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                /* TODO: Implement add entrance logic */
-              }}
-            >
+            <Button variant="outline" size="sm" onClick={handleAddEntrance}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Lägg till en ny entré
             </Button>
           </div>
+          <AddEntranceDialog
+            placeName={place.name || ""}
+            isOpen={isAddEntranceDialogOpen}
+            onClose={handleCloseAddEntranceDialog}
+            onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
+          />
           <ul className="space-y-4">
             {entrances.map((entrance) => (
               <li key={entrance.entrance_id}>
@@ -175,7 +175,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
                           </Tooltip>
                         </TooltipProvider>
                       </span>
-                      {getAccessibilityIcon("full")}
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-2">
@@ -239,8 +238,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
             Oj då! Den här platsen saknar entréinformation
           </h2>
           <p className="text-muted-foreground mb-4">
-            Vill du hjälpa till? Lägg till entréinformation för att göra platsen
-            mer tillgänglig för alla besökare. Din insats gör skillnad!
+            Vill du vara en tillgänglighetshjälte? Lägg till entréinformation
+            och hjälp personer med barnvagnar, rullstolar, eller andra
+            tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
+            platsen en välkomnande high-five för alla besökare!
           </p>
           <Button
             className="w-full sm:w-auto"
@@ -259,10 +260,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
   return (
     <>
       <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="flex items-start space-x-2">
+        <div className="flex flex-col w-full">
+          <div className="flex items-start space-x-2 w-full">
             {getCategoryIcon(place.category_name || "unknown")}
-            <div>
+            <div className="flex-grow">
               <CardTitle className="text-2xl font-bold">{place.name}</CardTitle>
               <div className="flex items-center space-x-2">
                 <p className="text-muted-foreground">
@@ -272,10 +273,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
                 <p className="text-sm text-muted-foreground">placeholder</p>
               </div>
             </div>
-          </div>
-          <div className="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
-            <Shield className="w-4 h-4 mr-1" />
-            <span>Verifierad</span>
           </div>
         </div>
       </CardHeader>
