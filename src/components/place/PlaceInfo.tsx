@@ -15,12 +15,14 @@ import {
 } from "@/src/components/ui/tooltip";
 import { createClient } from "@/utils/supabase/client";
 import {
+  AlertCircle,
   AlertTriangle,
   Check,
   Coffee,
   Flag,
   Info,
   MapPin,
+  PlusCircle,
   Shield,
   X,
 } from "lucide-react";
@@ -127,6 +129,133 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setSelectedPhotoIndex(0);
   };
 
+  const renderEntranceSection = () => {
+    if (place.has_entrances) {
+      return (
+        <section aria-labelledby="entrances-heading">
+          <div className="flex justify-between items-center mb-4">
+            <h2 id="entrances-heading" className="text-lg font-semibold">
+              Entréer
+            </h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                /* TODO: Implement add entrance logic */
+              }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Lägg till en ny entré
+            </Button>
+          </div>
+          <ul className="space-y-4">
+            {entrances.map((entrance) => (
+              <li key={entrance.entrance_id}>
+                <Collapsible
+                  open={expandedEntrance === entrance.entrance_id}
+                  onOpenChange={() =>
+                    handleEntranceExpand(entrance.entrance_id!)
+                  }
+                >
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                    >
+                      <span className="flex items-center">
+                        {entrance.entrance_type_name_sv}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="w-4 h-4 ml-2 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{entrance.entrance_type_description_sv}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </span>
+                      {getAccessibilityIcon("full")}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-2">
+                    <p className="text-sm mb-2 font-medium">
+                      {
+                        (
+                          entrance.accessibility_info as {
+                            details?: string;
+                          }
+                        )?.details
+                      }
+                    </p>
+                    <div className="grid grid-cols-1 gap-2 mb-2">
+                      {loadingImages ? (
+                        <Skeleton className="w-full h-48" />
+                      ) : (
+                        allPlacePhotos
+                          .filter(
+                            (photo) =>
+                              photo.entrance_id === entrance.entrance_id,
+                          )
+                          .map((photo) => (
+                            <Button
+                              key={photo.id}
+                              variant="ghost"
+                              className="p-0 w-full h-auto"
+                              onClick={() =>
+                                handlePhotoClick(
+                                  allPlacePhotos.findIndex(
+                                    (p) => p.id === photo.id,
+                                  ),
+                                )
+                              }
+                            >
+                              <Image
+                                src={photo.image_url!}
+                                alt={photo.description || ""}
+                                width={300}
+                                height={200}
+                                className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
+                              />
+                            </Button>
+                          ))
+                      )}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    } else {
+      return (
+        <section
+          aria-labelledby="no-entrances-heading"
+          className="text-center py-6"
+        >
+          <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
+          <h2 id="no-entrances-heading" className="text-xl font-semibold mb-2">
+            Oj då! Den här platsen saknar entréinformation
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            Vill du hjälpa till? Lägg till entréinformation för att göra platsen
+            mer tillgänglig för alla besökare. Din insats gör skillnad!
+          </p>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() => {
+              /* TODO: Implement add entrance logic */
+            }}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Lägg till entré
+          </Button>
+        </section>
+      );
+    }
+  };
+
   return (
     <>
       <CardHeader>
@@ -153,96 +282,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
       <CardContent>
         <ScrollArea>
           <div className="space-y-6">
-            {entrances.length > 0 && (
-              <section aria-labelledby="entrances-heading">
-                <h2
-                  id="entrances-heading"
-                  className="text-lg font-semibold mb-2"
-                >
-                  Entréer
-                </h2>
-                <ul className="space-y-4">
-                  {entrances.map((entrance) => (
-                    <li key={entrance.entrance_id}>
-                      <Collapsible
-                        open={expandedEntrance === entrance.entrance_id}
-                        onOpenChange={() =>
-                          handleEntranceExpand(entrance.entrance_id!)
-                        }
-                      >
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-between"
-                          >
-                            <span className="flex items-center">
-                              {entrance.entrance_type_name_sv}
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Info className="w-4 h-4 ml-2 text-muted-foreground" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>
-                                      {entrance.entrance_type_description_sv}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </span>
-                            {getAccessibilityIcon("full")}
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="p-2">
-                          <p className="text-sm mb-2 font-medium">
-                            {
-                              (
-                                entrance.accessibility_info as {
-                                  details?: string;
-                                }
-                              )?.details
-                            }
-                          </p>
-                          <div className="grid grid-cols-1 gap-2 mb-2">
-                            {loadingImages ? (
-                              <Skeleton className="w-full h-48" />
-                            ) : (
-                              allPlacePhotos
-                                .filter(
-                                  (photo) =>
-                                    photo.entrance_id === entrance.entrance_id,
-                                )
-                                .map((photo) => (
-                                  <Button
-                                    key={photo.id}
-                                    variant="ghost"
-                                    className="p-0 w-full h-auto"
-                                    onClick={() =>
-                                      handlePhotoClick(
-                                        allPlacePhotos.findIndex(
-                                          (p) => p.id === photo.id,
-                                        ),
-                                      )
-                                    }
-                                  >
-                                    <Image
-                                      src={photo.image_url!}
-                                      alt={photo.description || ""}
-                                      width={300}
-                                      height={200}
-                                      className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
-                                    />
-                                  </Button>
-                                ))
-                            )}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+            {renderEntranceSection()}
 
             <section aria-labelledby="actions-heading">
               <h2 id="actions-heading" className="sr-only">
