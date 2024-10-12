@@ -10,8 +10,6 @@ create server osm_remote_server foreign data wrapper postgres_fdw options (host 
 
 create user mapping for current_user server osm_remote_server options (user 'postgres', password 'p4ik5IdbSwQBMaUNBUgashGjZUxBhkN9Autx9R9Yj9VeXNgOIMYzhIuapPKn8ti1');
 
-create schema if not exists map_views;
-
 create schema if not exists osm_import;
 
 import foreign schema public
@@ -106,7 +104,6 @@ create table "public"."places" (
     "id" integer not null default nextval('places_place_id_seq'::regclass),
     "osm_id" bigint,
     "name" character varying(255),
-    "is_verified" boolean not null default false,
     "location" geometry(Point,4326),
     "category_id" bigint,
     "osm_tags" jsonb,
@@ -136,9 +133,6 @@ create table "public"."users" (
     "first_name" text,
     "last_name" text
 );
-
-
-
 
 alter sequence "public"."user_notifications_notification_id_seq" owned by "public"."user_notifications"."notification_id";
 
@@ -310,60 +304,6 @@ create or replace view "public"."detailed_entrances_view" as  SELECT
    FROM place_entrances se
    JOIN places s ON s.id = se.place_id
    JOIN entrance_types et ON et.id = se.type_id;
-
-
-create or replace view "public"."detailed_places_view" as  SELECT p.id AS place_id,
-    p.name,
-    p.osm_id,
-    p.osm_tags,
-    st_y((p.location)::geometry) AS lat,
-    st_x((p.location)::geometry) AS long,
-    p.location,
-    p.created_at,
-    p.updated_at,
-    p.user_id,
-    c.name AS category_name,
-    c.name_sv AS category_name_sv,
-    c.id AS category_id,
-    pc.id AS parent_category_id,
-    pc.name AS parent_category_name,
-    pc.name_sv AS parent_category_name_sv
-   FROM (((places p
-     LEFT JOIN place_categories c ON ((p.category_id = c.id)))
-     LEFT JOIN place_categories pc ON ((c.parent_category_id = pc.id)))
-     LEFT JOIN users u ON ((p.user_id = u.id)));
-
-CREATE OR REPLACE FUNCTION public.update_place_categories()
-RETURNS void
-LANGUAGE plpgsql
-AS $function$
-DECLARE
-    place_record RECORD;
-    new_category_id INTEGER;
-BEGIN
-    FOR place_record IN SELECT id, osm_id, osm_tags, category_id FROM places WHERE osm_id IS NOT NULL AND osm_tags IS NOT NULL
-    LOOP
-        -- Convert JSONB to HSTORE and get the new category ID
-        SELECT get_category_id_from_osm_tags(
-            hstore(array_agg(key), array_agg(value))
-        ) INTO new_category_id
-        FROM jsonb_each_text(place_record.osm_tags);
-
-        -- Update the place if the category has changed
-        IF new_category_id IS NOT NULL AND new_category_id != place_record.category_id THEN
-            UPDATE places
-            SET category_id = new_category_id,
-                updated_at = NOW()
-            WHERE id = place_record.id;
-
-            RAISE NOTICE 'Updated category for place ID % from % to %', place_record.id, place_record.category_id, new_category_id;
-        END IF;
-    END LOOP;
-
-    RAISE NOTICE 'Place categories update completed.';
-END;
-$function$
-;
 
 
 CREATE OR REPLACE FUNCTION public.email_exists(email character varying)
@@ -549,15 +489,6 @@ end;
 $function$
 ;
 
-create or replace view "map_views"."map_places_view" as  SELECT 
-    p.id,
-    p.name,
-    p.location,
-    c.id AS category_id,
-    c.name AS category_name
-   FROM places p
-     LEFT JOIN place_categories c ON (p.category_id = c.id);
-
 CREATE OR REPLACE FUNCTION public.validate_osm_id()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -574,6 +505,7 @@ AS $function$BEGIN
   RETURN NEW;
 END;$function$
 ;
+
 
 grant delete on table "public"."user_notifications" to "anon";
 
@@ -1072,3 +1004,95 @@ using (true);
 CREATE TRIGGER check_osm_id BEFORE INSERT OR UPDATE ON public.places FOR EACH ROW EXECUTE FUNCTION validate_osm_id();
 
 
+-- Create a function to build the materialized view
+CREATE OR REPLACE FUNCTION create_detailed_places_view()
+RETURNS void AS $$
+BEGIN
+  -- Drop the materialized view if it exists
+  DROP MATERIALIZED VIEW IF EXISTS public.detailed_places_view;
+
+  -- Create the materialized view
+  EXECUTE '
+  CREATE MATERIALIZED VIEW public.detailed_places_view AS
+  WITH custom_places AS (
+    SELECT 
+        p.id AS place_id,
+        p.osm_id,
+        p.name,
+        p.osm_tags,
+        ST_Y(p.location::geometry) AS lat,
+        ST_X(p.location::geometry) AS long,
+        p.location,
+        p.created_at,
+        p.updated_at,
+        p.user_id,
+        c.id AS category_id,
+        c.name AS category_name,
+        c.name_sv AS category_name_sv,
+        pc.id AS parent_category_id,
+        pc.name AS parent_category_name,
+        pc.name_sv AS parent_category_name_sv,
+        NULL AS source,
+        CASE WHEN pe.place_id IS NOT NULL THEN true ELSE false END AS has_entrances
+    FROM public.places p
+    LEFT JOIN place_categories c ON p.category_id = c.id
+    LEFT JOIN place_categories pc ON c.parent_category_id = pc.id
+    LEFT JOIN (
+        SELECT DISTINCT place_id
+        FROM public.place_entrances
+    ) pe ON p.id = pe.place_id
+  ),
+  osm_places AS (
+    SELECT 
+        NULL::integer AS id,
+        osm.osm_id,
+        osm.name,
+        osm.tags::jsonb AS osm_tags,
+        ST_Y(osm.geom::geometry) AS lat,
+        ST_X(osm.geom::geometry) AS long,
+        osm.geom AS location,
+        NULL::timestamp with time zone AS created_at,
+        NULL::timestamp with time zone AS updated_at,
+        NULL::uuid AS user_id,
+        osm_c.id AS category_id,
+        osm_c.name AS category_name,
+        osm_c.name_sv AS category_name_sv,
+        osm_pc.id AS parent_category_id,
+        osm_pc.name AS parent_category_name,
+        osm_pc.name_sv AS parent_category_name_sv,
+        ''osm'' AS source,
+        false AS has_entrances
+    FROM osm_import.sweden_osm_poi osm
+    LEFT JOIN LATERAL (
+        SELECT public.get_category_id_from_osm_tags(osm.tags::hstore) AS category_id
+    ) AS osm_category ON true
+    LEFT JOIN place_categories osm_c ON osm_category.category_id = osm_c.id
+    LEFT JOIN place_categories osm_pc ON osm_c.parent_category_id = osm_pc.id
+    WHERE osm.name IS NOT NULL
+      AND osm.osm_id NOT IN (SELECT p2.osm_id FROM public.places p2 WHERE p2.osm_id IS NOT NULL)
+    LIMIT 100
+  )
+  SELECT * FROM custom_places
+  UNION ALL
+  SELECT * FROM osm_places;
+  ';
+
+  -- Create an index on the materialized view for better query performance
+  CREATE INDEX idx_detailed_places_view_location ON public.detailed_places_view USING gist (location);
+  CREATE INDEX idx_detailed_places_view_osm_id ON public.detailed_places_view (osm_id);
+  CREATE INDEX idx_detailed_places_view_category_id ON public.detailed_places_view (category_id);
+
+
+  -- Grant necessary permissions
+  GRANT SELECT ON public.detailed_places_view TO PUBLIC;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a function to refresh the materialized view
+CREATE OR REPLACE FUNCTION refresh_detailed_places_view()
+RETURNS void AS $$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY public.detailed_places_view;
+END;
+$$ LANGUAGE plpgsql;

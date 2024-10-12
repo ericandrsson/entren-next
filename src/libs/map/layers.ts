@@ -5,7 +5,7 @@ export function addPlacesLayer(map: maplibregl.Map) {
     id: "placesLayer",
     type: "symbol",
     source: "placesSource",
-    "source-layer": "map_places_view",
+    "source-layer": "detailed_places_view",
     layout: {
       "icon-image": ["get", "category_name"],
       "icon-size": 0.65,
@@ -23,7 +23,18 @@ export function addPlacesLayer(map: maplibregl.Map) {
       "icon-opacity": 1,
       "text-halo-width": 1,
       "text-halo-color": "rgba(255, 255, 255, 0.75)",
-      "text-color": "#348f50",
+      "text-color": [
+        "case",
+        ["==", ["get", "has_entrances"], false],
+        "red",
+        "#348f50",
+      ],
+      "icon-color": [
+        "case",
+        ["==", ["get", "has_entrances"], false],
+        "red",
+        "rgba(0, 0, 0, 0)", // Transparent for places with entrances
+      ],
     },
   });
 }

@@ -72,27 +72,6 @@ export type Database = {
             foreignKeyName: "place_categories_parent_category_fkey"
             columns: ["parent_category_id"]
             isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
-          },
-          {
-            foreignKeyName: "place_categories_parent_category_fkey"
-            columns: ["parent_category_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "place_categories_parent_category_fkey"
-            columns: ["parent_category_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "place_categories_parent_category_fkey"
-            columns: ["parent_category_id"]
-            isOneToOne: false
             referencedRelation: "place_categories"
             referencedColumns: ["id"]
           },
@@ -148,20 +127,6 @@ export type Database = {
             foreignKeyName: "place_entrance_images_place_id_fkey"
             columns: ["place_id"]
             isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["place_id"]
-          },
-          {
-            foreignKeyName: "place_entrance_images_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "place_entrance_images_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
             referencedRelation: "places"
             referencedColumns: ["id"]
           },
@@ -196,20 +161,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["place_id"]
-          },
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "place_entrances_place_id_fkey"
             columns: ["place_id"]
@@ -252,27 +203,6 @@ export type Database = {
             foreignKeyName: "tag_category_mapping_place_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
-          },
-          {
-            foreignKeyName: "tag_category_mapping_place_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "tag_category_mapping_place_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "tag_category_mapping_place_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
             referencedRelation: "place_categories"
             referencedColumns: ["id"]
           },
@@ -283,7 +213,6 @@ export type Database = {
           category_id: number | null
           created_at: string
           id: number
-          is_verified: boolean
           location: unknown | null
           name: string | null
           osm_id: number | null
@@ -295,7 +224,6 @@ export type Database = {
           category_id?: number | null
           created_at?: string
           id?: number
-          is_verified?: boolean
           location?: unknown | null
           name?: string | null
           osm_id?: number | null
@@ -307,7 +235,6 @@ export type Database = {
           category_id?: number | null
           created_at?: string
           id?: number
-          is_verified?: boolean
           location?: unknown | null
           name?: string | null
           osm_id?: number | null
@@ -316,27 +243,6 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "places_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
-          },
-          {
-            foreignKeyName: "places_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "places_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["category_id"]
-          },
           {
             foreignKeyName: "places_category_id_fkey"
             columns: ["category_id"]
@@ -459,35 +365,7 @@ export type Database = {
             referencedRelation: "places"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "map_places_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "detailed_places_view"
-            referencedColumns: ["place_id"]
-          },
         ]
-      }
-      detailed_places_osm_view: {
-        Row: {
-          category_id: number | null
-          category_name: string | null
-          category_name_sv: string | null
-          lat: number | null
-          location: unknown | null
-          long: number | null
-          name: string | null
-          osm_id: number | null
-          tags: unknown | null
-        }
-        Relationships: []
       }
       detailed_places_view: {
         Row: {
@@ -495,6 +373,7 @@ export type Database = {
           category_name: string | null
           category_name_sv: string | null
           created_at: string | null
+          has_entrances: boolean | null
           lat: number | null
           location: unknown | null
           long: number | null
@@ -505,21 +384,18 @@ export type Database = {
           parent_category_name: string | null
           parent_category_name_sv: string | null
           place_id: number | null
+          source: string | null
           updated_at: string | null
           user_id: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "places_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
+      create_detailed_places_view: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_place_from_osm: {
         Args: {
           osm_id: number
@@ -528,7 +404,6 @@ export type Database = {
           category_id: number | null
           created_at: string
           id: number
-          is_verified: boolean
           location: unknown | null
           name: string | null
           osm_id: number | null
@@ -594,7 +469,7 @@ export type Database = {
           parent_category_name: string
         }[]
       }
-      update_place_categories: {
+      refresh_detailed_places_view: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

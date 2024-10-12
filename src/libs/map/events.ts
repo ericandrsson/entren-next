@@ -1,15 +1,11 @@
 import { useStore } from "@/src/libs/store";
-import { Place, PlaceOsm } from "@/src/types/custom.types";
+import { Place } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
 
 export async function registerMapEvents(map: maplibregl.Map) {
   map.on("click", "placesLayer", async (e) => {
     handlePlacesLayerClick(e);
-  });
-
-  map.on("click", "placesOsmLayer", async (e) => {
-    handlePlacesOsmLayerClick(e);
   });
 
   map.on("mouseenter", "placesLayer", () => {
@@ -80,36 +76,19 @@ export async function registerMapEvents(map: maplibregl.Map) {
   map.on("moveend", debouncedMoveEnd);
 }
 
-async function handlePlacesLayerClick(e: maplibregl.MapLayerMouseEvent) {
+function handlePlacesLayerClick(e: maplibregl.MapLayerMouseEvent) {
   const { setSelectedPlace } = useStore.getState();
-  const properties = e.features?.[0]?.properties ?? {};
-  if (properties.id) {
-    const supabase = createClient();
-    const { data: place } = await supabase
-      .from("detailed_places_view")
-      .select("*")
-      .eq("place_id", properties.id)
-      .single();
+  const properties = e.features?.[0]?.properties;
 
-    if (place) {
-      setSelectedPlace(place);
-    }
-  }
-}
+  if (properties) {
+    const { id: place_id, ...rest } = properties;
+    const place: Partial<Place> = {
+      place_id,
+      ...rest,
+    };
 
-async function handlePlacesOsmLayerClick(e: maplibregl.MapLayerMouseEvent) {
-  const { setSelectedPlace } = useStore.getState();
-  const properties = e.features?.[0]?.properties ?? {};
-  if (properties.osm_id) {
-    const supabase = createClient();
-    const { data: place } = await supabase
-      .from("detailed_places_osm_view")
-      .select("*")
-      .eq("osm_id", properties.osm_id)
-      .single();
+    console.log(place);
 
-    if (place) {
-      setSelectedPlace(place as PlaceOsm);
-    }
+    setSelectedPlace(place as Place);
   }
 }

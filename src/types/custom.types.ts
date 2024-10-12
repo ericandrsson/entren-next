@@ -6,9 +6,7 @@ export type PlaceEntranceFromDB =
   Database["public"]["Views"]["detailed_entrances_view"]["Row"];
 
 // Place
-export interface Place extends PlaceFromDB {
-  photos: string[];
-}
+export interface Place extends PlaceFromDB {}
 export interface PlaceEntrance extends PlaceEntranceFromDB {}
 export type PlaceEntranceImage =
   Database["public"]["Tables"]["place_entrance_images"]["Row"];
@@ -16,7 +14,3 @@ export type PlaceEntranceImage =
 export interface PlaceEntranceWithImages extends PlaceEntrance {
   photos: PlaceEntranceImage[];
 }
-
-// Place OSM
-export type PlaceOsm =
-  Database["public"]["Views"]["detailed_places_osm_view"]["Row"];
