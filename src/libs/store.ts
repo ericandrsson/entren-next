@@ -1,7 +1,7 @@
 import { registerMapEvents } from "@/src/libs/map/events";
 import { addPlacesLayer, addPlacesOsmLayer } from "@/src/libs/map/layers";
 import { addPlacesOsmSource, addPlacesSource } from "@/src/libs/map/sources";
-import { Place, PlaceEntrance } from "@/src/types/custom.types";
+import { Place, PlaceEntrance, PlaceOsm } from "@/src/types/custom.types";
 import maplibregl from "maplibre-gl";
 import { create } from "zustand";
 import { addMapControls } from "./map/controls";
@@ -19,11 +19,11 @@ type StoreState = {
   // Place-related state
   places: Place[];
   isLoading: boolean;
-  selectedPlace: Place | null;
+  selectedPlace: Place | PlaceOsm | null;
   visiblePlaces: Place[];
   setPlaces: (places: Place[]) => void;
   setIsLoading: (isLoading: boolean) => void;
-  setSelectedPlace: (place: Place | null) => void;
+  setSelectedPlace: (place: Place | PlaceOsm | null) => void;
   setVisiblePlaces: (places: Place[]) => void;
 
   // Map-related state
@@ -87,8 +87,11 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
   onMapLoad: (map) => {
+    // Add sources
     addPlacesSource(map);
     addPlacesOsmSource(map);
+
+    // Add layers
     addPlacesLayer(map);
     addPlacesOsmLayer(map);
 

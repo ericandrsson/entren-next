@@ -1,15 +1,15 @@
 import { useStore } from "@/src/libs/store";
-import { Place } from "@/src/types/custom.types";
+import { Place, PlaceOsm } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import debounce from "lodash/debounce";
 
 export async function registerMapEvents(map: maplibregl.Map) {
   map.on("click", "placesLayer", async (e) => {
-    handleDetailedSpotsViewClick(e);
+    handlePlacesLayerClick(e);
   });
 
   map.on("click", "placesOsmLayer", async (e) => {
-    handleUnverifiedSpotClick(e);
+    handlePlacesOsmLayerClick(e);
   });
 
   map.on("mouseenter", "placesLayer", () => {
@@ -80,7 +80,7 @@ export async function registerMapEvents(map: maplibregl.Map) {
   map.on("moveend", debouncedMoveEnd);
 }
 
-async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
+async function handlePlacesLayerClick(e: maplibregl.MapLayerMouseEvent) {
   const { setSelectedPlace } = useStore.getState();
   const properties = e.features?.[0]?.properties ?? {};
   if (properties.id) {
@@ -97,6 +97,19 @@ async function handleDetailedSpotsViewClick(e: maplibregl.MapLayerMouseEvent) {
   }
 }
 
-async function handleUnverifiedSpotClick(e: maplibregl.MapLayerMouseEvent) {
-  console.log("Unverified spot clicked", e);
+async function handlePlacesOsmLayerClick(e: maplibregl.MapLayerMouseEvent) {
+  const { setSelectedPlace } = useStore.getState();
+  const properties = e.features?.[0]?.properties ?? {};
+  if (properties.osm_id) {
+    const supabase = createClient();
+    const { data: place } = await supabase
+      .from("detailed_places_osm_view")
+      .select("*")
+      .eq("osm_id", properties.osm_id)
+      .single();
+
+    if (place) {
+      setSelectedPlace(place as PlaceOsm);
+    }
+  }
 }

@@ -85,9 +85,12 @@ function Map() {
 
   useEffect(() => {
     if (selectedPlace && map.current) {
+      const currentZoom = map.current.getZoom();
+      const targetZoom = 12;
+
       map.current.flyTo({
         center: [selectedPlace.long!, selectedPlace.lat!],
-        zoom: 12,
+        zoom: currentZoom < targetZoom ? targetZoom : currentZoom,
         essential: true,
       });
     }

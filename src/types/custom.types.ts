@@ -18,4 +18,5 @@ export interface PlaceEntranceWithImages extends PlaceEntrance {
 }
 
 // Place OSM
-export type PlaceOsm = Database["map_views"]["Views"]["map_places_view"]["Row"];
+export type PlaceOsm =
+  Database["public"]["Views"]["detailed_places_osm_view"]["Row"];

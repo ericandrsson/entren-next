@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:https": "next dev --experimental-https",
     "dev:ngrok": "ngrok http 3000 --scheme http",
-    "generate-types": "supabase gen types --lang=typescript --local --schema public --schema map_views > src/types/database.types.ts",
+    "generate-types": "supabase gen types --lang=typescript --local --schema public > src/types/database.types.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

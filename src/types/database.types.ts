@@ -7,44 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  map_views: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      map_places_osm_view: {
-        Row: {
-          category_id: number | null
-          category_name: string | null
-          category_name_sv: string | null
-          location: unknown | null
-          name: string | null
-          osm_id: number | null
-          tags: unknown | null
-        }
-        Relationships: []
-      }
-      map_places_view: {
-        Row: {
-          category_id: number | null
-          category_name: string | null
-          id: number | null
-          location: unknown | null
-          name: string | null
-        }
-        Relationships: []
-      }
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       entrance_types: {
@@ -513,6 +475,20 @@ export type Database = {
           },
         ]
       }
+      detailed_places_osm_view: {
+        Row: {
+          category_id: number | null
+          category_name: string | null
+          category_name_sv: string | null
+          lat: number | null
+          location: unknown | null
+          long: number | null
+          name: string | null
+          osm_id: number | null
+          tags: unknown | null
+        }
+        Relationships: []
+      }
       detailed_places_view: {
         Row: {
           category_id: number | null
@@ -577,7 +553,7 @@ export type Database = {
         Args: {
           user_lat: number
           user_long: number
-          limit_count: number
+          limit_count?: number
           max_distance_meters?: number
         }
         Returns: {
