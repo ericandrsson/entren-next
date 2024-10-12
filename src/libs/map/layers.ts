@@ -28,7 +28,7 @@ export function addPlacesLayer(map: maplibregl.Map) {
   });
 }
 
-export function addLocalSwedenOsmPoiLayer(map: maplibregl.Map) {
+export function addPlacesOsmLayer(map: maplibregl.Map) {
   map.addLayer({
     id: "placesOsmLayer",
     type: "circle",

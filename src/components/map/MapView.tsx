@@ -11,8 +11,7 @@ const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
 });
 
 export default function MapView() {
-  const { isListVisible, toggleListCollapse, isMobile, selectedPlace } =
-    useStore();
+  const { view, toggleListVisibility, isMobile, selectedPlace } = useStore();
 
   return (
     <div className="p-4 h-full relative">
@@ -25,20 +24,18 @@ export default function MapView() {
         </div>
       )}
 
-      {!isMobile && (
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute top-8 left-8 z-10"
-          onClick={toggleListCollapse}
-        >
-          {isListVisible ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
-      )}
+      <Button
+        variant="outline"
+        size="icon"
+        className="absolute top-8 left-8 z-10"
+        onClick={toggleListVisibility}
+      >
+        {(isMobile && view === "list") || (!isMobile && view === "both") ? (
+          <ChevronLeft className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+      </Button>
     </div>
   );
 }

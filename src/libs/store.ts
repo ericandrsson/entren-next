@@ -1,6 +1,6 @@
 import { registerMapEvents } from "@/src/libs/map/events";
-import { addPlacesLayer } from "@/src/libs/map/layers";
-import { addDetailedSpotsSource } from "@/src/libs/map/sources";
+import { addPlacesLayer, addPlacesOsmLayer } from "@/src/libs/map/layers";
+import { addPlacesOsmSource, addPlacesSource } from "@/src/libs/map/sources";
 import { Place, PlaceEntrance } from "@/src/types/custom.types";
 import maplibregl from "maplibre-gl";
 import { create } from "zustand";
@@ -11,11 +11,10 @@ type StoreState = {
   view: "list" | "map" | "both";
   isFilterOpen: boolean;
   isMobile: boolean;
-  isListVisible: boolean;
   setView: (view: "list" | "map" | "both") => void;
   setIsFilterOpen: (isOpen: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
-  toggleListCollapse: () => void;
+  toggleListVisibility: () => void;
 
   // Place-related state
   places: Place[];
@@ -52,12 +51,19 @@ export const useStore = create<StoreState>((set, get) => ({
   view: "map",
   isFilterOpen: false,
   isMobile: false,
-  isListVisible: false,
   setView: (view) => set({ view }),
   setIsFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
   setIsMobile: (isMobile) => set({ isMobile }),
-  toggleListCollapse: () =>
-    set((state) => ({ isListVisible: !state.isListVisible })),
+  toggleListVisibility: () =>
+    set((state) => {
+      if (state.isMobile) {
+        // On mobile, toggle between "list" and "map" views
+        return { view: state.view === "list" ? "map" : "list" };
+      } else {
+        // On desktop, toggle between "both" and "map"
+        return { view: state.view === "both" ? "map" : "both" };
+      }
+    }),
 
   // Place-related state
   places: [],
@@ -81,8 +87,12 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
   onMapLoad: (map) => {
-    addDetailedSpotsSource(map);
+    addPlacesSource(map);
+    addPlacesOsmSource(map);
     addPlacesLayer(map);
+    addPlacesOsmLayer(map);
+
+    // Add map controls and events
     addMapControls(map);
     registerMapEvents(map);
   },

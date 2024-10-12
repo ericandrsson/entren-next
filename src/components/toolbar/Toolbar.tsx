@@ -3,6 +3,7 @@
 import { Input } from "@/src/components/ui/input";
 
 import FilterButton from "@/src/components/toolbar/FilterButton";
+import AddLocationButton from "./AddLocationButton";
 
 export default function SearchBar() {
   return (
@@ -13,6 +14,7 @@ export default function SearchBar() {
           className="flex-grow"
         />
         <FilterButton />
+        <AddLocationButton />
       </div>
     </div>
   );

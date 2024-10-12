@@ -41,9 +41,10 @@ export async function registerMapEvents(map: maplibregl.Map) {
 
   // Debounced function for handling moveend event
   const debouncedMoveEnd = debounce(async () => {
-    const isListVisible = useStore.getState().isListVisible;
-    console.log(isListVisible);
-    if (!isListVisible) return; // Exit if list is not visible
+    const { view, setVisiblePlaces } = useStore.getState();
+
+    const shouldShowList = view === "both"; // We only want to setVisiblePlaces when the list and map are both visible
+    if (!shouldShowList) return;
 
     const features = map.queryRenderedFeatures(undefined, {
       layers: ["placesLayer"],
@@ -55,32 +56,25 @@ export async function registerMapEvents(map: maplibregl.Map) {
 
     // If no places are visible, clear the visible places
     if (visiblePlaceIds.length === 0) {
-      const { setVisiblePlaces } = useStore.getState();
       setVisiblePlaces([]);
       return;
     }
 
-    console.log("visiblePlaceIds", visiblePlaceIds);
-
     const supabase = createClient();
-    const { setVisiblePlaces } = useStore.getState();
 
-    try {
-      const { data: visiblePlaces, error } = await supabase
-        .from("detailed_places_view")
-        .select("*")
-        .in("place_id", visiblePlaceIds);
+    const { data: visiblePlaces, error } = await supabase
+      .from("detailed_places_view")
+      .select("*")
+      .in("place_id", visiblePlaceIds)
+      .order("name", { ascending: true });
 
-      if (error) {
-        console.error("Error fetching visible places:", error);
-        return;
-      }
-
-      setVisiblePlaces(visiblePlaces as Place[]);
-    } catch (error) {
-      console.error("Error in moveend event handler:", error);
+    if (error) {
+      console.error("Error fetching visible places:", error);
+      return;
     }
-  }, 300); // 300ms delay, adjust as needed
+
+    setVisiblePlaces(visiblePlaces as Place[]);
+  }, 300);
 
   // Update the moveend event listener to use the debounced function
   map.on("moveend", debouncedMoveEnd);

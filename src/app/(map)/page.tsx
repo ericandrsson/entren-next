@@ -8,13 +8,12 @@ import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
 import { useStore } from "@/src/libs/store";
 import { requestUserLocation } from "@/src/libs/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function Page() {
   const {
     view,
     isMobile,
-    isListVisible,
     setIsMobile,
     selectedPlace,
     setSelectedPlace,
@@ -24,6 +23,9 @@ export default function Page() {
   } = useStore();
 
   const { toast } = useToast();
+
+  // Initialize prevIsMobileRef with the current window width
+  const prevIsMobileRef = useRef(window.innerWidth <= 960);
 
   useEffect(() => {
     const fetchUserLocation = async () => {
@@ -36,8 +38,8 @@ export default function Page() {
         });
       } else {
         setUserLocation({
-          latitude: userLocation[0],
-          longitude: userLocation[1],
+          latitude: userLocation[1],
+          longitude: userLocation[0],
         });
       }
     };
@@ -47,19 +49,37 @@ export default function Page() {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      const isMobile = window.innerWidth <= 960;
-      setIsMobile(isMobile);
+      const newIsMobile = window.innerWidth <= 960;
+      if (newIsMobile !== prevIsMobileRef.current) {
+        // The isMobile state has changed
+        setIsMobile(newIsMobile);
+        const currentView = useStore.getState().view;
 
-      // Adjust view only if switching to mobile and current view is "map" or "list"
-      if (isMobile) {
-        setView("list");
+        if (newIsMobile) {
+          // Switched to mobile
+          if (currentView === "both") {
+            // "both" view isn't supported on mobile
+            setView("list"); // Default to "list" on mobile
+          }
+        } else {
+          // Switched to desktop
+          if (currentView === "list") {
+            // "list" view alone isn't ideal on desktop
+            setView("both");
+          }
+        }
+        // Update prevIsMobileRef to the new value
+        prevIsMobileRef.current = newIsMobile;
       }
     };
-    checkIsMobile();
+
     window.addEventListener("resize", checkIsMobile);
 
+    // Initial check on mount
+    checkIsMobile();
+
     return () => window.removeEventListener("resize", checkIsMobile);
-  }, [setIsMobile, view, setView]);
+  }, [setIsMobile, setView]);
 
   useEffect(() => {
     const storedToast = localStorage.getItem("accountCreatedToast");
@@ -84,9 +104,9 @@ export default function Page() {
                 ? view === "map"
                   ? "hidden"
                   : "w-full"
-                : isListVisible
-                  ? "w-0"
-                  : "w-1/3"
+                : view === "both"
+                  ? "w-1/5"
+                  : "w-0"
             } 
             ${!isMobile && "border-r"}`}
         >
@@ -103,9 +123,9 @@ export default function Page() {
                 ? view === "list"
                   ? "hidden"
                   : "w-full"
-                : isListVisible
-                  ? "w-full"
-                  : "w-2/3"
+                : view === "both"
+                  ? "w-4/5"
+                  : "w-full"
             }`}
         >
           <MapView />
