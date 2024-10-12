@@ -7,23 +7,36 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
+  map_views: {
     Tables: {
       [_ in never]: never
     }
     Views: {
-      [_ in never]: never
+      map_places_osm_view: {
+        Row: {
+          category_id: number | null
+          category_name: string | null
+          category_name_sv: string | null
+          location: unknown | null
+          name: string | null
+          osm_id: number | null
+          tags: unknown | null
+        }
+        Relationships: []
+      }
+      map_places_view: {
+        Row: {
+          category_id: number | null
+          category_name: string | null
+          id: number | null
+          location: unknown | null
+          name: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
@@ -98,14 +111,14 @@ export type Database = {
             columns: ["parent_category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "place_categories_parent_category_fkey"
             columns: ["parent_category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "place_categories_parent_category_fkey"
@@ -278,14 +291,14 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "tag_category_mapping_place_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "tag_category_mapping_place_category_id_fkey"
@@ -346,14 +359,14 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["category_id"]
+            referencedColumns: ["parent_category_id"]
           },
           {
             foreignKeyName: "places_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "detailed_places_view"
-            referencedColumns: ["parent_category_id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "places_category_id_fkey"
@@ -559,6 +572,28 @@ export type Database = {
           tags: unknown
         }
         Returns: number
+      }
+      get_nearest_places: {
+        Args: {
+          user_lat: number
+          user_long: number
+          limit_count: number
+          max_distance_meters?: number
+        }
+        Returns: {
+          place_id: number
+          osm_id: number
+          name: string
+          lat: number
+          long: number
+          distance_meters: number
+          created_at: string
+          updated_at: string
+          osm_tags: Json
+          user_id: string
+          category_name: string
+          parent_category_name: string
+        }[]
       }
       get_places_in_bounding_box: {
         Args: {
