@@ -26,7 +26,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import {
   Place,
-  PlaceEntranceWithImages,
+  PlaceEntrancePhoto,
   PlaceEntranceWithPending,
 } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
@@ -44,11 +44,10 @@ const getCategoryIcon = (category: string) => {
 
 export default function PlaceInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
-  const [entrances, setEntrances] = useState<PlaceEntranceWithImages[]>([]);
-  const [loadingImages, setLoadingImages] = useState<boolean>(false);
-  const [allPlacePhotos, setAllPlacePhotos] = useState<
-    PlaceEntranceWithPending[]
-  >([]);
+  const [entrances, setEntrances] = useState<PlaceEntranceWithPending[]>([]);
+  const [allPlacePhotos, setAllPlacePhotos] = useState<PlaceEntrancePhoto[]>(
+    [],
+  );
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
@@ -70,7 +69,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
   useEffect(() => {
     const fetchEntrances = async () => {
-      const supabase = createClient();
       const { data, error } = await supabase.rpc(
         "get_place_entrances_with_pending",
         {
@@ -83,34 +81,23 @@ export default function PlaceInfo({ place }: { place: Place }) {
         return;
       }
 
-      console.log("entrances data", data);
-
-      if (data) {
-        const entrancesWithImages = data.map((entrance) => ({
-          ...entrance,
-          photos: entrance.photos || [],
-        }));
-        setEntrances(entrancesWithImages);
-        if (entrancesWithImages.length > 0) {
-          setExpandedEntrance(entrancesWithImages[0].entrance_id!);
-        }
-        setAllPlacePhotos(entrancesWithImages.flatMap((e) => e.photos));
+      const entrancesData = data as PlaceEntranceWithPending[];
+      setEntrances(entrancesData);
+      if (entrancesData.length > 0) {
+        console.log("entrancesData", entrancesData);
+        setExpandedEntrance(entrancesData[0].entrance_id);
       }
+      setAllPlacePhotos(
+        entrancesData.flatMap((e) => e.photos as PlaceEntrancePhoto[]),
+      );
     };
 
     fetchEntrances();
-  }, [place.place_id]);
+  }, [place.place_id, supabase]);
 
-  const handleEntranceExpand = useCallback(
-    async (entranceId: number) => {
-      if (expandedEntrance === entranceId) {
-        setExpandedEntrance(null);
-      } else {
-        setExpandedEntrance(entranceId);
-      }
-    },
-    [expandedEntrance],
-  );
+  const handleEntranceExpand = useCallback((entranceId: number) => {
+    setExpandedEntrance((prev) => (prev === entranceId ? null : entranceId));
+  }, []);
 
   const handlePhotoClick = (clickedPhotoIndex: number) => {
     setSelectedPhotoIndex(clickedPhotoIndex);
@@ -152,12 +139,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
               Lägg till en ny entré
             </Button>
           </div>
-          <AddEntranceDialog
-            place={place}
-            isOpen={isAddEntranceDialogOpen}
-            onClose={handleCloseAddEntranceDialog}
-            onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
-          />
           <ul className="space-y-4">
             {entrances.map((entrance) => (
               <li key={entrance.entrance_id}>
@@ -206,21 +187,21 @@ export default function PlaceInfo({ place }: { place: Place }) {
                       </p>
                     )}
                     <div className="grid grid-cols-1 gap-2 mb-2">
-                      {entrance.photos.map((photo, index) => (
+                      {entrance.photos?.map((photo) => (
                         <Button
-                          key={index}
+                          key={photo.photo_id}
                           variant="ghost"
                           className="p-0 w-full h-auto"
                           onClick={() =>
                             handlePhotoClick(
                               allPlacePhotos.findIndex(
-                                (p) => p.photo_url === photo.photo_url,
+                                (p) => p.photo_id === photo.photo_id,
                               ),
                             )
                           }
                         >
                           <Image
-                            src={photo.photo_url!}
+                            src={photo.photo_url}
                             alt={photo.description || ""}
                             width={300}
                             height={200}
@@ -312,9 +293,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
         place={place}
         isOpen={isAddEntranceDialogOpen}
         onClose={handleCloseAddEntranceDialog}
-        onSaveAndAddAnother={() => {
-          // Implement logic for save and add another if needed
-        }}
+        onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
       />
 
       <PlacePhotoModal

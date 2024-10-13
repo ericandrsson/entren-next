@@ -10,15 +10,21 @@ export type EntranceType =
 export type EntityChangeStaging =
   Database["public"]["Tables"]["entity_changes_staging"]["Row"];
 
-export type PlaceEntranceWithPending =
+type PlaceEntranceWithPendingBase =
   Database["public"]["Functions"]["get_place_entrances_with_pending"]["Returns"][0];
+
+export type PlaceEntrancePhoto = {
+  photo_id: string;
+  photo_url: string;
+  description: string | null;
+};
+
+export interface PlaceEntranceWithPending extends PlaceEntranceWithPendingBase {
+  photos: PlaceEntrancePhoto[];
+}
 
 // Place
 export interface Place extends PlaceFromDB {}
 export interface PlaceEntrance extends PlaceEntranceFromDB {}
 export type PlaceEntranceImage =
   Database["public"]["Tables"]["place_entrance_photos"]["Row"];
-
-export interface PlaceEntranceWithImages extends PlaceEntrance {
-  photos: PlaceEntranceImage[];
-}

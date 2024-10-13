@@ -574,8 +574,8 @@ GROUP BY se.entrance_id, p.place_id, et.id;
 -- detailed_places_view
 CREATE MATERIALIZED VIEW public.detailed_places_view AS
 WITH custom_places AS (
-SELECT 
-    p.place_id,
+  SELECT 
+    'place_' || p.place_id::text AS id,  -- Combine place_id with a prefix
     p.osm_id,
     p.name,
     p.osm_tags,
@@ -591,19 +591,19 @@ SELECT
     pc.category_id AS parent_category_id,
     pc.name AS parent_category_name,
     pc.name_sv AS parent_category_name_sv,
-    NULL AS source,
+    'internal' AS source,  -- Add a source field to distinguish the source of the data
     CASE WHEN pe.place_id IS NOT NULL THEN true ELSE false END AS has_entrances
-FROM public.places p
-LEFT JOIN place_categories c ON p.category_id = c.category_id
-LEFT JOIN place_categories pc ON c.parent_category_id = pc.category_id
-LEFT JOIN (
+  FROM public.places p
+  LEFT JOIN place_categories c ON p.category_id = c.category_id
+  LEFT JOIN place_categories pc ON c.parent_category_id = pc.category_id
+  LEFT JOIN (
     SELECT DISTINCT place_id
     FROM public.place_entrances
-) pe ON p.place_id = pe.place_id
+  ) pe ON p.place_id = pe.place_id
 ),
 osm_places AS (
-SELECT 
-    NULL::integer AS id,
+  SELECT 
+    'osm_' || osm.osm_id::text AS id,  -- Combine osm_id with a prefix
     osm.osm_id,
     osm.name,
     osm.tags::jsonb AS osm_tags,
@@ -619,21 +619,26 @@ SELECT
     osm_pc.category_id AS parent_category_id,
     osm_pc.name AS parent_category_name,
     osm_pc.name_sv AS parent_category_name_sv,
-    'osm' AS source,
+    'osm' AS source,  -- Indicate that this data comes from OSM
     false AS has_entrances
-FROM osm_import.sweden_osm_poi osm
-LEFT JOIN LATERAL (
+  FROM osm_import.sweden_osm_poi osm
+  LEFT JOIN LATERAL (
     SELECT public.get_category_id_from_osm_tags(osm.tags::hstore) AS category_id
-) AS osm_category ON true
-LEFT JOIN place_categories osm_c ON osm_category.category_id = osm_c.category_id
-LEFT JOIN place_categories osm_pc ON osm_c.parent_category_id = osm_pc.category_id
-WHERE osm.name IS NOT NULL
+  ) AS osm_category ON true
+  LEFT JOIN place_categories osm_c ON osm_category.category_id = osm_c.category_id
+  LEFT JOIN place_categories osm_pc ON osm_c.parent_category_id = osm_pc.category_id
+  WHERE osm.name IS NOT NULL
     AND osm.osm_id NOT IN (SELECT p2.osm_id FROM public.places p2 WHERE p2.osm_id IS NOT NULL)
-LIMIT 100
+  LIMIT 1
 )
+-- Combine both sets of data with a UNION ALL
 SELECT * FROM custom_places
 UNION ALL
 SELECT * FROM osm_places;
+
+-- Create a unique index on the id column to allow concurrent refreshes
+CREATE UNIQUE INDEX idx_detailed_places_view_id ON public.detailed_places_view (id);
+
 -- end detailed_places_view
 
 -- get_place_entrances_with_pending
@@ -650,6 +655,7 @@ RETURNS TABLE (
   entrance_type_description_sv TEXT,
   location geometry,
   photos jsonb,
+  action TEXT,
   status TEXT
 )
 LANGUAGE SQL
@@ -668,7 +674,8 @@ WITH verified_entrances AS (
         'photo_url', img->>'photo_url',
         'description', img->>'description'
     )) AS photos,
-    'approved' AS status
+    'approved' AS status,
+    'update' AS action
   FROM detailed_entrances_view de
   LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS img ON true
   WHERE de.place_id = p_place_id
@@ -690,6 +697,7 @@ pending_entrances AS (
         'photo_url', img->>'photo_url', 
         'description', img->>'description'
     )) AS photos,
+    ecs.action_type AS action,
     ecs.status
   FROM entity_changes_staging ecs
   LEFT JOIN entrance_types et ON et.id = (ecs.change_data->>'entrance_type_id')::integer
@@ -697,8 +705,9 @@ pending_entrances AS (
   WHERE ecs.entity_type = 'entrance'
     AND ecs.action_type = 'add'
     AND ecs.status = 'pending'
+    AND (ecs.change_data->>'place_id')::integer = p_place_id
     AND (p_user_id IS NULL OR ecs.user_id = p_user_id)
-  GROUP BY ecs.entity_id, ecs.status, ecs.change_data, et.name, et.name_sv, et.description, et.description_sv
+  GROUP BY ecs.entity_id, ecs.status, ecs.change_data, et.name, et.name_sv, et.description, et.description_sv, ecs.action_type
 )
 -- Combine verified and pending entrances
 SELECT * FROM verified_entrances
