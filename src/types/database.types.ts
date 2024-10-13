@@ -16,6 +16,7 @@ export type Database = {
           description_sv: string | null
           id: number
           is_active: boolean
+          max_per_place: number | null
           name: string
           name_sv: string
           updated_at: string
@@ -26,6 +27,7 @@ export type Database = {
           description_sv?: string | null
           id: number
           is_active?: boolean
+          max_per_place?: number | null
           name: string
           name_sv: string
           updated_at?: string
@@ -36,6 +38,7 @@ export type Database = {
           description_sv?: string | null
           id?: number
           is_active?: boolean
+          max_per_place?: number | null
           name?: string
           name_sv?: string
           updated_at?: string

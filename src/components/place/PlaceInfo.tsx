@@ -116,9 +116,9 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setSelectedPhotoIndex(0);
   };
 
-  const handleAddEntrance = () => {
+  const handleAddEntrance = useCallback(() => {
     setIsAddEntranceDialogOpen(true);
-  };
+  }, []);
 
   const handleCloseAddEntranceDialog = () => {
     setIsAddEntranceDialogOpen(false);
@@ -143,7 +143,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
             </Button>
           </div>
           <AddEntranceDialog
-            placeName={place.name || ""}
+            place={place}
             isOpen={isAddEntranceDialogOpen}
             onClose={handleCloseAddEntranceDialog}
             onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
@@ -243,12 +243,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
             tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
             platsen en välkomnande high-five för alla besökare!
           </p>
-          <Button
-            className="w-full sm:w-auto"
-            onClick={() => {
-              /* TODO: Implement add entrance logic */
-            }}
-          >
+          <Button className="w-full sm:w-auto" onClick={handleAddEntrance}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Lägg till entré
           </Button>
@@ -299,6 +294,13 @@ export default function PlaceInfo({ place }: { place: Place }) {
           </div>
         </ScrollArea>
       </CardContent>
+
+      <AddEntranceDialog
+        place={place}
+        isOpen={isAddEntranceDialogOpen}
+        onClose={handleCloseAddEntranceDialog}
+        onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
+      />
 
       <PlacePhotoModal
         photos={allPlacePhotos}

@@ -23,8 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { Textarea } from "@/src/components/ui/textarea";
-import { EntranceType } from "@/src/types/custom.types";
+import { EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,28 +33,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const entranceSchema = z.object({
-  entranceType: z.enum(["main", "side", "back", "ramp", "other"]),
+  entranceType: z.string(),
   photo: z.instanceof(File).optional(),
   location: z.object({
     lat: z.string().optional(),
     lng: z.string().optional(),
   }),
-  accessibilityDetails: z
-    .string()
-    .min(1, "Please provide accessibility details"),
 });
 
 type EntranceFormData = z.infer<typeof entranceSchema>;
 
 interface AddEntranceDialogProps {
-  placeName?: string;
+  place: Place;
   isOpen: boolean;
   onClose: () => void;
   onSaveAndAddAnother: () => void;
 }
 
 export default function AddEntranceDialog({
-  placeName = "Place Name",
+  place,
   isOpen,
   onClose,
   onSaveAndAddAnother,
@@ -63,13 +59,16 @@ export default function AddEntranceDialog({
   const [step, setStep] = useState(1);
   const [hasLocationMetadata, setHasLocationMetadata] = useState(false);
   const [entranceTypes, setEntranceTypes] = useState<EntranceType[]>([]);
+  const [entranceCounts, setEntranceCounts] = useState<Record<number, number>>(
+    {},
+  );
+
+  const supabase = createClient();
 
   const fetchEntranceTypes = async () => {
-    const supabase = createClient();
-
     const { data, error } = await supabase
       .from("entrance_types")
-      .select("id, name_sv")
+      .select("*")
       .order("id", { ascending: true });
 
     if (error) {
@@ -79,9 +78,26 @@ export default function AddEntranceDialog({
     }
   };
 
+  const fetchEntranceCounts = async () => {
+    const { data, error } = await supabase.rpc("get_entrance_counts", {
+      p_place_id: place.place_id,
+    });
+
+    if (error) {
+      console.error("Error fetching entrance counts:", error);
+    } else {
+      const counts: Record<number, number> = {};
+      data.forEach((item: { type_id: number; count: string }) => {
+        counts[item.type_id] = parseInt(item.count);
+      });
+      setEntranceCounts(counts);
+    }
+  };
+
   useEffect(() => {
     fetchEntranceTypes();
-  }, []);
+    fetchEntranceCounts();
+  }, [place.place_id]);
 
   const form = useForm<EntranceFormData>({
     resolver: zodResolver(entranceSchema),
@@ -89,7 +105,6 @@ export default function AddEntranceDialog({
       entranceType: undefined,
       photo: undefined,
       location: { lat: "", lng: "" },
-      accessibilityDetails: "",
     },
   });
 
@@ -139,12 +154,12 @@ export default function AddEntranceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] sm:w-[90vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Lägg till Entré</DialogTitle>
           <DialogDescription>
             Hjälp andra att hitta tillgängliga ingångar genom att lägga till
-            entréinformation för {placeName}.
+            entréinformation för {place.name}.
           </DialogDescription>
         </DialogHeader>
 
@@ -170,14 +185,24 @@ export default function AddEntranceDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {entranceTypes.map((type) => (
-                            <SelectItem
-                              key={type.id}
-                              value={type.id.toString()}
-                            >
-                              {type.name_sv}
-                            </SelectItem>
-                          ))}
+                          {entranceTypes.map((type) => {
+                            const count = entranceCounts[type.id] || 0;
+                            const isDisabled =
+                              type.max_per_place !== null &&
+                              count >= type.max_per_place;
+                            return (
+                              <SelectItem
+                                key={type.id}
+                                value={type.id.toString()}
+                                disabled={isDisabled}
+                              >
+                                {type.name_sv}{" "}
+                                {isDisabled
+                                  ? `(Max ${type.max_per_place} nådd)`
+                                  : ""}
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -281,27 +306,39 @@ export default function AddEntranceDialog({
                 </div>
               )}
 
-              {/* Accessibility details step */}
+              {/* Step 4: Review */}
               {((step === 3 && hasLocationMetadata) || step === 4) && (
-                <FormField
-                  control={form.control}
-                  name="accessibilityDetails"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="accessibility-details">
-                        Tillgänglighetsdetaljer
-                      </Label>
-                      <FormControl>
-                        <Textarea
-                          id="accessibility-details"
-                          placeholder="Beskriv tillgängligheten för denna entré..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                <div className="grid gap-4">
+                  <h3 className="text-lg font-semibold">Granska information</h3>
+                  <div>
+                    <Label>Typ av entré</Label>
+                    <p>
+                      {entranceTypes.find(
+                        (t) => t.id.toString() === form.watch("entranceType"),
+                      )?.name_sv || "Inte vald"}
+                    </p>
+                  </div>
+                  {form.watch("photo") && (
+                    <div>
+                      <Label>Bild</Label>
+                      <img
+                        src={URL.createObjectURL(form.watch("photo") as File)}
+                        alt="Entrance"
+                        className="mt-2 max-h-[150px] rounded-md"
+                      />
+                    </div>
                   )}
-                />
+                  {(form.watch("location.lat") ||
+                    form.watch("location.lng")) && (
+                    <div>
+                      <Label>Plats</Label>
+                      <p>
+                        Lat: {form.watch("location.lat")}, Lng:{" "}
+                        {form.watch("location.lng")}
+                      </p>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 

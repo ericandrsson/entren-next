@@ -464,14 +464,14 @@ INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
 -- Data for Name: places; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description" ,"description_sv" , "is_active") VALUES
-    (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär ingångspunkt för allmänhetens tillträde till anläggningen', true),
-    (2, 'Side Entrance', 'Sidentré', 'Secondary access point, typically located on the lateral side of the building', 'Sekundär ingångspunkt, vanligtvis belägen på byggnadens sida', true),
-    (3, 'Back Entrance', 'Baksidaingång', 'Access point situated at the rear of the establishment, often used for deliveries or as an alternative entry', 'Ingångspunkt belägen på baksidan av anläggningen, ofta använd för leveranser eller som alternativ ingång', true),
-    (4, 'Staff Entrance', 'Personalentré', 'Designated entry point for employees and authorized personnel', 'Särskild ingångspunkt för anställda och behörig personal', true),
-    (5, 'Garage Entrance', 'Garageingång', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Ingångspunkt som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true),
-    (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgångspunkt för användning vid nödsituationer eller evakueringar', true);
-
+INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "description_sv", "is_active", "max_per_place") VALUES
+    (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär ingångspunkt för allmänhetens tillträde till anläggningen', true, 1),
+    (2, 'Side Entrance', 'Sidentré', 'Secondary access point, typically located on the lateral side of the building', 'Sekundär ingångspunkt, vanligtvis belägen på byggnadens sida', true, 2),
+    (3, 'Back Entrance', 'Baksidaingång', 'Access point situated at the rear of the establishment, often used for deliveries or as an alternative entry', 'Ingångspunkt belägen på baksidan av anläggningen, ofta använd för leveranser eller som alternativ ingång', true, 1),
+    (4, 'Staff Entrance', 'Personalentré', 'Designated entry point for employees and authorized personnel', 'Särskild ingångspunkt för anställda och behörig personal', true, 1),
+    (5, 'Garage Entrance', 'Garageingång', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Ingångspunkt som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
+    (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgångspunkt för användning vid nödsituationer eller evakueringar', true, NULL);
+	
 INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at", "location", "category_id", "osm_tags", "user_id") VALUES
     (1, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
     (2, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),

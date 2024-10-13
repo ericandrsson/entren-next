@@ -74,14 +74,15 @@ create table "public"."place_entrances" (
 alter table "public"."place_entrances" enable row level security;
 
 create table "public"."entrance_types" (
-    "id" integer not null,
-    "name" text not null,
-    "name_sv" text not null,
+    "id" integer NOT NULL,
+    "name" text NOT NULL,
+    "name_sv" text NOT NULL,
     "description" text,
     "description_sv" text,
-    "is_active" boolean not null default true,
-    "created_at" timestamp with time zone not null default (now() AT TIME ZONE 'utc'::text),
-    "updated_at" timestamp with time zone not null default (now() AT TIME ZONE 'utc'::text)
+    "is_active" boolean NOT NULL DEFAULT true,
+    "max_per_place" integer DEFAULT NULL,
+    "created_at" timestamp with time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'::text),
+    "updated_at" timestamp with time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'::text)
 );
 
 alter table "public"."entrance_types" enable row level security;
@@ -1096,3 +1097,19 @@ BEGIN
   REFRESH MATERIALIZED VIEW CONCURRENTLY public.detailed_places_view;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Add this new function at the end of the file
+
+CREATE OR REPLACE FUNCTION get_entrance_counts(p_place_id INTEGER)
+RETURNS TABLE (type_id INTEGER, count BIGINT) 
+LANGUAGE SQL
+AS $$
+    SELECT type_id, COUNT(*) as count
+    FROM place_entrances
+    WHERE place_id = p_place_id
+    GROUP BY type_id;
+$$;
+
+-- Grant necessary permissions
+GRANT EXECUTE ON FUNCTION get_entrance_counts(INTEGER) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_entrance_counts(INTEGER) TO anon;
