@@ -243,177 +243,177 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 
 INSERT INTO "public"."place_osm_tag_to_category" ("tag_key", "tag_value", "category_id", "created_at", "updated_at", "priority") VALUES
 -- Finance (higher priority for specific tags)
-('amenity', 'atm', (SELECT id FROM "public"."place_categories" WHERE name = 'ATM'), NOW(), NOW(), 2),
-('amenity', 'bank', (SELECT id FROM "public"."place_categories" WHERE name = 'Bank'), NOW(), NOW(), 2),
+('amenity', 'atm', (SELECT category_id FROM "public"."place_categories" WHERE name = 'ATM'), NOW(), NOW(), 2),
+('amenity', 'bank', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bank'), NOW(), NOW(), 2),
 
 -- Food & Drink (higher priority for cuisine tags)
-('amenity', 'bar', (SELECT id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
-('amenity', 'pub', (SELECT id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
-('shop', 'bakery', (SELECT id FROM "public"."place_categories" WHERE name = 'Bakery'), NOW(), NOW(), 1),
-('amenity', 'cafe', (SELECT id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 1),
-('amenity', 'fast_food', (SELECT id FROM "public"."place_categories" WHERE name = 'Fast Food'), NOW(), NOW(), 1),
-('amenity', 'restaurant', (SELECT id FROM "public"."place_categories" WHERE name = 'Restaurant'), NOW(), NOW(), 1),
-('cuisine', 'burger', (SELECT id FROM "public"."place_categories" WHERE name = 'Burger Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'pizza', (SELECT id FROM "public"."place_categories" WHERE name = 'Pizzeria'), NOW(), NOW(), 2),
-('cuisine', 'kebab', (SELECT id FROM "public"."place_categories" WHERE name = 'Kebab Shop'), NOW(), NOW(), 2),
-('cuisine', 'sushi', (SELECT id FROM "public"."place_categories" WHERE name = 'Sushi Bar'), NOW(), NOW(), 2),
-('amenity', 'ice_cream', (SELECT id FROM "public"."place_categories" WHERE name = 'Ice Cream Parlor'), NOW(), NOW(), 2),
-('cuisine', 'italian', (SELECT id FROM "public"."place_categories" WHERE name = 'Italian Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'chinese', (SELECT id FROM "public"."place_categories" WHERE name = 'Chinese Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'indian', (SELECT id FROM "public"."place_categories" WHERE name = 'Indian Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'mexican', (SELECT id FROM "public"."place_categories" WHERE name = 'Mexican Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'japanese', (SELECT id FROM "public"."place_categories" WHERE name = 'Japanese Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'coffee_shop', (SELECT id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 2),
-('cuisine', 'sandwich', (SELECT id FROM "public"."place_categories" WHERE name = 'Sandwich Shop'), NOW(), NOW(), 2),
+('amenity', 'bar', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
+('amenity', 'pub', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
+('shop', 'bakery', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bakery'), NOW(), NOW(), 1),
+('amenity', 'cafe', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 1),
+('amenity', 'fast_food', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Fast Food'), NOW(), NOW(), 1),
+('amenity', 'restaurant', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Restaurant'), NOW(), NOW(), 1),
+('cuisine', 'burger', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Burger Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'pizza', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Pizzeria'), NOW(), NOW(), 2),
+('cuisine', 'kebab', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Kebab Shop'), NOW(), NOW(), 2),
+('cuisine', 'sushi', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sushi Bar'), NOW(), NOW(), 2),
+('amenity', 'ice_cream', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Ice Cream Parlor'), NOW(), NOW(), 2),
+('cuisine', 'italian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Italian Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'chinese', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Chinese Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'indian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Indian Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'mexican', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Mexican Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'japanese', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Japanese Restaurant'), NOW(), NOW(), 2),
+('cuisine', 'coffee_shop', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 2),
+('cuisine', 'sandwich', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sandwich Shop'), NOW(), NOW(), 2),
 
 -- Leisure (keep default priority)
-('shop', 'hairdresser', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('shop', 'beauty', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('amenity', 'nightclub', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'park', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('tourism', 'theme_park', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('amenity', 'bench', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'pitch', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'swimming_pool', (SELECT id FROM "public"."place_categories" WHERE name = 'Swimming Pool'), NOW(), NOW(), 0),
-('leisure', 'garden', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'playground', (SELECT id FROM "public"."place_categories" WHERE name = 'Playground'), NOW(), NOW(), 0),
-('leisure', 'picnic_table', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'track', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'nature_reserve', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'fitness_station', (SELECT id FROM "public"."place_categories" WHERE name = 'Fitness Station'), NOW(), NOW(), 0),
-('leisure', 'outdoor_seating', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'slipway', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'stadium', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bleachers', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'golf_course', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'firepit', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'common', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'sports_hall', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'marina', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'dog_park', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'resort', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'horse_riding', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'fishing', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'sauna', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'beach_resort', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'water_park', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'dance', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'miniature_golf', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'ice_rink', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'recreation_ground', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bird_hide', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bandstand', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'amusement_arcade', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'swimming_area', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bowling_alley', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'gym', (SELECT id FROM "public"."place_categories" WHERE name = 'Gym'), NOW(), NOW(), 0),
+('shop', 'hairdresser', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('shop', 'beauty', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('amenity', 'nightclub', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('tourism', 'theme_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('amenity', 'bench', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'pitch', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'swimming_pool', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Swimming Pool'), NOW(), NOW(), 0),
+('leisure', 'garden', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'playground', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Playground'), NOW(), NOW(), 0),
+('leisure', 'picnic_table', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'track', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'nature_reserve', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'fitness_station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Fitness Station'), NOW(), NOW(), 0),
+('leisure', 'outdoor_seating', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'slipway', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'stadium', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'bleachers', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'golf_course', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'firepit', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'common', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'sports_hall', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'marina', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'dog_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'resort', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'horse_riding', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'fishing', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'sauna', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'beach_resort', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'water_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'dance', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'miniature_golf', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'ice_rink', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'recreation_ground', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'bird_hide', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'bandstand', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'amusement_arcade', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'swimming_area', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'bowling_alley', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
+('leisure', 'gym', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Gym'), NOW(), NOW(), 0),
 
 -- Culture (keep default priority)
-('amenity', 'cinema', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'theatre', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'library', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('tourism', 'museum', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'place_of_worship', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'christian', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'muslim', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'jewish', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'fountain', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'community_centre', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'grave_yard', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'cinema', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'theatre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'library', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('tourism', 'museum', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'place_of_worship', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('religion', 'christian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('religion', 'muslim', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('religion', 'jewish', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'fountain', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'community_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
+('amenity', 'grave_yard', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
 
 -- Health (keep default priority)
-('amenity', 'dentist', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'doctors', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'clinic', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'hospital', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'pharmacy', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'veterinary', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'nursing_home', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'dentist', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'doctors', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'clinic', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'hospital', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'pharmacy', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'veterinary', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
+('amenity', 'nursing_home', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
 
 -- Shopping (keep default priority)
---('shop', 'convenience', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'supermarket', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'clothes', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'electronics', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'furniture', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'jewelry', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'mobile_phone', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'books', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'florist', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'gift', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'sports', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
-('amenity', 'vending_machine', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'convenience', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'supermarket', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'clothes', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'electronics', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'furniture', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'jewelry', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'mobile_phone', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'books', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'florist', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'gift', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+--('shop', 'sports', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
+('amenity', 'vending_machine', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
 
 -- Education (keep default priority)
-('amenity', 'school', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'university', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'college', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'kindergarten', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'childcare', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
+('amenity', 'school', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
+('amenity', 'university', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
+('amenity', 'college', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
+('amenity', 'kindergarten', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
+('amenity', 'childcare', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
 
 -- Sport (keep default priority)
-('leisure', 'fitness_centre', (SELECT id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
-('leisure', 'sports_centre', (SELECT id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
+('leisure', 'fitness_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
+('leisure', 'sports_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
 
 -- Transport (keep default priority)
-('amenity', 'parking', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'taxi', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('public_transport', 'station', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'car_repair', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'charging_station', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'bicycle_parking', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'parking_space', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'parking', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'taxi', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('public_transport', 'station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'car_repair', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'charging_station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'bicycle_parking', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
+('amenity', 'parking_space', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
 
 -- Authorities (keep default priority)
-('amenity', 'post_office', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('office', 'government', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'post_box', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'recycling', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'townhall', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'police', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('amenity', 'post_office', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('office', 'government', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('amenity', 'post_box', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('amenity', 'recycling', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('amenity', 'townhall', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
+('amenity', 'police', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
 
 -- Tourism (keep default priority)
-('tourism', 'attraction', (SELECT id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
-('tourism', 'zoo', (SELECT id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
+('tourism', 'attraction', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
+('tourism', 'zoo', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
 
 -- Toilets (keep default priority)
-('amenity', 'toilets', (SELECT id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
-('amenity', 'waste_basket', (SELECT id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
-('amenity', 'drinking_water', (SELECT id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
+('amenity', 'toilets', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
+('amenity', 'waste_basket', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
+('amenity', 'drinking_water', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
 
 -- Fallbacks -- 
 
 -- Shopping fallbacks
-('shop', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), -1),
+('shop', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), -1),
 
 -- Food & Drink fallbacks
-('amenity', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW(), -1),
+('amenity', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW(), -1),
 
 -- Leisure fallbacks
-('leisure', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), -1),
+('leisure', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), -1),
 
 -- Culture fallbacks
-('historic', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), -1),
+('historic', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), -1),
 
 -- Health fallbacks
-('healthcare', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), -1),
+('healthcare', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), -1),
 
 -- Education fallbacks
-('education', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), -1),
+('education', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), -1),
 
 -- Sport fallbacks
-('sport', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), -1),
+('sport', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), -1),
 
 -- Transport fallbacks
-('public_transport', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
-('highway', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
-('railway', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
+('public_transport', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
+('highway', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
+('railway', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), -1),
 
 -- Authorities fallbacks
-('office', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), -1),
+('office', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), -1),
 
 -- Tourism fallbacks
-('tourism', '*', (SELECT id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), -1);
+('tourism', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), -1);
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: supabase_admin
@@ -438,7 +438,7 @@ INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "
     (5, 'Garage Entrance', 'Garageingång', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Ingångspunkt som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
     (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgångspunkt för användning vid nödsituationer eller evakueringar', true, NULL);
 	
-INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at", "location", "category_id", "osm_tags", "user_id") VALUES
+INSERT INTO "public"."places" ("place_id", "osm_id", "name", "created_at", "updated_at", "location", "category_id", "osm_tags", "user_id") VALUES
     (1, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
     (2, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),
     (3, 7502121104, 'Tygapil', '2024-10-05 11:47:18.16393+00', '2024-10-05 11:47:18.16393+00', '0101000020E6100000609335EA212E2C40E8FDDA55A3B34B40', 26, '{"name": "Tygapil", "place": "farm"}', NULL),
@@ -448,7 +448,7 @@ INSERT INTO "public"."places" ("id", "osm_id", "name", "created_at", "updated_at
     (7, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
 
 -- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("id", "place_id", "type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
+INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
     (1, 1, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
     (2, 2, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
     (3, 2, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
@@ -475,127 +475,9 @@ SET search_path TO public, extensions;
 
 SELECT create_detailed_places_view();
 
--- Data for Name: place_entrances; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-
-
---
--- Data for Name: place_entrance_images; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-
-
---
--- Data for Name: user_contributions; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-
-
 --
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
 	('place_entrance_images', 'place_entrance_images', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', false, false, 10485760, '{image/*}', NULL);
-
-
---
--- Data for Name: objects; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
---
-
-
-
---
--- Data for Name: s3_multipart_uploads; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
---
-
-
-
---
--- Data for Name: s3_multipart_uploads_parts; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
---
-
-
-
---
--- Data for Name: hooks; Type: TABLE DATA; Schema: supabase_functions; Owner: supabase_functions_admin
---
-
-
-
---
--- Data for Name: secrets; Type: TABLE DATA; Schema: vault; Owner: supabase_admin
---
-
-
-
---
--- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: supabase_auth_admin
---
-
-SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 42, true);
-
-
---
--- Name: key_key_id_seq; Type: SEQUENCE SET; Schema: pgsodium; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
-
-
---
--- Name: user_notifications_notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."user_notifications_notification_id_seq"', 1, false);
-
-
---
--- Name: place_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."place_categories_id_seq"', 94, true);
-
-
---
--- Name: place_entrances_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."place_entrances_id_seq"', 4, true);
-
-
---
--- Name: place_entrance_images_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."place_entrance_images_id_seq"', 1, false);
-
-
---
--- Name: places_place_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."places_place_id_seq"', 1036, true);
-
-
---
--- Name: tag_category_mapping_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-
---
--- Name: users_contributions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-
---
--- Name: hooks_id_seq; Type: SEQUENCE SET; Schema: supabase_functions; Owner: supabase_functions_admin
---
-
-SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
-
-
---
--- PostgreSQL database dump complete
---
