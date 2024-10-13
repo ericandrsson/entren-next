@@ -26,14 +26,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { EntranceType, Place } from "@/src/types/custom.types";
+import {
+  EntityChangeStaging,
+  EntranceType,
+  Place,
+} from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, MapPin, Upload } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -105,7 +109,7 @@ export default function AddEntranceDialog({
   const [guidelinesConfirmed, setGuidelinesConfirmed] = useState(false);
   const [sameAsPlaceLocation, setSameAsPlaceLocation] = useState(false);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const fetchEntranceTypes = async () => {
     const { data, error } = await supabase
@@ -121,6 +125,8 @@ export default function AddEntranceDialog({
   };
 
   const fetchEntranceCounts = async () => {
+    const supabase = createClient();
+
     const { data, error } = await supabase.rpc("get_entrance_counts", {
       p_place_id: place.place_id,
     });
@@ -202,14 +208,93 @@ export default function AddEntranceDialog({
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = (data: EntranceFormData, addAnother: boolean) => {
-    console.log(data);
-    if (addAnother) {
-      onSaveAndAddAnother();
-      form.reset();
-      setStep(1);
+  const handleSubmit = async (data: EntranceFormData, addAnother: boolean) => {
+    const user = await supabase.auth.getUser();
+    if (!user.data.user) {
+      console.error("User is not authenticated");
+      // Handle the case where the user is not authenticated
+      // For example, you could show an error message or redirect to login
+      return;
+    }
+
+    // Prepare the change data
+    const changeData = {
+      entrance_type_id: parseInt(data.entranceType),
+      place_id: place.place_id,
+      location: data.sameAsPlaceLocation
+        ? { lat: place.lat, lng: place.long }
+        : data.location,
+      accessibility_info: {}, // Add accessibility info if you have any
+    };
+
+    // Insert into entity_changes_staging
+    const { data: insertedData, error } = await supabase
+      .from("entity_changes_staging")
+      .insert({
+        user_id: "1d8762d3-dcad-404f-999c-571aad22d2f5",
+        entity_id: place.place_id, // Using place_id
+        entity_type: "entrance",
+        action_type: "add",
+        change_data: changeData,
+        status: "pending",
+      })
+      .select()
+      .single();
+
+    if (!insertedData) {
+      throw new Error("Failed to insert data");
+    }
+
+    const entityChangeStaging: EntityChangeStaging = insertedData;
+
+    if (error) {
+      console.error("Error inserting entrance data:", error);
+      // Handle error (show error message to user)
     } else {
-      onClose();
+      console.log("Entrance data inserted successfully:", insertedData);
+
+      // Handle photo upload if a photo was provided
+      if (data.photo) {
+        const fileName = `entrance_${entityChangeStaging.id}_${Date.now()}.jpg`;
+        const { error: uploadError } = await supabase.storage
+          .from("place_entrance_images")
+          .upload(fileName, data.photo);
+
+        if (uploadError) {
+          console.error("Error uploading photo:", uploadError);
+          // Handle error (show error message to user)
+        } else {
+          // Update the change_data with the photo URL
+          const { data: photoUrl } = supabase.storage
+            .from("entrance-photos")
+            .getPublicUrl(fileName);
+
+          const { error: updateError } = await supabase
+            .from("entity_changes_staging")
+            .update({
+              change_data: {
+                ...changeData,
+                photo_url: photoUrl.publicUrl,
+              },
+            })
+            .eq("id", entityChangeStaging.id);
+
+          if (updateError) {
+            console.error(
+              "Error updating change_data with photo URL:",
+              updateError,
+            );
+          }
+        }
+      }
+
+      if (addAnother) {
+        onSaveAndAddAnother();
+        form.reset();
+        setStep(1);
+      } else {
+        onClose();
+      }
     }
   };
 

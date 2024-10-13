@@ -536,6 +536,12 @@ CREATE POLICY "Enable read access for all users" ON "public"."place_entrances" A
 CREATE POLICY "Enable read access for all users" ON "public"."place_entrance_images" AS PERMISSIVE FOR SELECT TO public USING (true);
 CREATE POLICY "Enable read access for all users" ON "public"."entrance_types" AS PERMISSIVE FOR SELECT TO public USING (true);
 
+--CREATE POLICY "Enable insert for authenticated users only" ON "public"."entity_changes_staging" AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Enable insert for public users" ON "public"."entity_changes_staging" AS PERMISSIVE FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Enable read access for public users" ON "public"."entity_changes_staging" AS PERMISSIVE FOR SELECT TO public USING (true);
+CREATE POLICY "Enable update for public users" ON "public"."entity_changes_staging" AS PERMISSIVE FOR UPDATE TO public USING (true) WITH CHECK (true);
+CREATE POLICY "Enable delete for public users" ON "public"."entity_changes_staging" AS PERMISSIVE FOR DELETE TO public USING (true);
+
 -- Enable Row Level Security
 ALTER TABLE "public"."place_osm_tag_to_category" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."place_categories" ENABLE ROW LEVEL SECURITY;
@@ -543,6 +549,27 @@ ALTER TABLE "public"."place_entrances" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."place_entrance_images" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."entity_changes_staging" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."entity_changes_audit " ENABLE ROW LEVEL SECURITY;
+
+-- Storage
+ALTER TABLE "storage"."buckets" ENABLE ROW LEVEL SECURITY;
+
+-- Policy for SELECT operations: Allow all users to read objects
+CREATE POLICY "Enable read access for all users" ON storage.objects
+FOR SELECT USING (true);
+
+-- Policy for INSERT operations: Allow authenticated users to upload objects
+CREATE POLICY "Enable upload for authenticated users only" ON storage.objects
+FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- Policy for UPDATE operations: Allow authenticated users to update their own objects
+CREATE POLICY "Enable update for users based on user_id" ON storage.objects
+FOR UPDATE USING (auth.uid() = owner);
+
+-- Policy for DELETE operations: Allow authenticated users to delete their own objects
+CREATE POLICY "Enable delete for users based on user_id" ON storage.objects
+FOR DELETE USING (auth.uid() = owner);
+
+-- End of Storage
 
 set check_function_bodies = off;
 
