@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/src/components/ui/button";
 import {
   Card,
@@ -7,18 +9,28 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface LoginPromptDialogProps {
   appName: string;
-  onGoToLoginPage: () => void;
   onClose: () => void;
+  isOpen: boolean;
 }
 
 export default function LoginPromptDialog({
   appName,
-  onGoToLoginPage,
   onClose,
+  isOpen,
 }: LoginPromptDialogProps) {
+  const router = useRouter();
+
+  if (!isOpen) return null;
+
+  function handleGoToLoginPage() {
+    router.push("/login");
+    onClose();
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -73,7 +85,7 @@ export default function LoginPromptDialog({
           </ul>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
-          <Button className="w-full" onClick={onGoToLoginPage}>
+          <Button className="w-full" onClick={handleGoToLoginPage}>
             Gå till inloggningssidan
           </Button>
           <Button variant="link" className="w-full" onClick={onClose}>

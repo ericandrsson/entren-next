@@ -30,6 +30,7 @@ import {
   PlaceEntranceWithImages,
 } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
+import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 
 const getCategoryIcon = (category: string) => {
@@ -51,6 +52,21 @@ export default function PlaceInfo({ place }: { place: Place }) {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
+  const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUserAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setIsUserAuthenticated(!!user);
+    };
+
+    checkUserAuth();
+  }, []);
 
   const fetchAllPlaceImages = useCallback(async (placeId: number) => {
     setLoadingImages(true);
@@ -116,9 +132,16 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setSelectedPhotoIndex(0);
   };
 
-  const handleAddEntrance = useCallback(() => {
-    setIsAddEntranceDialogOpen(true);
-  }, []);
+  const handleAddEntrance = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      setIsAddEntranceDialogOpen(true);
+    } else {
+      setIsLoginPromptOpen(true);
+    }
+  }, [supabase.auth]);
 
   const handleCloseAddEntranceDialog = () => {
     setIsAddEntranceDialogOpen(false);
@@ -252,6 +275,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
     }
   };
 
+  const handleCloseLoginPrompt = useCallback(() => {
+    setIsLoginPromptOpen(false);
+  }, []);
+
   return (
     <>
       <CardHeader>
@@ -307,6 +334,12 @@ export default function PlaceInfo({ place }: { place: Place }) {
         initialPhotoIndex={selectedPhotoIndex}
         onClose={handleClosePhotoDialog}
         isOpen={isPhotoDialogOpen}
+      />
+
+      <LoginPromptDialog
+        appName="Tillgänglighetskollen"
+        onClose={handleCloseLoginPrompt}
+        isOpen={isLoginPromptOpen}
       />
     </>
   );
