@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { useToast } from "@/src/hooks/use-toast";
 import { EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
@@ -106,6 +107,7 @@ export default function AddEntranceDialog({
   const [sameAsPlaceLocation, setSameAsPlaceLocation] = useState(false);
 
   const supabase = useMemo(() => createClient(), []);
+  const { toast } = useToast();
 
   const fetchEntranceTypes = async () => {
     const { data, error } = await supabase
@@ -114,7 +116,11 @@ export default function AddEntranceDialog({
       .order("id", { ascending: true });
 
     if (error) {
-      console.error("Error fetching entrance types:", error);
+      toast({
+        title: "Fel vid hämtning av entrétyper",
+        description: "Kunde inte hämta entrétyper. Försök igen senare.",
+        variant: "destructive",
+      });
     } else {
       setEntranceTypes(data || []);
     }
@@ -128,7 +134,11 @@ export default function AddEntranceDialog({
     });
 
     if (error) {
-      console.error("Error fetching entrance counts:", error);
+      toast({
+        title: "Fel vid hämtning av entréantal",
+        description: "Kunde inte hämta antalet entréer. Försök igen senare.",
+        variant: "destructive",
+      });
     } else {
       const counts: Record<number, number> = {};
       data.forEach((item: { type_id: number; count: string }) => {
@@ -207,8 +217,11 @@ export default function AddEntranceDialog({
   const handleSubmit = async (data: EntranceFormData, addAnother: boolean) => {
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
-      console.error("User is not authenticated");
-      // Handle unauthenticated user case
+      toast({
+        title: "Ej inloggad",
+        description: "Du måste vara inloggad för att lägga till en entré.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -236,6 +249,7 @@ export default function AddEntranceDialog({
       const changeData = {
         entrance_type_id: parseInt(data.entranceType),
         place_id: place.place_id,
+        osm_id: place.osm_id,
         location: location,
         photo_url: photoUrl, // Include photo_url directly in changeData
       };
@@ -252,30 +266,38 @@ export default function AddEntranceDialog({
       );
 
       if (error) {
-        console.error("Error calling add_entity_change:", error);
-        console.log("Function parameters:", {
-          p_user_id: user.data.user.id,
-          p_entity_id: place.place_id,
-          p_entity_type: "entrance",
-          p_action_type: "add",
-          p_change_data: changeData,
+        toast({
+          title: "Fel vid sparande av entré",
+          description:
+            "Ett fel uppstod när entrén skulle sparas. Försök igen senare.",
+          variant: "destructive",
         });
-        throw error;
+        return;
       }
-
-      console.log("Entrance data inserted successfully:", entityChangeId);
 
       if (addAnother) {
         onSaveAndAddAnother();
         form.reset();
         setStep(1);
+        toast({
+          title: "Tack för ditt bidrag!",
+          description:
+            "Entrén har sparats och väntar på granskning. Du kan nu lägga till en till.",
+        });
       } else {
         onClose();
+        toast({
+          title: "Tack för ditt bidrag!",
+          description:
+            "Entrén har sparats och kommer att visas så snart den har granskats.",
+        });
       }
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
-      // Handle error (show error message to user)
-      // You might want to use a toast or alert component here
+      toast({
+        title: "Fel vid sparande av entré",
+        description: "Ett oväntat fel uppstod. Försök igen senare.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -294,7 +316,6 @@ export default function AddEntranceDialog({
 
       try {
         const coordinates = await getGPSCoordinates(file);
-        console.log("coords", coordinates);
         if (coordinates.lat !== null && coordinates.lng !== null) {
           setHasLocationMetadata(true);
           form.setValue("location", {
@@ -302,12 +323,21 @@ export default function AddEntranceDialog({
             lng: coordinates.lng.toString(),
           });
         } else {
-          console.log("No coordinates found");
           setHasLocationMetadata(false);
+          toast({
+            title: "Ingen platsdata",
+            description:
+              "Bilden innehåller ingen platsinformation. Du behöver ange platsen manuellt.",
+          });
         }
       } catch (error) {
-        console.error("Error extracting GPS data:", error);
         setHasLocationMetadata(false);
+        toast({
+          title: "Fel vid läsning av bilddata",
+          description:
+            "Kunde inte läsa platsinformation från bilden. Du behöver ange platsen manuellt.",
+          variant: "destructive",
+        });
       }
     }
   };

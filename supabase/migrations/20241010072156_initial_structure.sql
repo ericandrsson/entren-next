@@ -430,7 +430,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION add_entity_change(
   p_user_id UUID,
-  p_entity_id INTEGER,
+  p_entity_id INTEGER DEFAULT NULL,
   p_entity_type TEXT,
   p_action_type TEXT,
   p_change_data JSONB
