@@ -128,6 +128,11 @@ export default function AddEntranceDialog({
   };
 
   const fetchEntranceCounts = async () => {
+    if (!place.place_id) {
+      setEntranceCounts({});
+      return;
+    }
+
     const supabase = createClient();
 
     const { data, error } = await supabase.rpc("get_entrance_counts", {
@@ -140,6 +145,7 @@ export default function AddEntranceDialog({
         description: "Kunde inte hämta antalet entréer. Försök igen senare.",
         variant: "destructive",
       });
+      setEntranceCounts({});
     } else {
       const counts: Record<number, number> = {};
       data.forEach((item: { type_id: number; count: string }) => {
@@ -164,11 +170,11 @@ export default function AddEntranceDialog({
   };
 
   useEffect(() => {
-    if (!isOpen) {
-      resetDialogState();
-    } else {
+    if (isOpen) {
       fetchEntranceTypes();
       fetchEntranceCounts();
+    } else {
+      resetDialogState();
     }
   }, [isOpen]);
 

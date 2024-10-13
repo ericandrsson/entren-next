@@ -323,7 +323,9 @@ export default function PlaceInfo({ place }: { place: Place }) {
         place={place}
         isOpen={isAddEntranceDialogOpen}
         onClose={handleCloseAddEntranceDialog}
-        onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
+        onSaveAndAddAnother={() => {
+          // Implement logic for save and add another if needed
+        }}
       />
 
       <PlacePhotoModal
