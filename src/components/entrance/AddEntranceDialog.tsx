@@ -1,4 +1,5 @@
 import { Button } from "@/src/components/ui/button";
+import { Checkbox } from "@/src/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, MapPin, Upload } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -50,6 +52,23 @@ interface AddEntranceDialogProps {
   onSaveAndAddAnother: () => void;
 }
 
+const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
+  <div className="space-y-4">
+    <h3 className="text-lg font-semibold">Följande bilder...</h3>
+    <ul className="list-disc pl-5 space-y-2">
+      <li>...ge användbar information om tillgängligheten.</li>
+      <li>...togs av mig.</li>
+      <li>... visar inga identifierbara personer.</li>
+    </ul>
+    <div className="flex items-center space-x-2">
+      <Checkbox id="terms" onCheckedChange={(checked) => checked && onConfirm()} />
+      <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        Jag publicerar härmed dessa bilder för allmänheten och avsäger mig copyright (universell CC0 1.0-licens).
+      </label>
+    </div>
+  </div>
+);
+
 export default function AddEntranceDialog({
   place,
   isOpen,
@@ -62,6 +81,8 @@ export default function AddEntranceDialog({
   const [entranceCounts, setEntranceCounts] = useState<Record<number, number>>(
     {},
   );
+
+  const [guidelinesConfirmed, setGuidelinesConfirmed] = useState(false);
 
   const supabase = createClient();
 
@@ -127,7 +148,15 @@ export default function AddEntranceDialog({
     }
   };
 
+  const handleGuidelinesConfirm = () => {
+    setGuidelinesConfirmed(true);
+  };
+
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!guidelinesConfirmed) {
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (file) {
       form.setValue("photo", file);
@@ -158,15 +187,12 @@ export default function AddEntranceDialog({
         <DialogHeader>
           <DialogTitle>Lägg till Entré</DialogTitle>
           <DialogDescription>
-            Hjälp andra att hitta tillgängliga ingångar genom att lägga till
-            entréinformation för {place.name}.
+            Hjälp andra att hitta tillgängliga ingångar genom att lägga till entréinformation för {place.name}.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data) => handleSubmit(data, false))}
-          >
+          <form onSubmit={form.handleSubmit((data) => handleSubmit(data, false))}>
             <div className="grid gap-4 py-4">
               {step === 1 && (
                 <FormField
@@ -175,10 +201,7 @@ export default function AddEntranceDialog({
                   render={({ field }) => (
                     <FormItem>
                       <Label htmlFor="entrance-type">Välj typ av entré</Label>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger id="entrance-type">
                             <SelectValue placeholder="Välj entrétyp" />
@@ -187,19 +210,10 @@ export default function AddEntranceDialog({
                         <SelectContent>
                           {entranceTypes.map((type) => {
                             const count = entranceCounts[type.id] || 0;
-                            const isDisabled =
-                              type.max_per_place !== null &&
-                              count >= type.max_per_place;
+                            const isDisabled = type.max_per_place !== null && count >= type.max_per_place;
                             return (
-                              <SelectItem
-                                key={type.id}
-                                value={type.id.toString()}
-                                disabled={isDisabled}
-                              >
-                                {type.name_sv}{" "}
-                                {isDisabled
-                                  ? `(Max ${type.max_per_place} nådd)`
-                                  : ""}
+                              <SelectItem key={type.id} value={type.id.toString()} disabled={isDisabled}>
+                                {type.name_sv} {isDisabled ? `(Max ${type.max_per_place} nådd)` : ''}
                               </SelectItem>
                             );
                           })}
@@ -211,61 +225,69 @@ export default function AddEntranceDialog({
                 />
               )}
 
-              {/* Photo upload step */}
+              {/* Combined Photo upload and Guidelines step */}
               {step === 2 && (
-                <div className="grid gap-2">
+                <div className="grid gap-4">
                   <Label>Lägg till en bild på entrén</Label>
-                  <div
-                    className="flex justify-center items-center h-[200px] bg-muted rounded-md cursor-pointer"
-                    onClick={() =>
-                      document.getElementById("photo-upload")?.click()
-                    }
-                  >
-                    {form.watch("photo") ? (
-                      <img
-                        src={URL.createObjectURL(form.watch("photo") as File)}
-                        alt="Entrance"
-                        className="max-h-full rounded-md"
-                      />
-                    ) : (
-                      <div className="text-center text-gray-500">
-                        Ingen bild uppladdad
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-4">
+                      <ImageGuidelines onConfirm={handleGuidelinesConfirm} />
+                    </div>
+                    <div className="space-y-4">
+                      <div
+                        className="flex justify-center items-center h-[200px] bg-muted rounded-md cursor-pointer overflow-hidden"
+                        onClick={() => guidelinesConfirmed && document.getElementById("photo-upload")?.click()}
+                      >
+                        {form.watch("photo") ? (
+                          <img
+                            src={URL.createObjectURL(form.watch("photo") as File)}
+                            alt="Entrance"
+                            className="max-h-full w-full object-cover rounded-md"
+                          />
+                        ) : (
+                          <div className="relative w-full h-full">
+                            <Image
+                              src="/images/entranceImagePlaceholder.jpg"
+                              alt="Entrance Placeholder"
+                              layout="fill"
+                              objectFit="contain"
+                              className="opacity-50"
+                            />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      onClick={() =>
-                        document.getElementById("photo-upload")?.click()
-                      }
-                    >
-                      <Upload className="mr-2 h-4 w-4" /> Ladda upp bild
-                    </Button>
-                    <input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handlePhotoUpload}
-                    />
-
-                    <Button type="button" variant="outline">
-                      <Camera className="mr-2 h-4 w-4" /> Ta foto
-                    </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          onClick={() => guidelinesConfirmed && document.getElementById("photo-upload")?.click()}
+                          disabled={!guidelinesConfirmed}
+                        >
+                          <Upload className="mr-2 h-4 w-4" /> Ladda upp bild
+                        </Button>
+                        <input
+                          id="photo-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoUpload}
+                          disabled={!guidelinesConfirmed}
+                        />
+                        <Button type="button" variant="outline" disabled={!guidelinesConfirmed}>
+                          <Camera className="mr-2 h-4 w-4" /> Ta foto
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* Location step */}
+              {/* Location step (now step 3) */}
               {step === 3 && !hasLocationMetadata && (
                 <div className="grid gap-2">
                   <Label>Markera platsen för entrén</Label>
                   <div className="h-[200px] bg-muted flex items-center justify-center rounded-md">
                     <MapPin className="h-8 w-8 text-muted-foreground" />
-                    <span className="ml-2 text-muted-foreground">
-                      Map Placeholder
-                    </span>
+                    <span className="ml-2 text-muted-foreground">Map Placeholder</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <FormField
@@ -306,7 +328,7 @@ export default function AddEntranceDialog({
                 </div>
               )}
 
-              {/* Step 4: Review */}
+              {/* Review step (now step 4 or 3 if location metadata exists) */}
               {((step === 3 && hasLocationMetadata) || step === 4) && (
                 <div className="grid gap-4">
                   <h3 className="text-lg font-semibold">Granska information</h3>
@@ -349,7 +371,11 @@ export default function AddEntranceDialog({
                 </Button>
               )}
               {step < (hasLocationMetadata ? 3 : 4) ? (
-                <Button type="button" onClick={handleNext}>
+                <Button 
+                  type="button" 
+                  onClick={handleNext}
+                  disabled={step === 2 && (!guidelinesConfirmed || !form.watch("photo"))}
+                >
                   Nästa
                 </Button>
               ) : (
@@ -358,9 +384,7 @@ export default function AddEntranceDialog({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() =>
-                      form.handleSubmit((data) => handleSubmit(data, true))()
-                    }
+                    onClick={() => form.handleSubmit((data) => handleSubmit(data, true))()}
                   >
                     Spara och lägg till en till
                   </Button>
