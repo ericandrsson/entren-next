@@ -237,41 +237,7 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 -- Updated table for place_categories with a new column 'name_sv'
 
 -- First, insert parent categories
-INSERT INTO "public"."place_categories" ("name", "name_sv", "parent_category_id", "created_at", "updated_at") VALUES
-    ('Finance', 'Finans', NULL, NOW(), NOW()),
-    ('Food & Drink', 'Mat & Dryck', NULL, NOW(), NOW()),
-    ('Leisure', 'Fritid', NULL, NOW(), NOW()),
-    ('Culture', 'Kultur', NULL, NOW(), NOW()),
-    ('Health', 'Hälsa och Vård', NULL, NOW(), NOW()),
-    ('Shopping', 'Affär', NULL, NOW(), NOW()),
-    ('Education', 'Utbildning', NULL, NOW(), NOW()),
-    ('Sport', 'Sport', NULL, NOW(), NOW()),
-    ('Accommodation', 'Boende och Hotell', NULL, NOW(), NOW()),
-    ('Transport', 'Transport', NULL, NOW(), NOW()),
-    ('Authorities', 'Myndigheter och Service', NULL, NOW(), NOW()),
-    ('Tourism', 'Turism', NULL, NOW(), NOW()),
-    ('Toilets', 'Toaletter', NULL, NOW(), NOW()),
-    ('Other', 'Övrigt', NULL, NOW(), NOW());
 
--- Then, insert child categories
-INSERT INTO "public"."place_categories" ("name", "name_sv", "parent_category_id", "created_at", "updated_at") VALUES
-    ('ATM', 'Bankomat', (SELECT id FROM "public"."place_categories" WHERE name = 'Finance'), NOW(), NOW()),
-    ('Bank', 'Bank', (SELECT id FROM "public"."place_categories" WHERE name = 'Finance'), NOW(), NOW()),
-    ('Bar/Pub', 'Bar/Pub', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Bakery', 'Bageri', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Restaurant', 'Restaurang', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Burger Restaurant', 'Hamburgerrestaurang', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Pizzeria', 'Pizzeria', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Kebab Shop', 'Kebabrestaurang', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Sushi Bar', 'Sushibar', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Ice Cream Parlor', 'Glasskiosk', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Fast Food', 'Snabbmat', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Coffee Shop', 'Café', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Sandwich Shop', 'Smörgåsbutik', (SELECT id FROM "public"."place_categories" WHERE name = 'Food & Drink'), NOW(), NOW()),
-    ('Gym', 'Gym', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW()),
-    ('Fitness Station', 'Utegym', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW()),
-    ('Swimming Pool', 'Simhall', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW()),
-    ('Playground', 'Lekplats', (SELECT id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW());
 
 -- Updated table for place_osm_tag_to_category
 
