@@ -14,6 +14,8 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
+  FormDescription,
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
@@ -41,6 +43,7 @@ const entranceSchema = z.object({
     lat: z.string().optional(),
     lng: z.string().optional(),
   }),
+  sameAsPlaceLocation: z.boolean().default(false),
 });
 
 type EntranceFormData = z.infer<typeof entranceSchema>;
@@ -83,6 +86,7 @@ export default function AddEntranceDialog({
   );
 
   const [guidelinesConfirmed, setGuidelinesConfirmed] = useState(false);
+  const [sameAsPlaceLocation, setSameAsPlaceLocation] = useState(false);
 
   const supabase = createClient();
 
@@ -126,11 +130,35 @@ export default function AddEntranceDialog({
       entranceType: undefined,
       photo: undefined,
       location: { lat: "", lng: "" },
+      sameAsPlaceLocation: false,
     },
   });
 
+  const handleEntranceTypeChange = (value: string) => {
+    form.setValue("entranceType", value);
+    const isMainEntrance = entranceTypes.find(t => t.id.toString() === value)?.name === "Main Entrance";
+    setSameAsPlaceLocation(isMainEntrance);
+    form.setValue("sameAsPlaceLocation", isMainEntrance);
+  };
+
+  const handleSameAsPlaceLocationChange = (checked: boolean) => {
+    setSameAsPlaceLocation(checked);
+    form.setValue("sameAsPlaceLocation", checked);
+    if (checked) {
+      // Set the location to the place's location
+      form.setValue("location", {
+        lat: place.lat.toString(),
+        lng: place.long.toString(),
+      });
+    }
+  };
+
   const handleNext = () => {
-    if (step < 4) setStep(step + 1);
+    if (step === 2 && sameAsPlaceLocation) {
+      setStep(4); // Skip to review step
+    } else if (step < 4) {
+      setStep(step + 1);
+    }
   };
 
   const handleBack = () => {
@@ -195,34 +223,58 @@ export default function AddEntranceDialog({
           <form onSubmit={form.handleSubmit((data) => handleSubmit(data, false))}>
             <div className="grid gap-4 py-4">
               {step === 1 && (
-                <FormField
-                  control={form.control}
-                  name="entranceType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="entrance-type">Välj typ av entré</Label>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <>
+                  <FormField
+                    control={form.control}
+                    name="entranceType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Label htmlFor="entrance-type">Välj typ av entré</Label>
+                        <Select onValueChange={handleEntranceTypeChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger id="entrance-type">
+                              <SelectValue placeholder="Välj entrétyp" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {entranceTypes.map((type) => {
+                              const count = entranceCounts[type.id] || 0;
+                              const isDisabled = type.max_per_place !== null && count >= type.max_per_place;
+                              return (
+                                <SelectItem key={type.id} value={type.id.toString()} disabled={isDisabled}>
+                                  {type.name_sv} {isDisabled ? `(Max ${type.max_per_place} nådd)` : ''}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="sameAsPlaceLocation"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                         <FormControl>
-                          <SelectTrigger id="entrance-type">
-                            <SelectValue placeholder="Välj entrétyp" />
-                          </SelectTrigger>
+                          <Checkbox
+                            checked={sameAsPlaceLocation}
+                            onCheckedChange={handleSameAsPlaceLocationChange}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {entranceTypes.map((type) => {
-                            const count = entranceCounts[type.id] || 0;
-                            const isDisabled = type.max_per_place !== null && count >= type.max_per_place;
-                            return (
-                              <SelectItem key={type.id} value={type.id.toString()} disabled={isDisabled}>
-                                {type.name_sv} {isDisabled ? `(Max ${type.max_per_place} nådd)` : ''}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>
+                            Entrén har samma plats som {place.name}
+                          </FormLabel>
+                          <FormDescription>
+                            Markera detta om entrén är på samma plats som huvudbyggnaden.
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
 
               {/* Combined Photo upload and Guidelines step */}
@@ -282,7 +334,7 @@ export default function AddEntranceDialog({
               )}
 
               {/* Location step (now step 3) */}
-              {step === 3 && !hasLocationMetadata && (
+              {step === 3 && !sameAsPlaceLocation && !hasLocationMetadata && (
                 <div className="grid gap-2">
                   <Label>Markera platsen för entrén</Label>
                   <div className="h-[200px] bg-muted flex items-center justify-center rounded-md">
@@ -328,8 +380,8 @@ export default function AddEntranceDialog({
                 </div>
               )}
 
-              {/* Review step (now step 4 or 3 if location metadata exists) */}
-              {((step === 3 && hasLocationMetadata) || step === 4) && (
+              {/* Review step (now step 4 or 3 if location is same as place) */}
+              {((step === 3 && (sameAsPlaceLocation || hasLocationMetadata)) || step === 4) && (
                 <div className="grid gap-4">
                   <h3 className="text-lg font-semibold">Granska information</h3>
                   <div>
@@ -350,16 +402,17 @@ export default function AddEntranceDialog({
                       />
                     </div>
                   )}
-                  {(form.watch("location.lat") ||
-                    form.watch("location.lng")) && (
-                    <div>
-                      <Label>Plats</Label>
+                  <div>
+                    <Label>Plats</Label>
+                    {sameAsPlaceLocation ? (
+                      <p>Samma plats som {place.name}</p>
+                    ) : (
                       <p>
                         Lat: {form.watch("location.lat")}, Lng:{" "}
                         {form.watch("location.lng")}
                       </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -370,7 +423,7 @@ export default function AddEntranceDialog({
                   Tillbaka
                 </Button>
               )}
-              {step < (hasLocationMetadata ? 3 : 4) ? (
+              {step < (sameAsPlaceLocation || hasLocationMetadata ? 3 : 4) ? (
                 <Button 
                   type="button" 
                   onClick={handleNext}
@@ -395,7 +448,7 @@ export default function AddEntranceDialog({
         </Form>
 
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          Steg {step} av {hasLocationMetadata ? 3 : 4}
+          Steg {step} av {sameAsPlaceLocation || hasLocationMetadata ? 3 : 4}
         </div>
 
         <div className="mt-2 text-center text-xs text-muted-foreground">
