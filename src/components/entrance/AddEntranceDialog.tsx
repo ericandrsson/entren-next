@@ -136,10 +136,28 @@ export default function AddEntranceDialog({
     }
   };
 
+  const resetDialogState = () => {
+    setStep(1);
+    setHasLocationMetadata(false);
+    setGuidelinesConfirmed(false);
+    setSameAsPlaceLocation(false);
+    setEntranceCounts({});
+    form.reset({
+      entranceType: undefined,
+      photo: undefined,
+      location: { lat: "", lng: "" },
+      sameAsPlaceLocation: false,
+    });
+  };
+
   useEffect(() => {
-    fetchEntranceTypes();
-    fetchEntranceCounts();
-  }, [place.place_id]);
+    if (!isOpen) {
+      resetDialogState();
+    } else {
+      fetchEntranceTypes();
+      fetchEntranceCounts();
+    }
+  }, [isOpen]);
 
   const form = useForm<EntranceFormData>({
     resolver: zodResolver(entranceSchema),
@@ -228,8 +246,13 @@ export default function AddEntranceDialog({
     }
   };
 
+  const handleClose = () => {
+    resetDialogState();
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] sm:w-[90vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Lägg till Entré</DialogTitle>
