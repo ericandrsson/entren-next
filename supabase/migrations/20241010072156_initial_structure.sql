@@ -428,6 +428,51 @@ AS $$
     GROUP BY type_id;
 $$;
 
+CREATE OR REPLACE FUNCTION add_entity_change(
+  p_user_id UUID,
+  p_entity_id INTEGER,
+  p_entity_type TEXT,
+  p_action_type TEXT,
+  p_change_data JSONB
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_entity_change_id INTEGER;
+BEGIN
+  -- Start transaction
+  BEGIN
+    -- Insert into entity_changes_staging
+    INSERT INTO entity_changes_staging (
+      user_id,
+      entity_id,
+      entity_type,
+      action_type,
+      change_data,
+      status
+    ) VALUES (
+      p_user_id,
+      p_entity_id,
+      p_entity_type,
+      p_action_type,
+      p_change_data,
+      'pending'
+    )
+    RETURNING id INTO v_entity_change_id;
+
+    -- If we get here, commit the transaction
+    RETURN v_entity_change_id;
+  EXCEPTION
+    WHEN OTHERS THEN
+      -- If any error occurs, the transaction will be rolled back automatically
+      RAISE;
+  END;
+END;
+$$;
+
+
+
 -- Views
 CREATE OR REPLACE VIEW "public"."detailed_entrances_view" AS 
 SELECT 

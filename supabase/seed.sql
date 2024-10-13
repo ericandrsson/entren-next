@@ -477,3 +477,6 @@ INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
 	('place_entrance_images', 'place_entrance_images', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', false, false, 10485760, '{image/*}', NULL);
+
+
+SELECT pg_stat_clear_snapshot();

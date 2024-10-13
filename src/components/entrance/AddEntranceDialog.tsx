@@ -26,11 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import {
-  EntityChangeStaging,
-  EntranceType,
-  Place,
-} from "@/src/types/custom.types";
+import { EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -212,81 +208,62 @@ export default function AddEntranceDialog({
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
       console.error("User is not authenticated");
-      // Handle the case where the user is not authenticated
-      // For example, you could show an error message or redirect to login
+      // Handle unauthenticated user case
       return;
     }
 
-    // Prepare the change data
-    const changeData = {
-      entrance_type_id: parseInt(data.entranceType),
-      place_id: place.place_id,
-      location: data.sameAsPlaceLocation
-        ? { lat: place.lat, lng: place.long }
-        : data.location,
-      accessibility_info: {}, // Add accessibility info if you have any
-    };
-
-    // Insert into entity_changes_staging
-    const { data: insertedData, error } = await supabase
-      .from("entity_changes_staging")
-      .insert({
-        user_id: "1d8762d3-dcad-404f-999c-571aad22d2f5",
-        entity_id: place.place_id, // Using place_id
-        entity_type: "entrance",
-        action_type: "add",
-        change_data: changeData,
-        status: "pending",
-      })
-      .select()
-      .single();
-
-    if (!insertedData) {
-      throw new Error("Failed to insert data");
-    }
-
-    const entityChangeStaging: EntityChangeStaging = insertedData;
-
-    if (error) {
-      console.error("Error inserting entrance data:", error);
-      // Handle error (show error message to user)
-    } else {
-      console.log("Entrance data inserted successfully:", insertedData);
-
-      // Handle photo upload if a photo was provided
+    try {
+      let photoUrl = null;
       if (data.photo) {
-        const fileName = `entrance_${entityChangeStaging.id}_${Date.now()}.jpg`;
-        const { error: uploadError } = await supabase.storage
+        const fileName = `entrance_${Date.now()}.jpg`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("place_entrance_images")
           .upload(fileName, data.photo);
 
-        if (uploadError) {
-          console.error("Error uploading photo:", uploadError);
-          // Handle error (show error message to user)
-        } else {
-          // Update the change_data with the photo URL
-          const { data: photoUrl } = supabase.storage
-            .from("entrance-photos")
-            .getPublicUrl(fileName);
+        if (uploadError) throw uploadError;
 
-          const { error: updateError } = await supabase
-            .from("entity_changes_staging")
-            .update({
-              change_data: {
-                ...changeData,
-                photo_url: photoUrl.publicUrl,
-              },
-            })
-            .eq("id", entityChangeStaging.id);
+        const { data: urlData } = supabase.storage
+          .from("place_entrance_images")
+          .getPublicUrl(fileName);
 
-          if (updateError) {
-            console.error(
-              "Error updating change_data with photo URL:",
-              updateError,
-            );
-          }
-        }
+        photoUrl = urlData.publicUrl;
       }
+
+      const location = data.sameAsPlaceLocation
+        ? { lat: place.lat, lng: place.long }
+        : data.location;
+
+      const changeData = {
+        entrance_type_id: parseInt(data.entranceType),
+        place_id: place.place_id,
+        location: location,
+        photo_url: photoUrl, // Include photo_url directly in changeData
+      };
+
+      const { data: entityChangeId, error } = await supabase.rpc(
+        "add_entity_change",
+        {
+          p_user_id: user.data.user.id,
+          p_entity_id: place.place_id,
+          p_entity_type: "entrance",
+          p_action_type: "add",
+          p_change_data: changeData,
+        },
+      );
+
+      if (error) {
+        console.error("Error calling add_entity_change:", error);
+        console.log("Function parameters:", {
+          p_user_id: user.data.user.id,
+          p_entity_id: place.place_id,
+          p_entity_type: "entrance",
+          p_action_type: "add",
+          p_change_data: changeData,
+        });
+        throw error;
+      }
+
+      console.log("Entrance data inserted successfully:", entityChangeId);
 
       if (addAnother) {
         onSaveAndAddAnother();
@@ -295,6 +272,10 @@ export default function AddEntranceDialog({
       } else {
         onClose();
       }
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      // Handle error (show error message to user)
+      // You might want to use a toast or alert component here
     }
   };
 
