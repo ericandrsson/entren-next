@@ -59,7 +59,9 @@ export default function LoginForm() {
   // Check if email exists
   const checkEmailExists = async (email: string) => {
     try {
-      const { data, error } = await supabase.rpc("email_exists", { email });
+      const { data, error } = await supabase.rpc("check_email_exists", {
+        email,
+      });
       if (error) throw error;
       return data;
     } catch (error) {

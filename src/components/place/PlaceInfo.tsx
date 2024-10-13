@@ -72,7 +72,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setLoadingImages(true);
     const supabase = createClient();
     const { data, error } = await supabase
-      .from("place_entrance_images")
+      .from("place_entrance_photos")
       .select("*")
       .eq("place_id", placeId);
 
@@ -218,19 +218,19 @@ export default function PlaceInfo({ place }: { place: Place }) {
                           )
                           .map((photo) => (
                             <Button
-                              key={photo.image_id}
+                              key={photo.photo_id}
                               variant="ghost"
                               className="p-0 w-full h-auto"
                               onClick={() =>
                                 handlePhotoClick(
                                   allPlacePhotos.findIndex(
-                                    (p) => p.image_id === photo.image_id,
+                                    (p) => p.photo_id === photo.photo_id,
                                   ),
                                 )
                               }
                             >
                               <Image
-                                src={photo.image_url!}
+                                src={photo.photo_url!}
                                 alt={photo.description || ""}
                                 width={300}
                                 height={200}

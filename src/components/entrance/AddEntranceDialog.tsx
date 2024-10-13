@@ -135,7 +135,7 @@ export default function AddEntranceDialog({
 
     const supabase = createClient();
 
-    const { data, error } = await supabase.rpc("get_entrance_counts", {
+    const { data, error } = await supabase.rpc("get_entrance_type_counts", {
       p_place_id: place.place_id,
     });
 
@@ -238,42 +238,43 @@ export default function AddEntranceDialog({
       if (data.photo) {
         const fileName = `entrance_${Date.now()}.jpg`;
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("place_entrance_images")
+          .from("place_entrance_photos")
           .upload(fileName, data.photo);
 
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage
-          .from("place_entrance_images")
+          .from("place_entrance_photos")
           .getPublicUrl(fileName);
 
         photoUrl = urlData.publicUrl;
       }
 
       const location = data.sameAsPlaceLocation
-        ? { lat: place.lat, lng: place.long }
-        : data.location;
+        ? { lat: place.lat, long: place.long }
+        : {
+            lat: parseFloat(data.location.lat!),
+            long: parseFloat(data.location.lng!),
+          };
 
       const changeData = {
-        entrance_type_id: parseInt(data.entranceType),
+        type_id: parseInt(data.entranceType),
+        location: location,
         place_id: place.place_id,
         osm_id: place.osm_id,
-        location: location,
-        photo_url: photoUrl, // Include photo_url directly in changeData
+        photo_url: photoUrl || null, // Ensure this is null if no photo was uploaded
       };
 
-      const { data: entityChangeId, error } = await supabase.rpc(
-        "add_entity_change",
-        {
-          p_user_id: user.data.user.id,
-          p_entity_id: place.place_id,
-          p_entity_type: "entrance",
-          p_action_type: "add",
-          p_change_data: changeData,
-        },
-      );
+      const { error } = await supabase.rpc("add_entity_change", {
+        p_user_id: user.data.user.id,
+        p_entity_id: place.place_id,
+        p_entity_type: "entrance",
+        p_action_type: "add",
+        p_change_data: changeData,
+      });
 
       if (error) {
+        console.error("Error adding entity change:", error);
         toast({
           title: "Fel vid sparande av entré",
           description:

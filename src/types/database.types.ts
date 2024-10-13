@@ -120,6 +120,21 @@ export type Database = {
           },
         ]
       }
+      entity_json_schemas: {
+        Row: {
+          entity_type: string
+          json_schema: Json
+        }
+        Insert: {
+          entity_type: string
+          json_schema: Json
+        }
+        Update: {
+          entity_type?: string
+          json_schema?: Json
+        }
+        Relationships: []
+      }
       entrance_types: {
         Row: {
           created_at: string
@@ -191,13 +206,13 @@ export type Database = {
           },
         ]
       }
-      place_entrance_images: {
+      place_entrance_photos: {
         Row: {
           created_at: string
           description: string | null
           entrance_id: number | null
-          image_id: number
-          image_url: string | null
+          photo_id: number
+          photo_url: string | null
           place_id: number | null
           updated_at: string | null
           user_id: string | null
@@ -206,8 +221,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           entrance_id?: number | null
-          image_id?: number
-          image_url?: string | null
+          photo_id?: number
+          photo_url?: string | null
           place_id?: number | null
           updated_at?: string | null
           user_id?: string | null
@@ -216,29 +231,29 @@ export type Database = {
           created_at?: string
           description?: string | null
           entrance_id?: number | null
-          image_id?: number
-          image_url?: string | null
+          photo_id?: number
+          photo_url?: string | null
           place_id?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "place_entrance_images_entrance_id_fkey"
+            foreignKeyName: "place_entrance_photos_entrance_id_fkey"
             columns: ["entrance_id"]
             isOneToOne: false
             referencedRelation: "detailed_entrances_view"
             referencedColumns: ["entrance_id"]
           },
           {
-            foreignKeyName: "place_entrance_images_entrance_id_fkey"
+            foreignKeyName: "place_entrance_photos_entrance_id_fkey"
             columns: ["entrance_id"]
             isOneToOne: false
             referencedRelation: "place_entrances"
             referencedColumns: ["entrance_id"]
           },
           {
-            foreignKeyName: "place_entrance_images_place_id_fkey"
+            foreignKeyName: "place_entrance_photos_place_id_fkey"
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
@@ -433,8 +448,10 @@ export type Database = {
           entrance_type_name_sv: string | null
           entrance_updated_at: string | null
           lat: number | null
+          location: unknown | null
           long: number | null
           osm_id: number | null
+          photos: Json | null
           place_id: number | null
           place_name: string | null
         }
@@ -473,7 +490,17 @@ export type Database = {
       }
     }
     Functions: {
-      create_place_from_osm: {
+      add_entity_change: {
+        Args: {
+          p_user_id: string
+          p_entity_id?: number
+          p_entity_type?: string
+          p_action_type?: string
+          p_change_data?: Json
+        }
+        Returns: number
+      }
+      add_place_from_osm: {
         Args: {
           osm_id: number
         }
@@ -489,7 +516,7 @@ export type Database = {
           user_id: string | null
         }
       }
-      email_exists: {
+      check_email_exists: {
         Args: {
           email: string
         }
@@ -501,7 +528,7 @@ export type Database = {
         }
         Returns: number
       }
-      get_entrance_counts: {
+      get_entrance_type_counts: {
         Args: {
           p_place_id: number
         }
@@ -530,6 +557,19 @@ export type Database = {
           user_id: string
           category_name: string
           parent_category_name: string
+        }[]
+      }
+      get_place_entrances_with_pending: {
+        Args: {
+          p_place_id: number
+          p_user_id?: string
+        }
+        Returns: {
+          entrance_id: number
+          entrance_type_id: number
+          location: unknown
+          photos: Json
+          status: string
         }[]
       }
       refresh_detailed_places_view: {

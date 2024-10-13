@@ -460,7 +460,7 @@ INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "type_id", "l
     (9, 7, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.5, "automatic_door": false}', NOW(), NOW());
 
 -- Insert sample images for place entrances
-INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_url", "created_at", "updated_at") VALUES
+INSERT INTO "public"."place_entrance_photos" ("place_id", "entrance_id", "photo_url", "created_at", "updated_at") VALUES
     (1, 1, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
     (2, 2, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
     (2, 3, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
@@ -476,7 +476,7 @@ INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_
 --
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
-	('place_entrance_images', 'place_entrance_images', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', false, false, 10485760, '{image/*}', NULL);
+	('place_entrance_photos', 'place_entrance_photos', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', false, false, 10485760, '{image/*}', NULL);
 
 
 SELECT pg_stat_clear_snapshot();

@@ -14,7 +14,7 @@ export type EntityChangeStaging =
 export interface Place extends PlaceFromDB {}
 export interface PlaceEntrance extends PlaceEntranceFromDB {}
 export type PlaceEntranceImage =
-  Database["public"]["Tables"]["place_entrance_images"]["Row"];
+  Database["public"]["Tables"]["place_entrance_photos"]["Row"];
 
 export interface PlaceEntranceWithImages extends PlaceEntrance {
   photos: PlaceEntranceImage[];

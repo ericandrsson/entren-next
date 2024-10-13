@@ -37,3 +37,25 @@ Limit ‘use client’:
 Favor server components and Next.js SSR.
 Use only for Web API access in small components.
 Avoid for data fetching or state management.
+
+When in composer or chat, give me follow up actions proposals in J K L hotkeys, so i can respond quickly
+
+Here are some general naming conventions for database functions:
+General Naming Guidelines:
+
+    Action-Based Prefixes: Start the function name with a verb that describes what the function does. For example:
+        get_: For retrieving data without changing anything.
+        add_: For inserting new records or data.
+        set_ or update_: For updating or modifying existing data.
+        delete_: For deleting data.
+        check_: For boolean checks or validations.
+        refresh_: For operations that rebuild or refresh materialized views or caches.
+        handle_: For procedural logic or events such as triggers or user actions.
+
+    Descriptive Object Names: Use nouns or noun phrases that describe what the function operates on, such as place, category, user, osm_tags, etc.
+
+    Lowercase with Underscores: In PostgreSQL, functions are typically named in lowercase with underscores to separate words (following the SQL convention).
+
+    Avoid Abbreviations: Use full, clear names instead of abbreviations (e.g., osm_tags is fine, but avoid vague abbreviations like ctg for category).
+
+    Use the Entity and Action Context: Follow the entity and action format like get_user_email, add_new_user, delete_user, etc. This makes the action and the target entity clear.
