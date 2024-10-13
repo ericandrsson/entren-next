@@ -33,7 +33,7 @@ export default function LoginPromptDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            Tack för din hjälp, men vi behöver lite mer från dig! 🙏
+            Logga in för att bidra! 🙏
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">

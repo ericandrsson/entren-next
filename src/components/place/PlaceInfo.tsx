@@ -132,16 +132,13 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setSelectedPhotoIndex(0);
   };
 
-  const handleAddEntrance = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
+  const handleAddEntrance = useCallback(() => {
+    if (isUserAuthenticated) {
       setIsAddEntranceDialogOpen(true);
     } else {
       setIsLoginPromptOpen(true);
     }
-  }, [supabase.auth]);
+  }, [isUserAuthenticated]);
 
   const handleCloseAddEntranceDialog = () => {
     setIsAddEntranceDialogOpen(false);
@@ -337,7 +334,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
       />
 
       <LoginPromptDialog
-        appName="Tillgänglighetskollen"
+        appName="Entrén"
         onClose={handleCloseLoginPrompt}
         isOpen={isLoginPromptOpen}
       />

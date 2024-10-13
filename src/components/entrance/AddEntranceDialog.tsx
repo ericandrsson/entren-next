@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { useToast } from "@/src/hooks/use-toast";
+import { cn } from "@/src/libs/utils";
 import { EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
@@ -34,13 +35,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, MapPin, Upload } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const entranceSchema = z.object({
   entranceType: z.string(),
-  photo: z.instanceof(File).optional(),
+  photo: z.any().optional(), // Changed from z.instanceof(File).optional()
   location: z.object({
     lat: z.string().optional(),
     lng: z.string().optional(),
@@ -106,10 +107,10 @@ export default function AddEntranceDialog({
   const [guidelinesConfirmed, setGuidelinesConfirmed] = useState(false);
   const [sameAsPlaceLocation, setSameAsPlaceLocation] = useState(false);
 
-  const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
 
   const fetchEntranceTypes = async () => {
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("entrance_types")
       .select("*")
@@ -215,6 +216,7 @@ export default function AddEntranceDialog({
   };
 
   const handleSubmit = async (data: EntranceFormData, addAnother: boolean) => {
+    const supabase = createClient();
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
       toast({
@@ -287,9 +289,39 @@ export default function AddEntranceDialog({
       } else {
         onClose();
         toast({
-          title: "Tack för ditt bidrag!",
-          description:
-            "Entrén har sparats och kommer att visas så snart den har granskats.",
+          title: "Tack för ditt bidrag! 🎉",
+          description: (
+            <div className="space-y-2">
+              <p>
+                Din entré har sparats och väntar nu på granskning. Vi uppskattar
+                verkligen din insats!
+              </p>
+              <ul className="space-y-1">
+                <li className="flex items-start">
+                  <span className="mr-2">✅</span>
+                  <span>
+                    <strong>Granskning:</strong> Ditt bidrag kommer att
+                    kontrolleras för att säkerställa kvaliteten.
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">⏳</span>
+                  <span>
+                    <strong>Synlighet:</strong> Entrén kommer att visas så snart
+                    den har godkänts.
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">🌟</span>
+                  <span>
+                    <strong>Karma-poäng:</strong> Du har tjänat karma-poäng för
+                    ditt bidrag!
+                  </span>
+                </li>
+              </ul>
+            </div>
+          ),
+          duration: 60000,
         });
       }
     } catch (error) {
@@ -349,7 +381,9 @@ export default function AddEntranceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] sm:w-[90vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className={cn("w-[95vw] sm:w-[90vw] sm:max-w-[600px] max-h-[90vh]")}
+      >
         <DialogHeader>
           <DialogTitle>Lägg till Entré</DialogTitle>
           <DialogDescription>
