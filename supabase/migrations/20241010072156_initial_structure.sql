@@ -120,7 +120,7 @@ CREATE TABLE "public"."places" (
 CREATE TABLE "public"."place_entrances" (
     "entrance_id" integer NOT NULL DEFAULT nextval('place_entrances_id_seq'::regclass) PRIMARY KEY,
     "place_id" integer NOT NULL,
-    "type_id" integer NOT NULL,
+    "entrance_type_id" integer NOT NULL,
     "location" geometry,
     "accessibility_info" jsonb,
     "created_at" timestamp with time zone DEFAULT now(),
@@ -141,7 +141,7 @@ CREATE TABLE "public"."place_entrance_photos" (
 CREATE TABLE "public"."entity_changes_staging" (
     "id" serial PRIMARY KEY,
     "user_id" uuid NOT NULL,
-    "entity_id" integer NOT NULL,
+    "entity_id" integer,
     "entity_type" text NOT NULL CHECK (entity_type IN ('place', 'entrance', 'photo')),
     "action_type" text NOT NULL CHECK (action_type IN ('add', 'update', 'delete')),
     "change_data" jsonb NOT NULL,
@@ -184,13 +184,13 @@ INSERT INTO public.entity_json_schemas (entity_type, json_schema) VALUES
   ('entrance', '{
     "type": "object",
     "properties": {
-      "type_id": { "type": "integer" },
+      "entrance_type_id": { "type": "integer" },
       "place_id": { "type": "integer" },
       "osm_id": { "type": "integer" },
       "photo_url": { "type": "string" },
       "location": { "type": "object", "properties": { "lat": { "type": "number" }, "long": { "type": "number" } }, "required": ["lat", "long"] }
     },
-    "required": ["type_id", "location", "photo_url"]
+    "required": ["entrance_type_id", "location", "photo_url"]
   }'::jsonb),
   ('photo', '{
     "type": "object",
@@ -457,13 +457,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.get_entrance_type_counts(p_place_id INTEGER)
-RETURNS TABLE (type_id INTEGER, count BIGINT) 
+RETURNS TABLE (entrance_type_id INTEGER, count BIGINT) 
 LANGUAGE SQL
 AS $$
-    SELECT type_id, COUNT(*) as count
+    SELECT entrance_type_id, COUNT(*) as count
     FROM place_entrances
     WHERE place_id = p_place_id
-    GROUP BY type_id;
+    GROUP BY entrance_type_id;
 $$;
 
 -- add_entity_change
@@ -542,7 +542,7 @@ SELECT
     se.place_id,
     p.osm_id,
     p.name AS place_name,
-    se.type_id AS entrance_type_id,
+    se.entrance_type_id,
     et.name AS entrance_type_name,
     et.name_sv AS entrance_type_name_sv,
     et.description AS entrance_type_description,
@@ -566,12 +566,12 @@ SELECT
     ) AS photos  -- Collect all photos for this entrance
 FROM place_entrances se
 JOIN places p ON p.place_id = se.place_id
-JOIN entrance_types et ON et.id = se.type_id
+JOIN entrance_types et ON et.id = se.entrance_type_id
 LEFT JOIN place_entrance_photos pei ON pei.entrance_id = se.entrance_id  -- Join photos
 GROUP BY se.entrance_id, p.place_id, et.id;
 
 
-
+-- detailed_places_view
 CREATE MATERIALIZED VIEW public.detailed_places_view AS
 WITH custom_places AS (
 SELECT 
@@ -634,9 +634,9 @@ LIMIT 100
 SELECT * FROM custom_places
 UNION ALL
 SELECT * FROM osm_places;
+-- end detailed_places_view
 
-
-
+-- get_place_entrances_with_pending
 CREATE OR REPLACE FUNCTION public.get_place_entrances_with_pending(
   p_place_id INTEGER, 
   p_user_id UUID DEFAULT NULL
@@ -644,6 +644,10 @@ CREATE OR REPLACE FUNCTION public.get_place_entrances_with_pending(
 RETURNS TABLE (
   entrance_id INTEGER,
   entrance_type_id INTEGER,
+  entrance_type_name TEXT,
+  entrance_type_name_sv TEXT,
+  entrance_type_description TEXT,
+  entrance_type_description_sv TEXT,
   location geometry,
   photos jsonb,
   status TEXT
@@ -654,36 +658,47 @@ WITH verified_entrances AS (
   SELECT 
     de.entrance_id,
     de.entrance_type_id,
+    de.entrance_type_name,
+    de.entrance_type_name_sv,
+    de.entrance_type_description,
+    de.entrance_type_description_sv,
     de.location,
     json_agg(json_build_object(
         'photo_id', img->>'photo_id',
         'photo_url', img->>'photo_url',
         'description', img->>'description'
     )) AS photos,
-    'approved' AS status  -- Mark as approved since it's from verified data
+    'approved' AS status
   FROM detailed_entrances_view de
-  LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS img ON true  -- Cast to jsonb
+  LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS img ON true
   WHERE de.place_id = p_place_id
-  GROUP BY de.entrance_id, de.entrance_type_id, de.location
+  GROUP BY de.entrance_id, de.entrance_type_id, de.entrance_type_name, de.entrance_type_name_sv, de.entrance_type_description, de.entrance_type_description_sv, de.location
 ),
 pending_entrances AS (
   SELECT 
     ecs.entity_id AS entrance_id,
-    (ecs.change_data->>'type_id')::integer AS entrance_type_id,  -- Cast to integer
-    ST_GeomFromGeoJSON(ecs.change_data->>'location') AS location,
+    (ecs.change_data->>'entrance_type_id')::integer AS entrance_type_id,
+    et.name AS entrance_type_name,
+    et.name_sv AS entrance_type_name_sv,
+    et.description AS entrance_type_description,
+    et.description_sv AS entrance_type_description_sv,
+    ST_SetSRID(ST_MakePoint(
+      (ecs.change_data->'location'->>'long')::float,
+      (ecs.change_data->'location'->>'lat')::float
+    ), 4326) AS location,
     json_agg(json_build_object(
         'photo_url', img->>'photo_url', 
         'description', img->>'description'
     )) AS photos,
     ecs.status
   FROM entity_changes_staging ecs
+  LEFT JOIN entrance_types et ON et.id = (ecs.change_data->>'entrance_type_id')::integer
   LEFT JOIN LATERAL jsonb_array_elements(ecs.change_data->'photos') AS img ON true
-  WHERE ecs.entity_id = p_place_id
-    AND ecs.entity_type = 'entrance'
+  WHERE ecs.entity_type = 'entrance'
     AND ecs.action_type = 'add'
     AND ecs.status = 'pending'
     AND (p_user_id IS NULL OR ecs.user_id = p_user_id)
-  GROUP BY ecs.entity_id, ecs.status, ecs.change_data->>'location', ecs.change_data->>'type_id'
+  GROUP BY ecs.entity_id, ecs.status, ecs.change_data, et.name, et.name_sv, et.description, et.description_sv
 )
 -- Combine verified and pending entrances
 SELECT * FROM verified_entrances
@@ -691,6 +706,8 @@ UNION ALL
 SELECT * FROM pending_entrances
 ORDER BY entrance_type_id;
 $$;
+
+-- end get_place_entrances_with_pending
 
 
 

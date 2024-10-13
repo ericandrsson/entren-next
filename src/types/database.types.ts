@@ -77,7 +77,7 @@ export type Database = {
         Row: {
           action_type: string
           change_data: Json
-          entity_id: number
+          entity_id: number | null
           entity_type: string
           id: number
           reviewed_at: string | null
@@ -89,7 +89,7 @@ export type Database = {
         Insert: {
           action_type: string
           change_data: Json
-          entity_id: number
+          entity_id?: number | null
           entity_type: string
           id?: number
           reviewed_at?: string | null
@@ -101,7 +101,7 @@ export type Database = {
         Update: {
           action_type?: string
           change_data?: Json
-          entity_id?: number
+          entity_id?: number | null
           entity_type?: string
           id?: number
           reviewed_at?: string | null
@@ -266,27 +266,27 @@ export type Database = {
           accessibility_info: Json | null
           created_at: string | null
           entrance_id: number
+          entrance_type_id: number
           location: unknown | null
           place_id: number
-          type_id: number
           updated_at: string | null
         }
         Insert: {
           accessibility_info?: Json | null
           created_at?: string | null
           entrance_id?: number
+          entrance_type_id: number
           location?: unknown | null
           place_id: number
-          type_id: number
           updated_at?: string | null
         }
         Update: {
           accessibility_info?: Json | null
           created_at?: string | null
           entrance_id?: number
+          entrance_type_id?: number
           location?: unknown | null
           place_id?: number
-          type_id?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -533,7 +533,7 @@ export type Database = {
           p_place_id: number
         }
         Returns: {
-          type_id: number
+          entrance_type_id: number
           count: number
         }[]
       }
@@ -567,6 +567,10 @@ export type Database = {
         Returns: {
           entrance_id: number
           entrance_type_id: number
+          entrance_type_name: string
+          entrance_type_name_sv: string
+          entrance_type_description: string
+          entrance_type_description_sv: string
           location: unknown
           photos: Json
           status: string

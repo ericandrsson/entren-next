@@ -6,7 +6,6 @@ import {
   CollapsibleTrigger,
 } from "@/src/components/ui/collapsible";
 import { ScrollArea } from "@/src/components/ui/scroll-area";
-import { Skeleton } from "@/src/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +15,7 @@ import {
 import { createClient } from "@/utils/supabase/client";
 import {
   AlertCircle,
+  Clock,
   Coffee,
   Flag,
   Info,
@@ -26,8 +26,8 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import {
   Place,
-  PlaceEntranceImage,
   PlaceEntranceWithImages,
+  PlaceEntranceWithPending,
 } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
@@ -46,9 +46,9 @@ export default function PlaceInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
   const [entrances, setEntrances] = useState<PlaceEntranceWithImages[]>([]);
   const [loadingImages, setLoadingImages] = useState<boolean>(false);
-  const [allPlacePhotos, setAllPlacePhotos] = useState<PlaceEntranceImage[]>(
-    [],
-  );
+  const [allPlacePhotos, setAllPlacePhotos] = useState<
+    PlaceEntranceWithPending[]
+  >([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
@@ -68,48 +68,38 @@ export default function PlaceInfo({ place }: { place: Place }) {
     checkUserAuth();
   }, []);
 
-  const fetchAllPlaceImages = useCallback(async (placeId: number) => {
-    setLoadingImages(true);
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("place_entrance_photos")
-      .select("*")
-      .eq("place_id", placeId);
-
-    if (error) {
-      console.error("Error fetching place images:", error);
-      setLoadingImages(false);
-      return [];
-    }
-
-    setLoadingImages(false);
-    return (data as PlaceEntranceImage[]) || [];
-  }, []);
-
   useEffect(() => {
-    const fetchEntrancesAndImages = async () => {
+    const fetchEntrances = async () => {
       const supabase = createClient();
-      const { data } = await supabase
-        .from("detailed_entrances_view")
-        .select("*")
-        .eq("place_id", place.place_id)
-        .order("entrance_type_id", { ascending: true });
+      const { data, error } = await supabase.rpc(
+        "get_place_entrances_with_pending",
+        {
+          p_place_id: place.place_id,
+        },
+      );
 
-      if (data) {
-        setEntrances(data as PlaceEntranceWithImages[]);
-        if (data.length > 0) {
-          setExpandedEntrance(data[0].entrance_id!);
-        }
+      if (error) {
+        console.error("Error fetching entrances:", error);
+        return;
       }
 
-      if (place.place_id) {
-        const allImages = await fetchAllPlaceImages(place.place_id);
-        setAllPlacePhotos(allImages);
+      console.log("entrances data", data);
+
+      if (data) {
+        const entrancesWithImages = data.map((entrance) => ({
+          ...entrance,
+          photos: entrance.photos || [],
+        }));
+        setEntrances(entrancesWithImages);
+        if (entrancesWithImages.length > 0) {
+          setExpandedEntrance(entrancesWithImages[0].entrance_id!);
+        }
+        setAllPlacePhotos(entrancesWithImages.flatMap((e) => e.photos));
       }
     };
 
-    fetchEntrancesAndImages();
-  }, [place.place_id, fetchAllPlaceImages]);
+    fetchEntrances();
+  }, [place.place_id]);
 
   const handleEntranceExpand = useCallback(
     async (entranceId: number) => {
@@ -150,7 +140,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
   };
 
   const renderEntranceSection = () => {
-    if (place.has_entrances) {
+    if (entrances.length > 0) {
       return (
         <section aria-labelledby="entrances-heading">
           <div className="flex justify-between items-center mb-4">
@@ -184,6 +174,18 @@ export default function PlaceInfo({ place }: { place: Place }) {
                     >
                       <span className="flex items-center">
                         {entrance.entrance_type_name_sv}
+                        {entrance.status === "pending" && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Clock className="w-4 h-4 ml-2 text-yellow-500" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Väntar på verifiering</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -198,47 +200,34 @@ export default function PlaceInfo({ place }: { place: Place }) {
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-2">
-                    <p className="text-sm mb-2 font-medium">
-                      {
-                        (
-                          entrance.accessibility_info as {
-                            details?: string;
-                          }
-                        )?.details
-                      }
-                    </p>
+                    {entrance.status === "pending" && (
+                      <p className="text-sm mb-2 text-yellow-500 font-medium">
+                        Denna entré väntar på verifiering
+                      </p>
+                    )}
                     <div className="grid grid-cols-1 gap-2 mb-2">
-                      {loadingImages ? (
-                        <Skeleton className="w-full h-48" />
-                      ) : (
-                        allPlacePhotos
-                          .filter(
-                            (photo) =>
-                              photo.entrance_id === entrance.entrance_id,
-                          )
-                          .map((photo) => (
-                            <Button
-                              key={photo.photo_id}
-                              variant="ghost"
-                              className="p-0 w-full h-auto"
-                              onClick={() =>
-                                handlePhotoClick(
-                                  allPlacePhotos.findIndex(
-                                    (p) => p.photo_id === photo.photo_id,
-                                  ),
-                                )
-                              }
-                            >
-                              <Image
-                                src={photo.photo_url!}
-                                alt={photo.description || ""}
-                                width={300}
-                                height={200}
-                                className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
-                              />
-                            </Button>
-                          ))
-                      )}
+                      {entrance.photos.map((photo, index) => (
+                        <Button
+                          key={index}
+                          variant="ghost"
+                          className="p-0 w-full h-auto"
+                          onClick={() =>
+                            handlePhotoClick(
+                              allPlacePhotos.findIndex(
+                                (p) => p.photo_url === photo.photo_url,
+                              ),
+                            )
+                          }
+                        >
+                          <Image
+                            src={photo.photo_url!}
+                            alt={photo.description || ""}
+                            width={300}
+                            height={200}
+                            className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
+                          />
+                        </Button>
+                      ))}
                     </div>
                   </CollapsibleContent>
                 </Collapsible>

@@ -431,13 +431,13 @@ INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
 --
 
 INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "description_sv", "is_active", "max_per_place") VALUES
-    (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär ingångspunkt för allmänhetens tillträde till anläggningen', true, 1),
-    (2, 'Side Entrance', 'Sidentré', 'Secondary access point, typically located on the lateral side of the building', 'Sekundär ingångspunkt, vanligtvis belägen på byggnadens sida', true, 2),
-    (3, 'Back Entrance', 'Baksidaingång', 'Access point situated at the rear of the establishment, often used for deliveries or as an alternative entry', 'Ingångspunkt belägen på baksidan av anläggningen, ofta använd för leveranser eller som alternativ ingång', true, 1),
-    (4, 'Staff Entrance', 'Personalentré', 'Designated entry point for employees and authorized personnel', 'Särskild ingångspunkt för anställda och behörig personal', true, 1),
-    (5, 'Garage Entrance', 'Garageingång', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Ingångspunkt som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
-    (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgångspunkt för användning vid nödsituationer eller evakueringar', true, NULL);
-	
+    (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär entré för allmänhetens tillträde till anläggningen', true, 1),
+    (2, 'Side Entrance', 'Sidoentré', 'Secondary access point, typically located on the lateral side of the building', 'Sekundär entré, vanligtvis belägen på byggnadens sida', true, 2),
+    (3, 'Back Entrance', 'Bakentré', 'Access point situated at the rear of the establishment, often used for deliveries or as an alternative entry', 'Entré belägen på baksidan av anläggningen, ofta använd för leveranser eller som alternativ ingång', true, 1),
+    (4, 'Staff Entrance', 'Personalentré', 'Designated entry point for employees and authorized personnel', 'Särskild entré för anställda och behörig personal', true, 1),
+    (5, 'Garage Entrance', 'Garageentré', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Entré som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
+    (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgång för användning vid nödsituationer eller evakueringar', true, NULL);
+
 INSERT INTO "public"."places" ("place_id", "osm_id", "name", "created_at", "updated_at", "location", "category_id", "osm_tags", "user_id") VALUES
     (1, 4738863189, 'Hagestad västra', '2024-10-05 11:42:31.554839+00', '2024-10-05 11:42:31.554839+00', '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', 26, '{"bus": "yes", "name": "Hagestad västra", "gtfs_id": "740016642", "highway": "bus_stop", "public_transport": "stop_position"}', NULL),
     (2, 1628413960, 'Ahls rökeri', '2024-10-05 11:49:28.945845+00', '2024-10-05 11:49:28.945845+00', '0101000020E61000003D1059A4891F2C403F53AF5B04B14B40', 26, '{"name": "Ahls rökeri", "amenity": "restaurant", "cuisine": "fish", "wheelchair": "yes"}', NULL),
@@ -448,7 +448,7 @@ INSERT INTO "public"."places" ("place_id", "osm_id", "name", "created_at", "upda
     (7, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
 
 -- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
+INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
     (1, 1, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
     (2, 2, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW()),
     (3, 2, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": false, "door_width": 0.9, "automatic_door": false}', NOW(), NOW()),
@@ -470,6 +470,48 @@ INSERT INTO "public"."place_entrance_photos" ("place_id", "entrance_id", "photo_
     (6, 7, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
     (7, 8, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
     (7, 9, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
+
+
+-- Insert sample entity changes
+INSERT INTO "public"."entity_changes_staging" (user_id, entity_id, entity_type, action_type, change_data, status, submitted_at) VALUES
+    -- Add a new place
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', NULL, 'place', 'add', '{
+        "name": "New Coffee Shop",
+        "location": {"lat": 59.3293, "long": 18.0686},
+        "category_id": 2
+    }', 'pending', NOW()),
+
+    -- Update an existing place
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 7, 'place', 'update', '{
+        "name": "Updated Hagestad västra",
+        "category_id": 3
+    }', 'pending', NOW()),
+
+    -- Add a new entrance
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 7, 'entrance', 'add', '{
+        "entrance_type_id": 2,
+        "location": {"lat": 55.6044, "long": 13.0038},
+        "photo_url": "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D"
+    }', 'pending', NOW()),
+
+    -- Update an existing entrance
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 7, 'entrance', 'update', '{
+        "entrance_type_id": 3,
+        "accessibility_info": {"has_ramp": true, "door_width": 1.2, "automatic_door": true}
+    }', 'pending', NOW()),
+
+    -- Add a new photo
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 7, 'photo', 'add', '{
+        "photo_url": "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D",
+        "description": "New entrance photo",
+        "place_id": 3
+    }', 'pending', NOW()),
+
+    -- Delete an existing photo
+    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 7, 'photo', 'delete', '{
+        "photo_id": 1
+    }', 'pending', NOW());
+
 
 --
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
