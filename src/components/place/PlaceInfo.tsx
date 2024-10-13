@@ -198,13 +198,13 @@ export default function PlaceInfo({ place }: { place: Place }) {
                           )
                           .map((photo) => (
                             <Button
-                              key={photo.id}
+                              key={photo.image_id}
                               variant="ghost"
                               className="p-0 w-full h-auto"
                               onClick={() =>
                                 handlePhotoClick(
                                   allPlacePhotos.findIndex(
-                                    (p) => p.id === photo.id,
+                                    (p) => p.image_id === photo.image_id,
                                   ),
                                 )
                               }

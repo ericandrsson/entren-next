@@ -9,6 +9,117 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      "entity_changes_audit ": {
+        Row: {
+          action_type: string
+          audit_timestamp: string | null
+          change_data: Json
+          entity_id: number
+          entity_type: string
+          id: number
+          reviewed_at: string
+          reviewed_by: string | null
+          staging_change_id: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          audit_timestamp?: string | null
+          change_data: Json
+          entity_id: number
+          entity_type: string
+          id?: number
+          reviewed_at: string
+          reviewed_by?: string | null
+          staging_change_id?: number | null
+          status: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          audit_timestamp?: string | null
+          change_data?: Json
+          entity_id?: number
+          entity_type?: string
+          id?: number
+          reviewed_at?: string
+          reviewed_by?: string | null
+          staging_change_id?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_audit _reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_changes_audit _staging_change_id_fkey"
+            columns: ["staging_change_id"]
+            isOneToOne: false
+            referencedRelation: "entity_changes_staging"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_changes_audit _user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_changes_staging: {
+        Row: {
+          action_type: string
+          change_data: Json
+          entity_id: number
+          entity_type: string
+          id: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          change_data: Json
+          entity_id: number
+          entity_type: string
+          id?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          change_data?: Json
+          entity_id?: number
+          entity_type?: string
+          id?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_staging_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entrance_types: {
         Row: {
           created_at: string
@@ -25,7 +136,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_sv?: string | null
-          id: number
+          id?: number
           is_active?: boolean
           max_per_place?: number | null
           name: string
@@ -47,24 +158,24 @@ export type Database = {
       }
       place_categories: {
         Row: {
+          category_id: number
           created_at: string
-          id: number
           name: string
           name_sv: string
           parent_category_id: number | null
           updated_at: string | null
         }
         Insert: {
+          category_id?: number
           created_at?: string
-          id?: number
           name: string
           name_sv: string
           parent_category_id?: number | null
           updated_at?: string | null
         }
         Update: {
+          category_id?: number
           created_at?: string
-          id?: number
           name?: string
           name_sv?: string
           parent_category_id?: number | null
@@ -76,7 +187,7 @@ export type Database = {
             columns: ["parent_category_id"]
             isOneToOne: false
             referencedRelation: "place_categories"
-            referencedColumns: ["id"]
+            referencedColumns: ["category_id"]
           },
         ]
       }
@@ -85,7 +196,7 @@ export type Database = {
           created_at: string
           description: string | null
           entrance_id: number | null
-          id: number
+          image_id: number
           image_url: string | null
           place_id: number | null
           updated_at: string | null
@@ -95,7 +206,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           entrance_id?: number | null
-          id?: number
+          image_id?: number
           image_url?: string | null
           place_id?: number | null
           updated_at?: string | null
@@ -105,7 +216,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           entrance_id?: number | null
-          id?: number
+          image_id?: number
           image_url?: string | null
           place_id?: number | null
           updated_at?: string | null
@@ -124,14 +235,14 @@ export type Database = {
             columns: ["entrance_id"]
             isOneToOne: false
             referencedRelation: "place_entrances"
-            referencedColumns: ["id"]
+            referencedColumns: ["entrance_id"]
           },
           {
             foreignKeyName: "place_entrance_images_place_id_fkey"
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
-            referencedColumns: ["id"]
+            referencedColumns: ["place_id"]
           },
         ]
       }
@@ -139,7 +250,7 @@ export type Database = {
         Row: {
           accessibility_info: Json | null
           created_at: string | null
-          id: number
+          entrance_id: number
           location: unknown | null
           place_id: number
           type_id: number
@@ -148,7 +259,7 @@ export type Database = {
         Insert: {
           accessibility_info?: Json | null
           created_at?: string | null
-          id?: number
+          entrance_id?: number
           location?: unknown | null
           place_id: number
           type_id: number
@@ -157,7 +268,7 @@ export type Database = {
         Update: {
           accessibility_info?: Json | null
           created_at?: string | null
-          id?: number
+          entrance_id?: number
           location?: unknown | null
           place_id?: number
           type_id?: number
@@ -169,7 +280,7 @@ export type Database = {
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
-            referencedColumns: ["id"]
+            referencedColumns: ["place_id"]
           },
         ]
       }
@@ -207,7 +318,7 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "place_categories"
-            referencedColumns: ["id"]
+            referencedColumns: ["category_id"]
           },
         ]
       }
@@ -215,33 +326,33 @@ export type Database = {
         Row: {
           category_id: number | null
           created_at: string
-          id: number
           location: unknown | null
           name: string | null
           osm_id: number | null
           osm_tags: Json | null
+          place_id: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
           category_id?: number | null
           created_at?: string
-          id?: number
           location?: unknown | null
           name?: string | null
           osm_id?: number | null
           osm_tags?: Json | null
+          place_id?: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           category_id?: number | null
           created_at?: string
-          id?: number
           location?: unknown | null
           name?: string | null
           osm_id?: number | null
           osm_tags?: Json | null
+          place_id?: number
           updated_at?: string
           user_id?: string | null
         }
@@ -251,7 +362,7 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "place_categories"
-            referencedColumns: ["id"]
+            referencedColumns: ["category_id"]
           },
           {
             foreignKeyName: "places_user_id_fkey"
@@ -261,39 +372,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_contributions: {
-        Row: {
-          action_type: Database["public"]["Enums"]["contribution_action"]
-          created_at: string
-          details: Json | null
-          id: number
-          place_id: number
-          status: Database["public"]["Enums"]["contribution_status"] | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          action_type: Database["public"]["Enums"]["contribution_action"]
-          created_at?: string
-          details?: Json | null
-          id?: number
-          place_id: number
-          status?: Database["public"]["Enums"]["contribution_status"] | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          action_type?: Database["public"]["Enums"]["contribution_action"]
-          created_at?: string
-          details?: Json | null
-          id?: number
-          place_id?: number
-          status?: Database["public"]["Enums"]["contribution_status"] | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       user_notifications: {
         Row: {
@@ -366,7 +444,7 @@ export type Database = {
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
-            referencedColumns: ["id"]
+            referencedColumns: ["place_id"]
           },
         ]
       }
@@ -395,10 +473,6 @@ export type Database = {
       }
     }
     Functions: {
-      create_detailed_places_view: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
       create_place_from_osm: {
         Args: {
           osm_id: number
@@ -406,11 +480,11 @@ export type Database = {
         Returns: {
           category_id: number | null
           created_at: string
-          id: number
           location: unknown | null
           name: string | null
           osm_id: number | null
           osm_tags: Json | null
+          place_id: number
           updated_at: string
           user_id: string | null
         }
@@ -426,6 +500,15 @@ export type Database = {
           tags: unknown
         }
         Returns: number
+      }
+      get_entrance_counts: {
+        Args: {
+          p_place_id: number
+        }
+        Returns: {
+          type_id: number
+          count: number
+        }[]
       }
       get_nearest_places: {
         Args: {
@@ -445,29 +528,6 @@ export type Database = {
           updated_at: string
           osm_tags: Json
           user_id: string
-          category_name: string
-          parent_category_name: string
-        }[]
-      }
-      get_places_in_bounding_box: {
-        Args: {
-          min_lat: number
-          min_long: number
-          max_lat: number
-          max_long: number
-        }
-        Returns: {
-          place_id: number
-          osm_id: number
-          name: string
-          lat: number
-          long: number
-          created_at: string
-          updated_at: string
-          osm_tags: Json
-          user_id: string
-          user_created_at: string
-          user_updated_at: string
           category_name: string
           parent_category_name: string
         }[]

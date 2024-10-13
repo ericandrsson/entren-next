@@ -32,7 +32,7 @@ import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, MapPin, Upload } from "lucide-react";
 import Image from "next/image";
-import Link from 'next/link';
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -75,9 +75,9 @@ const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
       >
         Jag publicerar härmed dessa bilder för allmänheten och avsäger mig
         copyright (
-        <Link 
-          href="https://creativecommons.org/publicdomain/zero/1.0/" 
-          target="_blank" 
+        <Link
+          href="https://creativecommons.org/publicdomain/zero/1.0/"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline"
         >
@@ -465,7 +465,7 @@ export default function AddEntranceDialog({
                       </h4>
                       <p className="text-lg font-semibold">
                         {entranceTypes.find(
-                          (t) => t.id.toString() === form.watch("entranceType")
+                          (t) => t.id.toString() === form.watch("entranceType"),
                         )?.name_sv || "Inte vald"}
                       </p>
                     </div>
@@ -494,7 +494,9 @@ export default function AddEntranceDialog({
                         <div className="mt-2 flex justify-center">
                           <div className="relative w-48 h-64 overflow-hidden rounded-md">
                             <Image
-                              src={URL.createObjectURL(form.watch("photo") as File)}
+                              src={URL.createObjectURL(
+                                form.watch("photo") as File,
+                              )}
                               alt="Entrance"
                               layout="fill"
                               objectFit="cover"
@@ -532,7 +534,8 @@ export default function AddEntranceDialog({
                   onClick={handleNext}
                   disabled={
                     (step === 1 && !form.watch("entranceType")) ||
-                    (step === 2 && (!guidelinesConfirmed || !form.watch("photo")))
+                    (step === 2 &&
+                      (!guidelinesConfirmed || !form.watch("photo")))
                   }
                 >
                   Nästa

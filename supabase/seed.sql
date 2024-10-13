@@ -471,10 +471,6 @@ INSERT INTO "public"."place_entrance_images" ("place_id", "entrance_id", "image_
     (7, 8, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW()),
     (7, 9, 'https://images.unsplash.com/photo-1516601264451-91d128de297d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
 
-SET search_path TO public, extensions;
-
-SELECT create_detailed_places_view();
-
 --
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --

@@ -164,6 +164,7 @@ CREATE TABLE "public"."entity_changes_audit " (
     "audit_timestamp" timestamp DEFAULT now()
 );
 
+
 -- Indexes
 CREATE INDEX "idx_place_entrance_images_place_id" ON public.place_entrance_images USING btree (place_id);
 CREATE INDEX "idx_place_entrance_images_user_id" ON public.place_entrance_images USING btree (user_id);
@@ -410,88 +411,6 @@ BEGIN
 END;
 $function$;
 
-CREATE OR REPLACE FUNCTION public.create_detailed_places_view()
-RETURNS void AS $$
-BEGIN
-  -- Drop the materialized view if it exists
-  DROP MATERIALIZED VIEW IF EXISTS public.detailed_places_view;
-
-  -- Create the materialized view
-  EXECUTE '
-  CREATE MATERIALIZED VIEW public.detailed_places_view AS
-  WITH custom_places AS (
-    SELECT 
-        p.place_id,
-        p.osm_id,
-        p.name,
-        p.osm_tags,
-        ST_Y(p.location::geometry) AS lat,
-        ST_X(p.location::geometry) AS long,
-        p.location,
-        p.created_at,
-        p.updated_at,
-        p.user_id,
-        c.category_id,
-        c.name AS category_name,
-        c.name_sv AS category_name_sv,
-        pc.category_id AS parent_category_id,
-        pc.name AS parent_category_name,
-        pc.name_sv AS parent_category_name_sv,
-        NULL AS source,
-        CASE WHEN pe.place_id IS NOT NULL THEN true ELSE false END AS has_entrances
-    FROM public.places p
-    LEFT JOIN place_categories c ON p.category_id = c.category_id
-    LEFT JOIN place_categories pc ON c.parent_category_id = pc.category_id
-    LEFT JOIN (
-        SELECT DISTINCT place_id
-        FROM public.place_entrances
-    ) pe ON p.place_id = pe.place_id
-  ),
-  osm_places AS (
-    SELECT 
-        NULL::integer AS id,
-        osm.osm_id,
-        osm.name,
-        osm.tags::jsonb AS osm_tags,
-        ST_Y(osm.geom::geometry) AS lat,
-        ST_X(osm.geom::geometry) AS long,
-        osm.geom AS location,
-        NULL::timestamp with time zone AS created_at,
-        NULL::timestamp with time zone AS updated_at,
-        NULL::uuid AS user_id,
-        osm_c.category_id AS category_id,
-        osm_c.name AS category_name,
-        osm_c.name_sv AS category_name_sv,
-        osm_pc.category_id AS parent_category_id,
-        osm_pc.name AS parent_category_name,
-        osm_pc.name_sv AS parent_category_name_sv,
-        ''osm'' AS source,
-        false AS has_entrances
-    FROM osm_import.sweden_osm_poi osm
-    LEFT JOIN LATERAL (
-        SELECT public.get_category_id_from_osm_tags(osm.tags::hstore) AS category_id
-    ) AS osm_category ON true
-    LEFT JOIN place_categories osm_c ON osm_category.category_id = osm_c.category_id
-    LEFT JOIN place_categories osm_pc ON osm_c.parent_category_id = osm_pc.category_id
-    WHERE osm.name IS NOT NULL
-      AND osm.osm_id NOT IN (SELECT p2.osm_id FROM public.places p2 WHERE p2.osm_id IS NOT NULL)
-    LIMIT 100
-  )
-  SELECT * FROM custom_places
-  UNION ALL
-  SELECT * FROM osm_places;
-  ';
-
-  -- Create an index on the materialized view for better query performance
-  CREATE INDEX idx_detailed_places_view_location ON public.detailed_places_view USING gist (location);
-  CREATE INDEX idx_detailed_places_view_osm_id ON public.detailed_places_view (osm_id);
-  CREATE INDEX idx_detailed_places_view_category_id ON public.detailed_places_view (category_id);
-
-  -- Grant necessary permissions
-  GRANT SELECT ON public.detailed_places_view TO PUBLIC;
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION public.refresh_detailed_places_view()
 RETURNS void AS $$
 BEGIN
@@ -531,8 +450,78 @@ FROM place_entrances se
 JOIN places p ON p.place_id = se.place_id
 JOIN entrance_types et ON et.id = se.type_id;
 
--- Execute functions to create and populate views
-SELECT create_detailed_places_view();
+
+CREATE MATERIALIZED VIEW public.detailed_places_view AS
+WITH custom_places AS (
+SELECT 
+    p.place_id,
+    p.osm_id,
+    p.name,
+    p.osm_tags,
+    ST_Y(p.location::geometry) AS lat,
+    ST_X(p.location::geometry) AS long,
+    p.location,
+    p.created_at,
+    p.updated_at,
+    p.user_id,
+    c.category_id,
+    c.name AS category_name,
+    c.name_sv AS category_name_sv,
+    pc.category_id AS parent_category_id,
+    pc.name AS parent_category_name,
+    pc.name_sv AS parent_category_name_sv,
+    NULL AS source,
+    CASE WHEN pe.place_id IS NOT NULL THEN true ELSE false END AS has_entrances
+FROM public.places p
+LEFT JOIN place_categories c ON p.category_id = c.category_id
+LEFT JOIN place_categories pc ON c.parent_category_id = pc.category_id
+LEFT JOIN (
+    SELECT DISTINCT place_id
+    FROM public.place_entrances
+) pe ON p.place_id = pe.place_id
+),
+osm_places AS (
+SELECT 
+    NULL::integer AS id,
+    osm.osm_id,
+    osm.name,
+    osm.tags::jsonb AS osm_tags,
+    ST_Y(osm.geom::geometry) AS lat,
+    ST_X(osm.geom::geometry) AS long,
+    osm.geom AS location,
+    NULL::timestamp with time zone AS created_at,
+    NULL::timestamp with time zone AS updated_at,
+    NULL::uuid AS user_id,
+    osm_c.category_id AS category_id,
+    osm_c.name AS category_name,
+    osm_c.name_sv AS category_name_sv,
+    osm_pc.category_id AS parent_category_id,
+    osm_pc.name AS parent_category_name,
+    osm_pc.name_sv AS parent_category_name_sv,
+    'osm' AS source,
+    false AS has_entrances
+FROM osm_import.sweden_osm_poi osm
+LEFT JOIN LATERAL (
+    SELECT public.get_category_id_from_osm_tags(osm.tags::hstore) AS category_id
+) AS osm_category ON true
+LEFT JOIN place_categories osm_c ON osm_category.category_id = osm_c.category_id
+LEFT JOIN place_categories osm_pc ON osm_c.parent_category_id = osm_pc.category_id
+WHERE osm.name IS NOT NULL
+    AND osm.osm_id NOT IN (SELECT p2.osm_id FROM public.places p2 WHERE p2.osm_id IS NOT NULL)
+LIMIT 100
+)
+SELECT * FROM custom_places
+UNION ALL
+SELECT * FROM osm_places;
+
+
+-- Grant necessary permissions
+GRANT SELECT ON public.detailed_places_view TO PUBLIC;
+CREATE INDEX idx_detailed_places_view_location ON public.detailed_places_view USING gist (location);
+CREATE INDEX idx_detailed_places_view_osm_id ON public.detailed_places_view (osm_id);
+CREATE INDEX idx_detailed_places_view_category_id ON public.detailed_places_view (category_id);
+
+
 
 -- Triggers
 CREATE TRIGGER check_osm_id BEFORE INSERT OR UPDATE ON public.places FOR EACH ROW EXECUTE FUNCTION validate_osm_id();
