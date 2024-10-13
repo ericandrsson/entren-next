@@ -427,13 +427,12 @@ AS $$
     WHERE place_id = p_place_id
     GROUP BY type_id;
 $$;
-
 CREATE OR REPLACE FUNCTION add_entity_change(
   p_user_id UUID,
   p_entity_id INTEGER DEFAULT NULL,
-  p_entity_type TEXT,
-  p_action_type TEXT,
-  p_change_data JSONB
+  p_entity_type TEXT DEFAULT NULL,
+  p_action_type TEXT DEFAULT NULL,
+  p_change_data JSONB DEFAULT '{}'::JSONB
 )
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -441,6 +440,15 @@ AS $$
 DECLARE
   v_entity_change_id INTEGER;
 BEGIN
+  -- Check if entity_type and action_type are null
+  IF p_entity_type IS NULL THEN
+    RAISE EXCEPTION 'entity_type cannot be null';
+  END IF;
+
+  IF p_action_type IS NULL THEN
+    RAISE EXCEPTION 'action_type cannot be null';
+  END IF;
+
   -- Start transaction
   BEGIN
     -- Insert into entity_changes_staging
