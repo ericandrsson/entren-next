@@ -520,96 +520,33 @@ CREATE UNIQUE INDEX idx_detailed_places_view_place_id ON public.detailed_places_
 -- end detailed_places_view
 
 
-CREATE OR REPLACE VIEW "public"."detailed_entrances_view" AS 
-SELECT 
-    se.entrance_id,
+CREATE OR REPLACE VIEW public.detailed_entrances_view AS
+WITH verified_entrances AS (
+  SELECT 
+    se.entrance_id::text AS entrance_id,  -- Cast to TEXT to unify with staging
     se.place_id,
-    dpv.name AS place_name,
     se.entrance_type_id,
     et.name AS entrance_type_name,
     et.name_sv AS entrance_type_name_sv,
     et.description AS entrance_type_description,
     et.description_sv AS entrance_type_description_sv,
-    dpv.location,
-    st_y(se.location) AS lat,
-    st_x(se.location) AS long,
+    se.location,
     se.accessibility_info,
-    se.created_at AS entrance_created_at,
-    se.updated_at AS entrance_updated_at,
-    et.created_at AS entrance_type_created_at,
-    dpv.category_id,
-    dpv.category_name,
-    dpv.category_name_sv,
-    dpv.parent_category_id,
-    dpv.parent_category_name,
-    dpv.parent_category_name_sv,
-    dpv.source,
-    -- Aggregate multiple photos for each entrance
-    json_agg(
-        json_build_object(
-            'photo_id', pei.photo_id,
-            'photo_url', pei.photo_url,
-            'description', pei.description,
-            'user_id', pei.user_id,
-            'created_at', pei.created_at
-        )
-    ) AS photos  -- Collect all photos for this entrance
-FROM place_entrances se
-JOIN public.detailed_places_view dpv ON dpv.place_id = se.place_id
-JOIN entrance_types et ON et.id = se.entrance_type_id
-LEFT JOIN place_entrance_photos pei ON pei.entrance_id = se.entrance_id  -- Join photos
-GROUP BY se.entrance_id, dpv.place_id, et.id, dpv.name, dpv.location, dpv.category_id, dpv.category_name, dpv.category_name_sv, 
-         dpv.parent_category_id, dpv.parent_category_name, dpv.parent_category_name_sv, dpv.source;
-
-
-
-
--- end detailed_entrances_view
-
--- get_place_entrances_with_pending
-CREATE OR REPLACE FUNCTION public.get_place_entrances_with_pending(
-  p_place_id TEXT, 
-  p_user_id UUID DEFAULT NULL
-)
-RETURNS TABLE (
-  entrance_id TEXT,  -- Cast entrance_id to TEXT to accommodate both integer and prefixed IDs
-  entrance_type_id INTEGER,
-  entrance_type_name TEXT,
-  entrance_type_name_sv TEXT,
-  entrance_type_description TEXT,
-  entrance_type_description_sv TEXT,
-  location geometry,
-  photos jsonb,
-  action TEXT,
-  status TEXT
-)
-LANGUAGE SQL
-AS $$
-WITH verified_entrances AS (
-  SELECT 
-    de.entrance_id::text AS entrance_id,  -- Cast entrance_id to TEXT
-    de.entrance_type_id,
-    de.entrance_type_name,
-    de.entrance_type_name_sv,
-    de.entrance_type_description,
-    de.entrance_type_description_sv,
-    de.location,
     json_agg(json_build_object(
-        'photo_id', photo->>'photo_id',
-        'photo_url', photo->>'photo_url',
-        'description', photo->>'description'
-    )) AS photos,
-    'approved' AS status,
-    'update' AS action
-  FROM detailed_entrances_view de
-  LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS photo ON true
-  WHERE de.place_id = p_place_id
-  GROUP BY de.entrance_id, de.entrance_type_id, de.entrance_type_name, de.entrance_type_name_sv, 
-           de.entrance_type_description, de.entrance_type_description_sv, de.location
+      'photo_id', pei.photo_id,
+      'photo_url', pei.photo_url,
+      'description', pei.description
+    )) AS photos,  -- Collect all photos for verified entrances
+    'approved' AS status  -- Mark as approved
+  FROM place_entrances se
+  JOIN entrance_types et ON et.id = se.entrance_type_id
+  LEFT JOIN place_entrance_photos pei ON pei.entrance_id = se.entrance_id  -- Join photos
+  GROUP BY se.entrance_id, se.place_id, se.entrance_type_id, et.name, et.name_sv, et.description, et.description_sv, se.location, se.accessibility_info
 ),
 pending_entrances AS (
   SELECT 
-    ecs.entity_id::text AS entrance_id,  -- Keep entrance_id as TEXT to accommodate both integer and prefixed IDs
+    NULL AS entrance_id,
+    ecs.entity_id::text AS place_id,
     (ecs.change_data->>'entrance_type_id')::integer AS entrance_type_id,
     et.name AS entrance_type_name,
     et.name_sv AS entrance_type_name_sv,
@@ -619,33 +556,25 @@ pending_entrances AS (
       (ecs.change_data->'location'->>'long')::float,
       (ecs.change_data->'location'->>'lat')::float
     ), 4326) AS location,
-    json_agg(json_build_object(
-        'photo_url', photo->>'photo_url', 
-        'description', photo->>'description'
+    NULL::jsonb AS accessibility_info,
+    json_build_array(json_build_object(
+      'photo_id', NULL,
+      'photo_url', ecs.change_data->>'photo_url',
+      'description', NULL
     )) AS photos,
-    ecs.action_type AS action,
     ecs.status
   FROM entity_changes_staging ecs
   LEFT JOIN entrance_types et ON et.id = (ecs.change_data->>'entrance_type_id')::integer
-  LEFT JOIN LATERAL jsonb_array_elements(ecs.change_data->'photos') AS photo ON true
   WHERE ecs.entity_type = 'entrance'
-    AND ecs.action_type = 'add'
-    AND ecs.status = 'pending'
-    AND (ecs.change_data->>'place_id')::text = p_place_id  -- Ensure place_id comparison works with TEXT
-    AND (p_user_id IS NULL OR ecs.user_id = p_user_id)
-  GROUP BY ecs.entity_id, ecs.status, ecs.change_data, et.name, et.name_sv, et.description, et.description_sv, ecs.action_type
 )
 -- Combine verified and pending entrances
 SELECT * FROM verified_entrances
 UNION ALL
-SELECT * FROM pending_entrances
-ORDER BY entrance_type_id;
-$$;
+SELECT * FROM pending_entrances;
 
 
+-- end detailed_entrances_view
 
-
--- end get_place_entrances_with_pending
 
 CREATE OR REPLACE FUNCTION validate_place_combined_id()
 RETURNS TRIGGER AS $$

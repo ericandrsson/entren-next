@@ -287,13 +287,6 @@ export type Database = {
             foreignKeyName: "place_entrance_photos_entrance_id_fkey"
             columns: ["entrance_id"]
             isOneToOne: false
-            referencedRelation: "detailed_entrances_view"
-            referencedColumns: ["entrance_id"]
-          },
-          {
-            foreignKeyName: "place_entrance_photos_entrance_id_fkey"
-            columns: ["entrance_id"]
-            isOneToOne: false
             referencedRelation: "place_entrances"
             referencedColumns: ["entrance_id"]
           },
@@ -417,29 +410,16 @@ export type Database = {
       detailed_entrances_view: {
         Row: {
           accessibility_info: Json | null
-          category_id: number | null
-          category_name: string | null
-          category_name_sv: string | null
-          detailed_place_id: string | null
-          entrance_created_at: string | null
-          entrance_id: number | null
-          entrance_type_created_at: string | null
+          entrance_id: string | null
           entrance_type_description: string | null
           entrance_type_description_sv: string | null
           entrance_type_id: number | null
           entrance_type_name: string | null
           entrance_type_name_sv: string | null
-          entrance_updated_at: string | null
-          lat: number | null
           location: unknown | null
-          long: number | null
-          parent_category_id: number | null
-          parent_category_name: string | null
-          parent_category_name_sv: string | null
           photos: Json | null
           place_id: string | null
-          place_name: string | null
-          source: string | null
+          status: string | null
         }
         Relationships: []
       }
@@ -516,24 +496,6 @@ export type Database = {
           user_id: string
           category_name: string
           parent_category_name: string
-        }[]
-      }
-      get_place_entrances_with_pending: {
-        Args: {
-          p_place_id: string
-          p_user_id?: string
-        }
-        Returns: {
-          entrance_id: number
-          entrance_type_id: number
-          entrance_type_name: string
-          entrance_type_name_sv: string
-          entrance_type_description: string
-          entrance_type_description_sv: string
-          location: unknown
-          photos: Json
-          action: string
-          status: string
         }[]
       }
       refresh_detailed_places_view: {
