@@ -28,3 +28,29 @@ export interface Place extends PlaceFromDB {}
 export interface PlaceEntrance extends PlaceEntranceFromDB {}
 export type PlaceEntranceImage =
   Database["public"]["Tables"]["place_entrance_photos"]["Row"];
+
+// New types based on the JSON schemas
+export type PlaceEntitySchema = {
+  name: string;
+  location: {
+    lat: number;
+    long: number;
+  };
+  category_id: string;
+};
+
+export type EntranceEntitySchema = {
+  entrance_type_id: number;
+  place_id: string;
+  photo_url: string;
+  location: {
+    lat: number;
+    long: number;
+  };
+};
+
+export type PhotoEntitySchema = {
+  photo_url: string;
+  description: string;
+  place_id: string;
+};

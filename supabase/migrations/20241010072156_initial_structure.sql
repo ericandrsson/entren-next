@@ -304,6 +304,7 @@ EXCEPTION
 END;
 $function$;
 
+
 CREATE OR REPLACE FUNCTION public.get_nearest_places(
     user_lat double precision,
     user_long double precision,
@@ -413,7 +414,7 @@ BEGIN
   SELECT extensions.json_matches_schema(v_json_schema::json, p_change_data::json) INTO v_is_valid;
 
   -- If validation fails, raise an error
-  IF NOT v_is_valid THEN1
+  IF NOT v_is_valid THEN
     RAISE EXCEPTION 'Invalid change_data for entity_type %s, expected %, got %', p_entity_type, v_json_schema, p_change_data;
   END IF;
 
@@ -523,7 +524,6 @@ CREATE OR REPLACE VIEW "public"."detailed_entrances_view" AS
 SELECT 
     se.entrance_id,
     se.place_id,
-    dpv.place_id AS detailed_place_id,
     dpv.name AS place_name,
     se.entrance_type_id,
     et.name AS entrance_type_name,
@@ -562,13 +562,17 @@ GROUP BY se.entrance_id, dpv.place_id, et.id, dpv.name, dpv.location, dpv.catego
          dpv.parent_category_id, dpv.parent_category_name, dpv.parent_category_name_sv, dpv.source;
 
 
+
+
+-- end detailed_entrances_view
+
 -- get_place_entrances_with_pending
 CREATE OR REPLACE FUNCTION public.get_place_entrances_with_pending(
   p_place_id TEXT, 
   p_user_id UUID DEFAULT NULL
 )
 RETURNS TABLE (
-  entrance_id INTEGER,
+  entrance_id TEXT,  -- Cast entrance_id to TEXT to accommodate both integer and prefixed IDs
   entrance_type_id INTEGER,
   entrance_type_name TEXT,
   entrance_type_name_sv TEXT,
@@ -583,7 +587,7 @@ LANGUAGE SQL
 AS $$
 WITH verified_entrances AS (
   SELECT 
-    de.entrance_id,
+    de.entrance_id::text AS entrance_id,  -- Cast entrance_id to TEXT
     de.entrance_type_id,
     de.entrance_type_name,
     de.entrance_type_name_sv,
@@ -591,20 +595,21 @@ WITH verified_entrances AS (
     de.entrance_type_description_sv,
     de.location,
     json_agg(json_build_object(
-        'photo_id', img->>'photo_id',
-        'photo_url', img->>'photo_url',
-        'description', img->>'description'
+        'photo_id', photo->>'photo_id',
+        'photo_url', photo->>'photo_url',
+        'description', photo->>'description'
     )) AS photos,
     'approved' AS status,
     'update' AS action
   FROM detailed_entrances_view de
-  LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS img ON true
+  LEFT JOIN LATERAL jsonb_array_elements(de.photos::jsonb) AS photo ON true
   WHERE de.place_id = p_place_id
-  GROUP BY de.entrance_id, de.entrance_type_id, de.entrance_type_name, de.entrance_type_name_sv, de.entrance_type_description, de.entrance_type_description_sv, de.location
+  GROUP BY de.entrance_id, de.entrance_type_id, de.entrance_type_name, de.entrance_type_name_sv, 
+           de.entrance_type_description, de.entrance_type_description_sv, de.location
 ),
 pending_entrances AS (
   SELECT 
-    ecs.entity_id::integer AS entrance_id,
+    ecs.entity_id::text AS entrance_id,  -- Keep entrance_id as TEXT to accommodate both integer and prefixed IDs
     (ecs.change_data->>'entrance_type_id')::integer AS entrance_type_id,
     et.name AS entrance_type_name,
     et.name_sv AS entrance_type_name_sv,
@@ -615,18 +620,18 @@ pending_entrances AS (
       (ecs.change_data->'location'->>'lat')::float
     ), 4326) AS location,
     json_agg(json_build_object(
-        'photo_url', img->>'photo_url', 
-        'description', img->>'description'
+        'photo_url', photo->>'photo_url', 
+        'description', photo->>'description'
     )) AS photos,
     ecs.action_type AS action,
     ecs.status
   FROM entity_changes_staging ecs
   LEFT JOIN entrance_types et ON et.id = (ecs.change_data->>'entrance_type_id')::integer
-  LEFT JOIN LATERAL jsonb_array_elements(ecs.change_data->'photos') AS img ON true
+  LEFT JOIN LATERAL jsonb_array_elements(ecs.change_data->'photos') AS photo ON true
   WHERE ecs.entity_type = 'entrance'
     AND ecs.action_type = 'add'
     AND ecs.status = 'pending'
-    AND (ecs.change_data->>'place_id') = p_place_id
+    AND (ecs.change_data->>'place_id')::text = p_place_id  -- Ensure place_id comparison works with TEXT
     AND (p_user_id IS NULL OR ecs.user_id = p_user_id)
   GROUP BY ecs.entity_id, ecs.status, ecs.change_data, et.name, et.name_sv, et.description, et.description_sv, ecs.action_type
 )
@@ -636,6 +641,9 @@ UNION ALL
 SELECT * FROM pending_entrances
 ORDER BY entrance_type_id;
 $$;
+
+
+
 
 -- end get_place_entrances_with_pending
 

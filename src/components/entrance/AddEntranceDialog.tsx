@@ -29,7 +29,11 @@ import {
 import { useToast } from "@/src/hooks/use-toast";
 import { logger } from "@/src/libs/logger";
 import { cn } from "@/src/libs/utils";
-import { EntranceType, Place } from "@/src/types/custom.types";
+import {
+  EntranceEntitySchema,
+  EntranceType,
+  Place,
+} from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -280,18 +284,14 @@ export default function AddEntranceDialog({
         log.debug({ photoUrl }, "photo uploaded successfully");
       }
 
-      const location = data.sameAsPlaceLocation
-        ? { lat: place.lat, long: place.long }
-        : {
-            lat: parseFloat(data.location.lat!),
-            long: parseFloat(data.location.lng!),
-          };
-
-      const changeData = {
-        type_id: parseInt(data.entranceType),
-        location: location,
-        place_id: place.place_id,
-        photo_url: photoUrl || null,
+      const changeData: EntranceEntitySchema = {
+        entrance_type_id: parseInt(data.entranceType),
+        location: {
+          lat: parseFloat(data.location.lat!),
+          long: parseFloat(data.location.lng!),
+        },
+        place_id: place.place_id || "",
+        photo_url: photoUrl || "",
       };
 
       log.debug({ changeData }, "adding entity change");
