@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 import { logger } from "@/src/libs/logger";
+import { useStore } from "@/src/libs/store";
 import { createClient } from "@/utils/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
@@ -23,9 +24,9 @@ import {
   Clock,
   DoorClosed,
   DoorOpen,
+  Eye,
   Info,
   MapPin,
-  PlusCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -33,7 +34,6 @@ import { Entrance, EntrancePhoto, Place } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
-import { useStore } from "@/src/libs/store";
 
 const log = logger.child({ module: "PlaceInfoContent" });
 
@@ -44,12 +44,12 @@ export default function PlaceInfoContent({
   place: Place;
   onEntranceCountChange: (count: number) => void;
 }) {
-  const { 
-    isAddEntranceDialogOpen, 
-    setIsAddEntranceDialogOpen, 
-    isLoginPromptOpen, 
+  const {
+    isAddEntranceDialogOpen,
+    setIsAddEntranceDialogOpen,
+    isLoginPromptOpen,
     setIsLoginPromptOpen,
-    isUserAuthenticated
+    isUserAuthenticated,
   } = useStore();
   const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
     new Set(),
@@ -254,11 +254,14 @@ export default function PlaceInfoContent({
         )}
 
         {pendingEntrances.length > 0 && (
-          <div className="space-y-4 mt-6">
+          <div className="space-y-4 mt-6 bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold flex items-center">
               <Clock className="w-5 h-5 mr-2 text-yellow-600" />
               Obekräftade entréer
             </h3>
+            <p className="text-sm text-gray-500 italic mb-2">
+              Endast synligt för dig
+            </p>
             <ul className="space-y-4">
               {pendingEntrances.map((entrance) => (
                 <EntranceItem
@@ -284,7 +287,9 @@ export default function PlaceInfoContent({
     const isExpanded = expandedEntrances.has(entrance.entrance_id!);
 
     return (
-      <li className="bg-gray-50 rounded-lg overflow-hidden">
+      <li
+        className={`rounded-lg overflow-hidden ${isVerified ? "bg-white" : "bg-yellow-50"}`}
+      >
         <Collapsible
           open={isExpanded}
           onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}
@@ -297,7 +302,26 @@ export default function PlaceInfoContent({
                 {isVerified ? (
                   <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
                 ) : (
-                  <Clock className="w-4 h-4 ml-2 text-yellow-600" />
+                  <>
+                    <Clock className="w-4 h-4 ml-2 text-yellow-600" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Eye className="w-4 h-4 ml-2 text-blue-600" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          align="center"
+                          className="max-w-xs"
+                        >
+                          <p>
+                            This entrance is only visible to you until it is
+                            verified.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </>
                 )}
                 <TooltipProvider>
                   <Tooltip>

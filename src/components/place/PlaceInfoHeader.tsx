@@ -1,5 +1,6 @@
 import { Coffee, MapPin } from "lucide-react";
 import { Place } from "../../types/custom.types";
+import { Icon } from "../Icon";
 
 export default function PlaceInfoHeader({ place }: { place: Place }) {
   const getCategoryIcon = (category: string) => {
@@ -14,7 +15,11 @@ export default function PlaceInfoHeader({ place }: { place: Place }) {
   return (
     <div className="grid grid-cols-[auto,1fr] gap-x-2 w-full p-4">
       <div className="row-span-2 flex items-center">
-        {getCategoryIcon(place.category_name || "unknown")}
+        <Icon
+          category="mainCategories"
+          name={(place.top_category_name?.toLowerCase() as any) || "misc"}
+          size="large"
+        />
       </div>
       <div className="flex-grow">
         <h2 className="text-2xl font-bold">{place.name}</h2>
