@@ -24,6 +24,7 @@ import {
   PlusCircle,
   DoorOpen,
   DoorClosed,
+  CheckCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -200,7 +201,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
           
           {verifiedEntrances.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Verifierade entréer</h3>
+              <h3 className="text-lg font-semibold flex items-center">
+                <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+                Verifierade entréer
+              </h3>
               <ul className="space-y-4">
                 {verifiedEntrances.map((entrance) => (
                   <EntranceItem key={entrance.entrance_id} entrance={entrance} isVerified={true} />
@@ -211,7 +215,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
           
           {pendingEntrances.length > 0 && (
             <div className="space-y-4 mt-8">
-              <h3 className="text-lg font-semibold">Väntande entréer</h3>
+              <h3 className="text-lg font-semibold flex items-center">
+                <Clock className="w-5 h-5 mr-2 text-yellow-600" />
+                Väntande entréer
+              </h3>
               <ul className="space-y-4">
                 {pendingEntrances.map((entrance) => (
                   <EntranceItem key={`pending-${entrance.entrance_id}`} entrance={entrance} isVerified={false} />
@@ -261,32 +268,35 @@ export default function PlaceInfo({ place }: { place: Place }) {
             <span className="flex items-center">
               {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
               <span className="ml-2">{entrance.entrance_type_name_sv}</span>
-              {!isVerified && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Clock className="w-4 h-4 ml-2 text-yellow-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Väntar på verifiering</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+              {isVerified ? (
+                <CheckCircle className="w-4 h-4 ml-2 text-green-500" />
+              ) : (
+                <Clock className="w-4 h-4 ml-2 text-yellow-600" />
               )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-5 h-5 ml-2 text-blue-500" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{entrance.entrance_type_description_sv}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </span>
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="p-2">
           {!isVerified && (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
-              <p className="text-sm font-medium text-yellow-700">
+            <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
+              <p className="text-sm font-medium text-yellow-800">
                 <Clock className="inline-block w-4 h-4 mr-2" />
                 Väntar på verifiering
               </p>
-              <p className="text-xs text-yellow-600 mt-1">
+              <p className="text-sm text-yellow-700 mt-1">
                 Inskickad {formatDistanceToNow(new Date(entrance.created_at), { addSuffix: true, locale: sv })}
               </p>
-              <p className="text-xs text-yellow-600">
+              <p className="text-sm text-yellow-700">
                 Granskning tar vanligtvis 24-48 timmar
               </p>
             </div>
@@ -308,7 +318,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
                   />
                 </Button>
                 {!isVerified && (
-                  <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full opacity-75">
+                  <div className="absolute top-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
                     Väntar på granskning
                   </div>
                 )}
