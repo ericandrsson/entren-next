@@ -77,7 +77,7 @@ export type Database = {
         Row: {
           action_type: string
           change_data: Json
-          entity_id: number | null
+          entity_id: string | null
           entity_type: string
           id: number
           reviewed_at: string | null
@@ -89,7 +89,7 @@ export type Database = {
         Insert: {
           action_type: string
           change_data: Json
-          entity_id?: number | null
+          entity_id?: string | null
           entity_type: string
           id?: number
           reviewed_at?: string | null
@@ -101,7 +101,7 @@ export type Database = {
         Update: {
           action_type?: string
           change_data?: Json
-          entity_id?: number | null
+          entity_id?: string | null
           entity_type?: string
           id?: number
           reviewed_at?: string | null
@@ -476,12 +476,11 @@ export type Database = {
           location: unknown | null
           long: number | null
           name: string | null
-          osm_id: number | null
           osm_tags: Json | null
           parent_category_id: number | null
           parent_category_name: string | null
           parent_category_name_sv: string | null
-          place_id: number | null
+          place_id: string | null
           source: string | null
           updated_at: string | null
           user_id: string | null
@@ -493,7 +492,7 @@ export type Database = {
       add_entity_change: {
         Args: {
           p_user_id: string
-          p_entity_id?: number
+          p_entity_id?: string
           p_entity_type?: string
           p_action_type?: string
           p_change_data?: Json
@@ -545,7 +544,7 @@ export type Database = {
           max_distance_meters?: number
         }
         Returns: {
-          place_id: number
+          id: string
           osm_id: number
           name: string
           lat: number
@@ -561,7 +560,7 @@ export type Database = {
       }
       get_place_entrances_with_pending: {
         Args: {
-          p_place_id: number
+          p_place_id: string
           p_user_id?: string
         }
         Returns: {
@@ -573,6 +572,7 @@ export type Database = {
           entrance_type_description_sv: string
           location: unknown
           photos: Json
+          action: string
           status: string
         }[]
       }

@@ -261,7 +261,6 @@ export default function AddEntranceDialog({
         type_id: parseInt(data.entranceType),
         location: location,
         place_id: place.place_id,
-        osm_id: place.osm_id,
         photo_url: photoUrl || null, // Ensure this is null if no photo was uploaded
       };
 

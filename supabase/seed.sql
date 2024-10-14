@@ -438,8 +438,10 @@ INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "
     (5, 'Garage Entrance', 'Garageentré', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Entré som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
     (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgång för användning vid nödsituationer eller evakueringar', true, NULL);
 
-INSERT INTO "public"."places" ("place_id", "osm_id", "name", "created_at", "updated_at", "location", "category_id", "osm_tags", "user_id") VALUES
-    (1, 5377403389, 'Pinchos', '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 26, '{"name": "Pinchos", "amenity": "restaurant"}', NULL);
+INSERT INTO "public"."custom_places" ("id", "name", "location", "category_id", "user_id", "created_at", "updated_at") VALUES
+    (1, 'Pinchos', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 
+    (SELECT category_id FROM "public"."place_categories" WHERE name = 'Food & Drink'), 
+    NULL, '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00');
 
 -- Insert hardcoded place entrances
 INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
