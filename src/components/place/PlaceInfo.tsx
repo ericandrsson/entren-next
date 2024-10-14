@@ -31,6 +31,8 @@ import {
   Info,
   MapPin,
   PlusCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -46,7 +48,7 @@ import PlacePhotoModal from "./PlacePhotoModal";
 const log = logger.child({ module: "PlaceInfo" });
 
 export default function PlaceInfo({ place }: { place: Place }) {
-  const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
+  const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(new Set());
   const [entrances, setEntrances] = useState<DetailedEntrance[]>([]);
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
@@ -98,7 +100,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
       setEntrances(filteredEntrances);
       if (filteredEntrances.length > 0) {
-        setExpandedEntrance(filteredEntrances[0].entrance_id);
+        setExpandedEntrances(new Set([filteredEntrances[0].entrance_id]));
       }
       setAllPlacePhotos(
         filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
@@ -117,13 +119,22 @@ export default function PlaceInfo({ place }: { place: Place }) {
   }, [place.place_id, supabase, user]);
 
   const handleEntranceExpand = useCallback((entranceId: number) => {
-    setExpandedEntrance((prev) => {
-      const newState = prev === entranceId ? null : entranceId;
-      log.debug("entrance expansion toggled", {
-        entranceId,
-        newState: newState ? "expanded" : "collapsed",
-      });
-      return newState;
+    setExpandedEntrances((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(entranceId)) {
+        newSet.delete(entranceId);
+        log.debug("entrance expansion toggled", {
+          entranceId,
+          newState: 'collapsed',
+        });
+      } else {
+        newSet.add(entranceId);
+        log.debug("entrance expansion toggled", {
+          entranceId,
+          newState: 'expanded',
+        });
+      }
+      return newSet;
     });
   }, []);
 
@@ -287,92 +298,101 @@ export default function PlaceInfo({ place }: { place: Place }) {
   }: {
     entrance: DetailedEntrance;
     isVerified: boolean;
-  }) => (
-    <li>
-      <Collapsible
-        open={expandedEntrance === entrance.entrance_id}
-        onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}
-      >
-        <CollapsibleTrigger asChild>
-          <Button variant="outline" className="w-full justify-between">
-            <span className="flex items-center">
-              {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
-              <span className="ml-2">{entrance.entrance_type_name_sv}</span>
-              {isVerified ? (
-                <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
-              ) : (
-                <Clock className="w-4 h-4 ml-2 text-yellow-600" />
-              )}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="w-4 h-4 ml-2 text-blue-600" />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    align="center"
-                    className="max-w-xs"
-                  >
-                    <p>{entrance.entrance_type_description_sv}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </span>
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="p-2">
-          {!isVerified && (
-            <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
-              <p className="text-sm font-medium text-gray-900">
-                <Clock className="inline-block w-4 h-4 mr-2" />
-                Väntar på verifiering
-              </p>
-              <p className="text-sm text-gray-800 mt-1">
-                Inskickad{" "}
-                {formatDistanceToNow(new Date(entrance.created_at), {
-                  addSuffix: true,
-                  locale: sv,
-                })}
-              </p>
-              <p className="text-sm text-gray-800">
-                Granskning tar normalt 24-48 timmar
-              </p>
-            </div>
-          )}
-          <div className="grid grid-cols-1 gap-2 mb-2">
-            {entrance.photos?.map((photo: EntrancePhoto) => (
-              <div key={photo.photo_id} className="relative">
-                <Button
-                  variant="ghost"
-                  className="p-0 w-full h-auto"
-                  onClick={() =>
-                    handlePhotoClick(
-                      allPlacePhotos.findIndex(
-                        (p) => p.photo_id === photo.photo_id,
-                      ),
-                    )
-                  }
-                >
-                  <Image
-                    src={photo.photo_url}
-                    alt={photo.description || ""}
-                    width={300}
-                    height={200}
-                    className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
-                  />
-                </Button>
-                {!isVerified && (
-                  <div className="absolute bottom-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
-                    Väntar på granskning
-                  </div>
+  }) => {
+    const isExpanded = expandedEntrances.has(entrance.entrance_id!);
+
+    return (
+      <li>
+        <Collapsible
+          open={isExpanded}
+          onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}
+        >
+          <CollapsibleTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              <span className="flex items-center">
+                {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
+                <span className="ml-2">{entrance.entrance_type_name_sv}</span>
+                {isVerified ? (
+                  <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
+                ) : (
+                  <Clock className="w-4 h-4 ml-2 text-yellow-600" />
                 )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="w-4 h-4 ml-2 text-blue-600" />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      align="center"
+                      className="max-w-xs"
+                    >
+                      <p>{entrance.entrance_type_description_sv}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </span>
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4 ml-2" />
+              ) : (
+                <ChevronDown className="w-4 h-4 ml-2" />
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="p-2">
+            {!isVerified && (
+              <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
+                <p className="text-sm font-medium text-gray-900">
+                  <Clock className="inline-block w-4 h-4 mr-2" />
+                  Väntar på verifiering
+                </p>
+                <p className="text-sm text-gray-800 mt-1">
+                  Inskickad{" "}
+                  {formatDistanceToNow(new Date(entrance.created_at), {
+                    addSuffix: true,
+                    locale: sv,
+                  })}
+                </p>
+                <p className="text-sm text-gray-800">
+                  Granskning tar normalt 24-48 timmar
+                </p>
               </div>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    </li>
-  );
+            )}
+            <div className="grid grid-cols-1 gap-2 mb-2">
+              {entrance.photos?.map((photo: EntrancePhoto) => (
+                <div key={photo.photo_id} className="relative">
+                  <Button
+                    variant="ghost"
+                    className="p-0 w-full h-auto"
+                    onClick={() =>
+                      handlePhotoClick(
+                        allPlacePhotos.findIndex(
+                          (p) => p.photo_id === photo.photo_id,
+                        ),
+                      )
+                    }
+                  >
+                    <Image
+                      src={photo.photo_url}
+                      alt={photo.description || ""}
+                      width={300}
+                      height={200}
+                      className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
+                    />
+                  </Button>
+                  {!isVerified && (
+                    <div className="absolute bottom-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
+                      Väntar på granskning
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </li>
+    );
+  };
 
   return (
     <>
