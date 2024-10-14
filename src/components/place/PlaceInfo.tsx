@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
+import { logger } from "@/src/libs/logger";
 import { createClient } from "@/utils/supabase/client";
 import {
   AlertCircle,
@@ -32,6 +33,8 @@ import {
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
+
+const log = logger.child({ module: "PlaceInfo" });
 
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
@@ -62,6 +65,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
         data: { user },
       } = await supabase.auth.getUser();
       setIsUserAuthenticated(!!user);
+      log.info("user authentication checked", { isAuthenticated: !!user });
     };
 
     checkUserAuth();
@@ -69,6 +73,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
   useEffect(() => {
     const fetchEntrances = async () => {
+      log.info("fetching entrances", { placeId: place.place_id });
       const { data, error } = await supabase.rpc(
         "get_place_entrances_with_pending",
         {
@@ -77,7 +82,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
       );
 
       if (error) {
-        console.error("Error fetching entrances:", error);
+        log.error("error fetching entrances", {
+          error: error.message,
+          placeId: place.place_id,
+        });
         return;
       }
 
@@ -89,40 +97,62 @@ export default function PlaceInfo({ place }: { place: Place }) {
       setAllPlacePhotos(
         entrancesData.flatMap((e) => e.photos as PlaceEntrancePhoto[]),
       );
+      log.info("entrances fetched successfully", {
+        placeId: place.place_id,
+        entranceCount: entrancesData.length,
+        photoCount: entrancesData.flatMap(
+          (e) => e.photos as PlaceEntrancePhoto[],
+        ).length,
+      });
     };
 
     fetchEntrances();
   }, [place.place_id, supabase]);
 
   const handleEntranceExpand = useCallback((entranceId: number) => {
-    setExpandedEntrance((prev) => (prev === entranceId ? null : entranceId));
+    setExpandedEntrance((prev) => {
+      const newState = prev === entranceId ? null : entranceId;
+      log.debug("entrance expansion toggled", {
+        entranceId,
+        newState: newState ? "expanded" : "collapsed",
+      });
+      return newState;
+    });
   }, []);
 
   const handlePhotoClick = (clickedPhotoIndex: number) => {
     setSelectedPhotoIndex(clickedPhotoIndex);
     setIsPhotoDialogOpen(true);
+    log.debug("photo dialog opened", { photoIndex: clickedPhotoIndex });
   };
 
   const handleClosePhotoDialog = () => {
     setIsPhotoDialogOpen(false);
     setSelectedPhotoIndex(0);
+    log.debug("photo dialog closed");
   };
 
   const handleAddEntrance = useCallback(() => {
     if (isUserAuthenticated) {
       setIsAddEntranceDialogOpen(true);
+      log.info("add entrance dialog opened", { isAuthenticated: true });
     } else {
       setIsLoginPromptOpen(true);
+      log.info("login prompt opened for add entrance", {
+        isAuthenticated: false,
+      });
     }
   }, [isUserAuthenticated]);
 
   const handleCloseAddEntranceDialog = () => {
     setIsAddEntranceDialogOpen(false);
+    log.debug("add entrance dialog closed");
   };
 
   const handleSaveAndAddAnotherEntrance = () => {
     // Logic to save the entrance and reset the form
     // This will be implemented in the AddEntranceDialog component
+    log.info("save and add another entrance requested");
   };
 
   const renderEntranceSection = () => {
@@ -243,6 +273,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
   const handleCloseLoginPrompt = useCallback(() => {
     setIsLoginPromptOpen(false);
+    log.debug("login prompt closed");
   }, []);
 
   return (
