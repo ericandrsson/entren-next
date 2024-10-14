@@ -14,7 +14,6 @@ export default function UserAuthButton() {
     const supabase = createClient();
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
-        console.log("refreshing user");
         refreshUser();
       }
     });

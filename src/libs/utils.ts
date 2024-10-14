@@ -16,7 +16,6 @@ export function requestUserLocation(): Promise<[number, number] | null> {
     function success(position: GeolocationPosition) {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      console.log(latitude, longitude);
       resolve([longitude, latitude]);
     }
 

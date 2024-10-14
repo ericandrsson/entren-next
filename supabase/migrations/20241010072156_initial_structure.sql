@@ -413,7 +413,7 @@ BEGIN
   SELECT extensions.json_matches_schema(v_json_schema::json, p_change_data::json) INTO v_is_valid;
 
   -- If validation fails, raise an error
-  IF NOT v_is_valid THEN
+  IF NOT v_is_valid THEN1
     RAISE EXCEPTION 'Invalid change_data for entity_type %s, expected %, got %', p_entity_type, v_json_schema, p_change_data;
   END IF;
 
@@ -639,6 +639,34 @@ $$;
 
 -- end get_place_entrances_with_pending
 
+CREATE OR REPLACE FUNCTION validate_place_combined_id()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Check if the place_combined_id exists in the detailed_places_view
+  IF NOT EXISTS (
+    SELECT 1
+    FROM public.detailed_places_view
+    WHERE place_id = NEW.place_id  -- Check if the combined id exists
+  ) THEN
+    RAISE EXCEPTION 'Invalid place_id: % does not exist in detailed_places_view', NEW.place_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_place_combined_id
+BEFORE INSERT OR UPDATE ON public.place_entrances
+FOR EACH ROW
+EXECUTE FUNCTION validate_place_combined_id();
+
+
+CREATE OR REPLACE FUNCTION public.refresh_detailed_places_view()
+RETURNS void AS $$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY public.detailed_places_view;
+END;
+$$ LANGUAGE plpgsql;
 
 
 -- Grant necessary permissions

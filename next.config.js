@@ -7,6 +7,10 @@ const nextConfig = {
       "plus.unsplash.com",
     ],
   },
+  experimental: {
+    instrumentationHook: true,
+    serverComponentsExternalPackages: ["pino", "pino-pretty"],
+  },
 };
 
 module.exports = nextConfig;

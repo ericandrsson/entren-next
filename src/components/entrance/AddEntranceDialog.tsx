@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { useToast } from "@/src/hooks/use-toast";
+import { logger } from "@/src/libs/logger";
 import { cn } from "@/src/libs/utils";
 import { EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
@@ -39,6 +40,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+const log = logger.child({ module: "AddEntranceDialog" });
+
 const entranceSchema = z.object({
   entranceType: z.string(),
   photo: z.any().optional(), // Changed from z.instanceof(File).optional()
@@ -48,6 +51,8 @@ const entranceSchema = z.object({
   }),
   sameAsPlaceLocation: z.boolean().default(false),
 });
+
+log.debug({ schema: entranceSchema }, "Entrance schema defined");
 
 type EntranceFormData = z.infer<typeof entranceSchema>;
 
@@ -69,7 +74,10 @@ const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
     <div className="flex items-center space-x-2">
       <Checkbox
         id="terms"
-        onCheckedChange={(checked) => checked && onConfirm()}
+        onCheckedChange={(checked) => {
+          log.debug({ checked }, "Image guidelines checkbox changed");
+          if (checked) onConfirm();
+        }}
       />
       <label
         htmlFor="terms"
@@ -97,6 +105,8 @@ export default function AddEntranceDialog({
   onClose,
   onSaveAndAddAnother,
 }: AddEntranceDialogProps) {
+  log.debug({ place, isOpen }, "AddEntranceDialog rendered");
+
   const [step, setStep] = useState(1);
   const [hasLocationMetadata, setHasLocationMetadata] = useState(false);
   const [entranceTypes, setEntranceTypes] = useState<EntranceType[]>([]);
@@ -110,6 +120,7 @@ export default function AddEntranceDialog({
   const { toast } = useToast();
 
   const fetchEntranceTypes = async () => {
+    log.debug("Fetching entrance types");
     const supabase = createClient();
     const { data, error } = await supabase
       .from("entrance_types")
@@ -117,22 +128,26 @@ export default function AddEntranceDialog({
       .order("id", { ascending: true });
 
     if (error) {
+      log.warn({ error }, "Error fetching entrance types");
       toast({
         title: "Fel vid hämtning av entrétyper",
         description: "Kunde inte hämta entrétyper. Försök igen senare.",
         variant: "destructive",
       });
     } else {
+      log.info({ count: data?.length }, "Entrance types fetched successfully");
       setEntranceTypes(data || []);
     }
   };
 
   const fetchEntranceCounts = async () => {
     if (!place.place_id) {
+      log.debug("No place_id, skipping entrance count fetch");
       setEntranceCounts({});
       return;
     }
 
+    log.debug({ place_id: place.place_id }, "Fetching entrance counts");
     const supabase = createClient();
 
     const { data, error } = await supabase.rpc("get_entrance_type_counts", {
@@ -140,6 +155,7 @@ export default function AddEntranceDialog({
     });
 
     if (error) {
+      log.warn({ error }, "Error fetching entrance counts");
       toast({
         title: "Fel vid hämtning av entréantal",
         description: "Kunde inte hämta antalet entréer. Försök igen senare.",
@@ -148,14 +164,16 @@ export default function AddEntranceDialog({
       setEntranceCounts({});
     } else {
       const counts: Record<number, number> = {};
-      data.forEach((item: { type_id: number; count: string }) => {
-        counts[item.type_id] = parseInt(item.count);
+      data.forEach((item: { entrance_type_id: number; count: string }) => {
+        counts[item.entrance_type_id] = parseInt(item.count);
       });
+      log.info({ counts }, "entrance counts fetched successfully");
       setEntranceCounts(counts);
     }
   };
 
   const resetDialogState = () => {
+    log.debug("Resetting dialog state");
     setStep(1);
     setHasLocationMetadata(false);
     setGuidelinesConfirmed(false);
@@ -170,6 +188,7 @@ export default function AddEntranceDialog({
   };
 
   useEffect(() => {
+    log.debug({ isOpen }, "dialog open state changed");
     if (isOpen) {
       fetchEntranceTypes();
       fetchEntranceCounts();
@@ -189,6 +208,7 @@ export default function AddEntranceDialog({
   });
 
   const handleEntranceTypeChange = (value: string) => {
+    log.debug({ value }, "entrance type changed");
     form.setValue("entranceType", value);
     const isMainEntrance =
       entranceTypes.find((t) => t.id.toString() === value)?.name ===
@@ -198,6 +218,7 @@ export default function AddEntranceDialog({
   };
 
   const handleSameAsPlaceLocationChange = (checked: boolean) => {
+    log.debug({ checked }, "Same as place location changed");
     setSameAsPlaceLocation(checked);
     form.setValue("sameAsPlaceLocation", checked);
     if (checked) {
@@ -210,6 +231,7 @@ export default function AddEntranceDialog({
   };
 
   const handleNext = () => {
+    log.debug({ currentStep: step }, "Moving to next step");
     if (step === 2 && sameAsPlaceLocation) {
       setStep(4); // Skip to review step
     } else if (step < 4) {
@@ -218,13 +240,16 @@ export default function AddEntranceDialog({
   };
 
   const handleBack = () => {
+    log.debug({ currentStep: step }, "Moving to previous step");
     if (step > 1) setStep(step - 1);
   };
 
   const handleSubmit = async (data: EntranceFormData, addAnother: boolean) => {
+    log.info({ data, addAnother }, "Submitting entrance form");
     const supabase = createClient();
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
+      log.warn("User not logged in");
       toast({
         title: "Ej inloggad",
         description: "Du måste vara inloggad för att lägga till en entré.",
@@ -236,6 +261,7 @@ export default function AddEntranceDialog({
     try {
       let photoUrl = null;
       if (data.photo) {
+        log.debug("Uploading photo");
         const fileName = `entrance_${Date.now()}.jpg`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("place_entrance_photos")
@@ -248,6 +274,7 @@ export default function AddEntranceDialog({
           .getPublicUrl(fileName);
 
         photoUrl = urlData.publicUrl;
+        log.debug({ photoUrl }, "Photo uploaded successfully");
       }
 
       const location = data.sameAsPlaceLocation
@@ -264,6 +291,7 @@ export default function AddEntranceDialog({
         photo_url: photoUrl || null, // Ensure this is null if no photo was uploaded
       };
 
+      log.debug({ changeData }, "adding entity change");
       const { error } = await supabase.rpc("add_entity_change", {
         p_user_id: user.data.user.id,
         p_entity_id: place.place_id,
@@ -273,7 +301,7 @@ export default function AddEntranceDialog({
       });
 
       if (error) {
-        console.error("Error adding entity change:", error);
+        log.error({ error }, "error adding entity change");
         toast({
           title: "Fel vid sparande av entré",
           description:
@@ -284,6 +312,7 @@ export default function AddEntranceDialog({
       }
 
       if (addAnother) {
+        log.info("saving and adding another entrance");
         onSaveAndAddAnother();
         form.reset();
         setStep(1);
@@ -426,6 +455,7 @@ export default function AddEntranceDialog({
                               const isDisabled =
                                 type.max_per_place !== null &&
                                 count >= type.max_per_place;
+
                               return (
                                 <SelectItem
                                   key={type.id}

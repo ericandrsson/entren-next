@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      custom_places: {
+        Row: {
+          category_id: number | null
+          created_at: string
+          id: number
+          location: unknown | null
+          name: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          location?: unknown | null
+          name?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          location?: unknown | null
+          name?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_places_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "place_categories"
+            referencedColumns: ["category_id"]
+          },
+          {
+            foreignKeyName: "custom_places_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       "entity_changes_audit ": {
         Row: {
           action_type: string
@@ -213,7 +258,7 @@ export type Database = {
           entrance_id: number | null
           photo_id: number
           photo_url: string | null
-          place_id: number | null
+          place_id: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -223,7 +268,7 @@ export type Database = {
           entrance_id?: number | null
           photo_id?: number
           photo_url?: string | null
-          place_id?: number | null
+          place_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -233,7 +278,7 @@ export type Database = {
           entrance_id?: number | null
           photo_id?: number
           photo_url?: string | null
-          place_id?: number | null
+          place_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -252,13 +297,6 @@ export type Database = {
             referencedRelation: "place_entrances"
             referencedColumns: ["entrance_id"]
           },
-          {
-            foreignKeyName: "place_entrance_photos_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "places"
-            referencedColumns: ["place_id"]
-          },
         ]
       }
       place_entrances: {
@@ -268,7 +306,7 @@ export type Database = {
           entrance_id: number
           entrance_type_id: number
           location: unknown | null
-          place_id: number
+          place_id: string
           updated_at: string | null
         }
         Insert: {
@@ -277,7 +315,7 @@ export type Database = {
           entrance_id?: number
           entrance_type_id: number
           location?: unknown | null
-          place_id: number
+          place_id: string
           updated_at?: string | null
         }
         Update: {
@@ -286,18 +324,10 @@ export type Database = {
           entrance_id?: number
           entrance_type_id?: number
           location?: unknown | null
-          place_id?: number
+          place_id?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "places"
-            referencedColumns: ["place_id"]
-          },
-        ]
+        Relationships: []
       }
       place_osm_tag_to_category: {
         Row: {
@@ -334,57 +364,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "place_categories"
             referencedColumns: ["category_id"]
-          },
-        ]
-      }
-      places: {
-        Row: {
-          category_id: number | null
-          created_at: string
-          location: unknown | null
-          name: string | null
-          osm_id: number | null
-          osm_tags: Json | null
-          place_id: number
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          category_id?: number | null
-          created_at?: string
-          location?: unknown | null
-          name?: string | null
-          osm_id?: number | null
-          osm_tags?: Json | null
-          place_id?: number
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          category_id?: number | null
-          created_at?: string
-          location?: unknown | null
-          name?: string | null
-          osm_id?: number | null
-          osm_tags?: Json | null
-          place_id?: number
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "places_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "place_categories"
-            referencedColumns: ["category_id"]
-          },
-          {
-            foreignKeyName: "places_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -438,6 +417,10 @@ export type Database = {
       detailed_entrances_view: {
         Row: {
           accessibility_info: Json | null
+          category_id: number | null
+          category_name: string | null
+          category_name_sv: string | null
+          detailed_place_id: string | null
           entrance_created_at: string | null
           entrance_id: number | null
           entrance_type_created_at: string | null
@@ -450,20 +433,15 @@ export type Database = {
           lat: number | null
           location: unknown | null
           long: number | null
-          osm_id: number | null
+          parent_category_id: number | null
+          parent_category_name: string | null
+          parent_category_name_sv: string | null
           photos: Json | null
-          place_id: number | null
+          place_id: string | null
           place_name: string | null
+          source: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "place_entrances_place_id_fkey"
-            columns: ["place_id"]
-            isOneToOne: false
-            referencedRelation: "places"
-            referencedColumns: ["place_id"]
-          },
-        ]
+        Relationships: []
       }
       detailed_places_view: {
         Row: {
@@ -476,7 +454,6 @@ export type Database = {
           location: unknown | null
           long: number | null
           name: string | null
-          osm_tags: Json | null
           parent_category_id: number | null
           parent_category_name: string | null
           parent_category_name_sv: string | null
@@ -499,22 +476,6 @@ export type Database = {
         }
         Returns: number
       }
-      add_place_from_osm: {
-        Args: {
-          osm_id: number
-        }
-        Returns: {
-          category_id: number | null
-          created_at: string
-          location: unknown | null
-          name: string | null
-          osm_id: number | null
-          osm_tags: Json | null
-          place_id: number
-          updated_at: string
-          user_id: string | null
-        }
-      }
       check_email_exists: {
         Args: {
           email: string
@@ -529,7 +490,7 @@ export type Database = {
       }
       get_entrance_type_counts: {
         Args: {
-          p_place_id: number
+          p_place_id: string
         }
         Returns: {
           entrance_type_id: number
@@ -545,7 +506,6 @@ export type Database = {
         }
         Returns: {
           id: string
-          osm_id: number
           name: string
           lat: number
           long: number

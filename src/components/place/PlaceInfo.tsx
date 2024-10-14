@@ -84,7 +84,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
       const entrancesData = data as PlaceEntranceWithPending[];
       setEntrances(entrancesData);
       if (entrancesData.length > 0) {
-        console.log("entrancesData", entrancesData);
         setExpandedEntrance(entrancesData[0].entrance_id);
       }
       setAllPlacePhotos(

@@ -87,8 +87,6 @@ function handlePlacesLayerClick(e: maplibregl.MapLayerMouseEvent) {
       ...rest,
     };
 
-    console.log(place);
-
     setSelectedPlace(place as Place);
   }
 }

@@ -12,7 +12,7 @@ SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+SELECT pg_catalog.set_config('search_path', 'public, extensions', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -21,6 +21,8 @@ SET row_security = off;
 --
 -- Data for Name: audit_log_entries; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
+
+SELECT refresh_detailed_places_view();
 
 INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created_at", "ip_address") VALUES
 	('00000000-0000-0000-0000-000000000000', '969374ce-c4d8-43b7-990f-89df2a8e5db7', '{"action":"user_signedup","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"eric.andrsson@gmail.com","user_id":"1571ff46-8afa-470a-aef4-c786f72c5a36","user_phone":""}}', '2024-10-02 12:47:33.600138+00', ''),
@@ -445,13 +447,13 @@ INSERT INTO "public"."custom_places" ("id", "name", "location", "category_id", "
 
 -- Insert hardcoded place entrances
 INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
-    (1, 1, 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-    (2, 1, 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW());
+    (1, 'place_1', 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
+    (2, 'place_1', 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW());
 
 -- Insert sample images for place entrances
-INSERT INTO "public"."place_entrance_photos" ("place_id", "entrance_id", "photo_url", "created_at", "updated_at") VALUES
-    (1, 1, 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
-    (1, 2, 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
+INSERT INTO "public"."place_entrance_photos" ("entrance_id", "place_id", "photo_url", "created_at", "updated_at") VALUES
+    (1, 'place_1', 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
+    (2, 'place_1', 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
 
 
 -- Insert sample entity changes
