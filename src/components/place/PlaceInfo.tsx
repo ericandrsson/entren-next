@@ -38,6 +38,7 @@ import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 import { formatDistanceToNow } from 'date-fns';
 import { sv } from 'date-fns/locale';
+import { AlertTriangle } from "lucide-react";
 
 const log = logger.child({ module: "PlaceInfo" });
 
@@ -53,11 +54,11 @@ const getCategoryIcon = (category: string) => {
 const getEntranceTypeIcon = (entranceType: string) => {
   switch (entranceType.toLowerCase()) {
     case 'huvudentré':
-      return <DoorOpen className="w-4 h-4" />;
+      return <DoorOpen className="w-6 h-6 text-blue-600" />;
     case 'sidoentré':
-      return <DoorClosed className="w-4 h-4" />;
+      return <DoorClosed className="w-6 h-6 text-green-600" />;
     default:
-      return <MapPin className="w-4 h-4" />;
+      return <MapPin className="w-6 h-6 text-gray-600" />;
   }
 };
 
@@ -190,19 +191,19 @@ export default function PlaceInfo({ place }: { place: Place }) {
       return (
         <section aria-labelledby="entrances-heading" className="space-y-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 id="entrances-heading" className="text-xl font-bold">
+            <h2 id="entrances-heading" className="text-2xl font-bold text-gray-900">
               Entréer
             </h2>
             <Button variant="outline" size="sm" onClick={handleAddEntrance}>
-              <PlusCircle className="mr-2 h-4 w-4" />
+              <PlusCircle className="mr-2 h-5 w-5" />
               Lägg till en ny entré
             </Button>
           </div>
           
           {verifiedEntrances.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+              <h3 className="text-xl font-semibold flex items-center text-gray-800">
+                <CheckCircle className="w-6 h-6 mr-2 text-green-600" />
                 Verifierade entréer
               </h3>
               <ul className="space-y-4">
@@ -215,8 +216,8 @@ export default function PlaceInfo({ place }: { place: Place }) {
           
           {pendingEntrances.length > 0 && (
             <div className="space-y-4 mt-8">
-              <h3 className="text-lg font-semibold flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-yellow-600" />
+              <h3 className="text-xl font-semibold flex items-center text-gray-800">
+                <Clock className="w-6 h-6 mr-2 text-yellow-600" />
                 Väntande entréer
               </h3>
               <ul className="space-y-4">
@@ -267,18 +268,18 @@ export default function PlaceInfo({ place }: { place: Place }) {
           <Button variant="outline" className="w-full justify-between">
             <span className="flex items-center">
               {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
-              <span className="ml-2">{entrance.entrance_type_name_sv}</span>
+              <span className="ml-2 text-lg">{entrance.entrance_type_name_sv}</span>
               {isVerified ? (
-                <CheckCircle className="w-4 h-4 ml-2 text-green-500" />
+                <CheckCircle className="w-5 h-5 ml-2 text-green-600" />
               ) : (
-                <Clock className="w-4 h-4 ml-2 text-yellow-600" />
+                <Clock className="w-5 h-5 ml-2 text-yellow-600" />
               )}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Info className="w-5 h-5 ml-2 text-blue-500" />
+                    <Info className="w-6 h-6 ml-2 text-blue-600" />
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent side="right" align="center" className="max-w-xs">
                     <p>{entrance.entrance_type_description_sv}</p>
                   </TooltipContent>
                 </Tooltip>
@@ -289,15 +290,15 @@ export default function PlaceInfo({ place }: { place: Place }) {
         <CollapsibleContent className="p-2">
           {!isVerified && (
             <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
-              <p className="text-sm font-medium text-yellow-800">
+              <p className="text-sm font-medium text-gray-900">
                 <Clock className="inline-block w-4 h-4 mr-2" />
                 Väntar på verifiering
               </p>
-              <p className="text-sm text-yellow-700 mt-1">
+              <p className="text-sm text-gray-800 mt-1">
                 Inskickad {formatDistanceToNow(new Date(entrance.created_at), { addSuffix: true, locale: sv })}
               </p>
-              <p className="text-sm text-yellow-700">
-                Granskning tar vanligtvis 24-48 timmar
+              <p className="text-sm text-gray-800">
+                Granskning tar normalt 24-48 timmar
               </p>
             </div>
           )}
@@ -318,7 +319,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
                   />
                 </Button>
                 {!isVerified && (
-                  <div className="absolute top-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
+                  <div className="absolute bottom-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
                     Väntar på granskning
                   </div>
                 )}
@@ -359,17 +360,25 @@ export default function PlaceInfo({ place }: { place: Place }) {
           <div className="space-y-6">
             {renderEntranceSection()}
 
-            <section aria-labelledby="actions-heading">
+            <section aria-labelledby="actions-heading" className="mt-6">
               <h2 id="actions-heading" className="sr-only">
                 User Actions
               </h2>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full">
-                  <Flag className="mr-2 h-4 w-4" />
+              <div className="flex flex-col items-center space-y-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full max-w-md h-12 text-base flex items-center justify-center"
+                  onClick={() => {/* Add your report problem logic here */}}
+                >
+                  <AlertTriangle className="mr-2 h-5 w-5" />
                   Rapportera ett problem
                 </Button>
-                <Button variant="outline" className="w-full">
-                  <MapPin className="mr-2 h-4 w-4" />
+                <Button 
+                  variant="outline" 
+                  className="w-full max-w-md h-12 text-base flex items-center justify-center"
+                  onClick={() => {/* Add your open in maps logic here */}}
+                >
+                  <MapPin className="mr-2 h-5 w-5" />
                   Öppna i Kartor
                 </Button>
               </div>
