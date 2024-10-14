@@ -4,6 +4,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/src/components/ui/collapsible";
+import { ScrollArea } from "@/src/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
@@ -210,21 +211,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
       const pendingEntrances = entrances.filter((e) => e.status === "pending");
 
       return (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 id="entrances-heading" className="text-xl font-bold">
-              Entréer
-            </h2>
-            <Button
-              variant="outline"
-              onClick={handleAddEntrance}
-              className="border-blue-300 hover:border-blue-400 transition-colors duration-200"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Skapa ny entré
-            </Button>
-          </div>
-
+        <>
           {verifiedEntrances.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold flex items-center">
@@ -260,7 +247,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
               </ul>
             </div>
           )}
-        </div>
+        </>
       );
     } else {
       return (
@@ -390,8 +377,25 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
   };
 
   return (
-    <div className="space-y-6">
-      {renderEntranceSection()}
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center p-4">
+        <h2 id="entrances-heading" className="text-xl font-bold">
+          Entréer
+        </h2>
+        <Button
+          variant="outline"
+          onClick={handleAddEntrance}
+          className="border-blue-300 hover:border-blue-400 transition-colors duration-200"
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Skapa ny entré
+        </Button>
+      </div>
+      <ScrollArea className="flex-grow">
+        <div className="p-4 space-y-6">
+          {renderEntranceSection()}
+        </div>
+      </ScrollArea>
       <AddEntranceDialog
         place={place}
         isOpen={isAddEntranceDialogOpen}
