@@ -1,3 +1,4 @@
+import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import {
@@ -20,6 +21,7 @@ import {
   Coffee,
   Flag,
   Info,
+  Lock,
   MapPin,
   PlusCircle,
 } from "lucide-react";
@@ -93,7 +95,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
       const entrancesData = data as DetailedEntrance[];
       const filteredEntrances = entrancesData.filter(
         (entrance) =>
-          entrance.status !== "pending" || entrance.created_by === user?.id
+          entrance.status !== "pending" || entrance.created_by === user?.id,
       );
 
       setEntrances(filteredEntrances);
@@ -101,13 +103,14 @@ export default function PlaceInfo({ place }: { place: Place }) {
         setExpandedEntrance(filteredEntrances[0].entrance_id);
       }
       setAllPlacePhotos(
-        filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
+        filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
       );
       log.info("entrances fetched and filtered successfully", {
         placeId: place.place_id,
         entranceCount: filteredEntrances.length,
-        photoCount: filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
-          .length,
+        photoCount: filteredEntrances.flatMap(
+          (e) => e.photos as EntrancePhoto[],
+        ).length,
       });
       setIsLoading(false);
     };
@@ -166,120 +169,166 @@ export default function PlaceInfo({ place }: { place: Place }) {
       return <div>Loading...</div>; // Or a more sophisticated loading indicator
     }
 
-    if (entrances.length > 0) {
-      return (
-        <section aria-labelledby="entrances-heading">
-          <div className="flex justify-between items-center mb-4">
-            <h2 id="entrances-heading" className="text-lg font-semibold">
-              Entréer
-            </h2>
-            <Button variant="outline" size="sm" onClick={handleAddEntrance}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Lägg till en ny entré
-            </Button>
-          </div>
-          <ul className="space-y-4">
-            {entrances.map((entrance) => (
-              <li key={entrance.entrance_id || `pending-${entrance.place_id}`}>
-                <Collapsible
-                  open={expandedEntrance === entrance.entrance_id}
-                  onOpenChange={() =>
-                    handleEntranceExpand(entrance.entrance_id!)
-                  }
-                >
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                    >
-                      <span className="flex items-center">
-                        {entrance.entrance_type_name_sv}
-                        {entrance.status === "pending" && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Clock className="w-4 h-4 ml-2 text-yellow-500" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Väntar på verifiering</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="w-4 h-4 ml-2 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{entrance.entrance_type_description_sv}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </span>
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-2">
-                    {entrance.status === "pending" && (
-                      <p className="text-sm mb-2 text-yellow-500 font-medium">
-                        Denna entré väntar på verifiering
-                      </p>
-                    )}
-                    <div className="grid grid-cols-1 gap-2 mb-2">
-                      {entrance.photos?.map((photo: EntrancePhoto) => (
-                        <Button
-                          key={photo.photo_id}
-                          variant="ghost"
-                          className="p-0 w-full h-auto"
-                          onClick={() =>
-                            handlePhotoClick(
-                              allPlacePhotos.findIndex(
-                                (p) => p.photo_id === photo.photo_id,
-                              ),
-                            )
-                          }
-                        >
-                          <Image
-                            src={photo.photo_url}
-                            alt={photo.description || ""}
-                            width={300}
-                            height={200}
-                            className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
-                          />
-                        </Button>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </li>
+    const approvedEntrances = entrances.filter((e) => e.status !== "pending");
+    const pendingEntrances = entrances.filter((e) => e.status === "pending");
+
+    return (
+      <section aria-labelledby="entrances-heading">
+        <div className="flex justify-between items-center mb-4">
+          <h2 id="entrances-heading" className="text-lg font-semibold">
+            Entréer
+          </h2>
+          <Button variant="outline" size="sm" onClick={handleAddEntrance}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Lägg till en ny entré
+          </Button>
+        </div>
+
+        {approvedEntrances.length > 0 && (
+          <ul className="space-y-4 mb-6">
+            {approvedEntrances.map((entrance) => (
+              <EntranceItem key={entrance.entrance_id} entrance={entrance} />
             ))}
           </ul>
-        </section>
-      );
-    } else {
-      return (
-        <section
-          aria-labelledby="no-entrances-heading"
-          className="text-center py-6"
-        >
-          <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
-          <h2 id="no-entrances-heading" className="text-xl font-semibold mb-2">
-            Oj då! Den här platsen saknar entréinformation
-          </h2>
-          <p className="text-muted-foreground mb-4">
-            Vill du vara en tillgänglighetshjälte? Lägg till entréinformation
-            och hjälp personer med barnvagnar, rullstolar, eller andra
-            tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
-            platsen en välkomnande high-five för alla besökare!
-          </p>
-          <Button className="w-full sm:w-auto" onClick={handleAddEntrance}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Lägg till entré
-          </Button>
-        </section>
-      );
-    }
+        )}
+
+        {pendingEntrances.length > 0 && (
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" className="w-full mb-2">
+                <Lock className="mr-2 h-4 w-4" />
+                Pending Entrances (only visible to you)
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ul className="space-y-4">
+                {pendingEntrances.map((entrance) => (
+                  <EntranceItem
+                    key={entrance.entrance_id}
+                    entrance={entrance}
+                    isPending
+                  />
+                ))}
+              </ul>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        {entrances.length === 0 && (
+          <NoEntrancesSection onAddEntrance={handleAddEntrance} />
+        )}
+      </section>
+    );
   };
+
+  const EntranceItem = ({
+    entrance,
+    isPending = false,
+  }: {
+    entrance: DetailedEntrance;
+    isPending?: boolean;
+  }) => (
+    <li key={entrance.entrance_id || `pending-${entrance.place_id}`}>
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="outline"
+            className={`w-full justify-between ${isPending ? "border-yellow-500" : ""}`}
+          >
+            <span className="flex items-center">
+              {entrance.entrance_type_name_sv}
+              {isPending && (
+                <Badge
+                  variant="outline"
+                  className="ml-2 bg-yellow-100 text-yellow-800"
+                >
+                  Pending - Only Visible to You
+                </Badge>
+              )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 ml-2 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{entrance.entrance_type_description_sv}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </span>
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="p-2">
+          {isPending && (
+            <p className="text-sm mb-2 text-yellow-500 font-medium">
+              This entrance is awaiting verification and is only visible to you.
+            </p>
+          )}
+          <div className="grid grid-cols-1 gap-2 mb-2">
+            {entrance.photos?.map((photo: EntrancePhoto) => (
+              <div key={photo.photo_id} className="relative">
+                <Button
+                  variant="ghost"
+                  className="p-0 w-full h-auto"
+                  onClick={() =>
+                    handlePhotoClick(
+                      allPlacePhotos.findIndex(
+                        (p) => p.photo_id === photo.photo_id,
+                      ),
+                    )
+                  }
+                >
+                  <Image
+                    src={photo.photo_url}
+                    alt={photo.description || ""}
+                    width={300}
+                    height={200}
+                    className={`rounded-md object-cover w-full max-w-[300px] max-h-[200px] ${
+                      isPending ? "opacity-70" : ""
+                    }`}
+                  />
+                </Button>
+                {isPending && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-yellow-500 bg-opacity-50 p-2 rounded">
+                      <Clock className="w-8 h-8 text-white" />
+                      <p className="text-white font-bold">Pending Review</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </li>
+  );
+
+  const NoEntrancesSection = ({
+    onAddEntrance,
+  }: {
+    onAddEntrance: () => void;
+  }) => (
+    <section
+      aria-labelledby="no-entrances-heading"
+      className="text-center py-6"
+    >
+      <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
+      <h2 id="no-entrances-heading" className="text-xl font-semibold mb-2">
+        Oj då! Den här platsen saknar entréinformation
+      </h2>
+      <p className="text-muted-foreground mb-4">
+        Vill du vara en tillgänglighetshjälte? Lägg till entréinformation och
+        hjälp personer med barnvagnar, rullstolar, eller andra
+        tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
+        platsen en välkomnande high-five för alla besökare!
+      </p>
+      <Button className="w-full sm:w-auto" onClick={onAddEntrance}>
+        <PlusCircle className="mr-2 h-4 w-4" />
+        Lägg till entré
+      </Button>
+    </section>
+  );
 
   const handleCloseLoginPrompt = useCallback(() => {
     setIsLoginPromptOpen(false);
