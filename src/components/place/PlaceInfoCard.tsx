@@ -6,7 +6,7 @@ import PlaceInfoHeader from "./PlaceInfoHeader";
 
 export default function PlaceInfoCard({ place }: { place: Place }) {
   return (
-    <Card className="flex flex-col h-[calc(100vh-300px)]">
+    <Card className="flex flex-col h-[calc(100vh-400px)]">
       {/* Adjust the height as needed */}
       <PlaceInfoHeader place={place} />
       <CardContent className="flex-grow overflow-hidden p-0">

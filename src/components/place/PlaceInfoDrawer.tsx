@@ -20,7 +20,7 @@ export default function PlaceInfoDrawer({
 }) {
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="flex flex-col h-[85vh]">
+      <DrawerContent className="flex flex-col max-h-[calc(100vh-4rem)]">
         <DrawerHeader className="px-4 py-2">
           <PlaceInfoHeader place={place} />
         </DrawerHeader>

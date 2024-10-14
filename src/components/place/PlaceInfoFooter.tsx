@@ -7,10 +7,10 @@ export default function PlaceInfoFooter() {
       <h2 id="actions-heading" className="sr-only">
         User Actions
       </h2>
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col items-center space-y-4 w-full">
         <Button
           variant="outline"
-          className="w-full max-w-md h-12 flex items-center justify-center"
+          className="w-full h-12 flex items-center justify-center"
           onClick={() => {
             /* Add your report problem logic here */
           }}
@@ -20,7 +20,7 @@ export default function PlaceInfoFooter() {
         </Button>
         <Button
           variant="outline"
-          className="w-full max-w-md h-12 flex items-center justify-center"
+          className="w-full h-12 flex items-center justify-center"
           onClick={() => {
             /* Add your open in maps logic here */
           }}

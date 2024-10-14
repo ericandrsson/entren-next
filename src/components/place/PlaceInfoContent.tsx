@@ -345,8 +345,8 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
                     onClick={() =>
                       handlePhotoClick(
                         allPlacePhotos.findIndex(
-                          (p) => p.photo_id === photo.photo_id
-                        )
+                          (p) => p.photo_id === photo.photo_id,
+                        ),
                       )
                     }
                   >
@@ -355,11 +355,11 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
                       alt={photo.description || ""}
                       width={600}
                       height={400}
-                      className="rounded-md object-cover w-full h-auto"
+                      className="rounded-md object-cover w-full h-auto opacity-50"
                     />
                   </Button>
                   {!isVerified && (
-                    <div className="absolute bottom-2 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
+                    <div className="absolute bottom-4 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
                       Väntar på granskning
                     </div>
                   )}

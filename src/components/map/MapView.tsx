@@ -19,7 +19,7 @@ export default function MapView() {
         <MapWithNoSSR />
       </div>
       {!isMobile && selectedPlace && (
-        <div className="absolute bottom-8 left-8 z-10 max-w-sm">
+        <div className="absolute bottom-8 left-8 z-10 w-full max-w-sm">
           <PlaceInfoCard place={selectedPlace} />
         </div>
       )}
