@@ -336,26 +336,26 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
                 </p>
               </div>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
               {entrance.photos?.map((photo: EntrancePhoto) => (
-                <div key={photo.photo_id} className="relative">
+                <div key={photo.photo_id} className="relative w-full">
                   <Button
                     variant="ghost"
                     className="p-0 w-full h-auto"
                     onClick={() =>
                       handlePhotoClick(
                         allPlacePhotos.findIndex(
-                          (p) => p.photo_id === photo.photo_id,
-                        ),
+                          (p) => p.photo_id === photo.photo_id
+                        )
                       )
                     }
                   >
                     <Image
                       src={getImageUrl(photo.photo_filename)}
                       alt={photo.description || ""}
-                      width={300}
-                      height={200}
-                      className="rounded-md object-cover w-full h-[200px]"
+                      width={600}
+                      height={400}
+                      className="rounded-md object-cover w-full h-auto"
                     />
                   </Button>
                   {!isVerified && (
