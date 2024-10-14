@@ -1,11 +1,5 @@
 import { Button } from "@/src/components/ui/button";
 import {
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -22,12 +16,10 @@ import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
 import {
   AlertCircle,
-  AlertTriangle,
   CheckCircle,
   ChevronDown,
   ChevronUp,
   Clock,
-  Coffee,
   DoorClosed,
   DoorOpen,
   Info,
@@ -45,9 +37,9 @@ import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 
-const log = logger.child({ module: "PlaceInfo" });
+const log = logger.child({ module: "PlaceInfoContent" });
 
-export default function PlaceInfo({ place }: { place: Place }) {
+export default function PlaceInfoContent({ place }: { place: Place }) {
   const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
     new Set(),
   );
@@ -63,7 +55,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
   const supabase = createClient();
 
-  // Add this function to get the public URL with transformations
   const getImageUrl = useCallback(
     (imagePath: string) => {
       const { data } = supabase.storage
@@ -197,15 +188,6 @@ export default function PlaceInfo({ place }: { place: Place }) {
     setIsLoginPromptOpen(false);
     log.debug("login prompt closed");
   }, []);
-
-  const getCategoryIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "coffee shop":
-        return <Coffee className="w-5 h-5" />;
-      default:
-        return <MapPin className="w-5 h-5" />;
-    }
-  };
 
   const getEntranceTypeIcon = (entranceType: string) => {
     switch (entranceType.toLowerCase()) {
@@ -415,66 +397,14 @@ export default function PlaceInfo({ place }: { place: Place }) {
   };
 
   return (
-    <>
-      <CardHeader>
-        {/* Header content */}
-        <div className="grid grid-cols-[auto,1fr] gap-x-2 w-full">
-          <div className="row-span-2 flex items-center">
-            {getCategoryIcon(place.category_name || "unknown")}
-          </div>
-          <div className="flex-grow">
-            <CardTitle className="text-2xl font-bold">{place.name}</CardTitle>
-          </div>
-          <div className="flex items-center">
-            <p className="text-muted-foreground">{place.category_name_sv}</p>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 overflow-y-auto">
-        {/* Scrollable content */}
-        <div className="space-y-6">{renderEntranceSection()}</div>
-      </CardContent>
-
-      <CardFooter>
-        {/* Footer buttons */}
-        <section aria-labelledby="actions-heading" className="mt-6 w-full">
-          <h2 id="actions-heading" className="sr-only">
-            User Actions
-          </h2>
-          <div className="flex flex-col items-center space-y-4">
-            <Button
-              variant="outline"
-              className="w-full max-w-md h-12 flex items-center justify-center"
-              onClick={() => {
-                /* Add your report problem logic here */
-              }}
-            >
-              <AlertTriangle className="mr-2 h-4 w-4" />
-              Rapportera ett problem
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full max-w-md h-12 flex items-center justify-center"
-              onClick={() => {
-                /* Add your open in maps logic here */
-              }}
-            >
-              <MapPin className="mr-2 h-4 w-4" />
-              Öppna i Kartor
-            </Button>
-          </div>
-        </section>
-      </CardFooter>
-
-      {/* Modals and dialogs */}
+    <div className="flex-1 overflow-y-auto p-4">
+      <div className="space-y-6">{renderEntranceSection()}</div>
       <AddEntranceDialog
         place={place}
         isOpen={isAddEntranceDialogOpen}
         onClose={handleCloseAddEntranceDialog}
         onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
       />
-
       <PlacePhotoModal
         photos={allPlacePhotos.map((photo) => ({
           ...photo,
@@ -484,12 +414,11 @@ export default function PlaceInfo({ place }: { place: Place }) {
         onClose={handleClosePhotoDialog}
         isOpen={isPhotoDialogOpen}
       />
-
       <LoginPromptDialog
         appName="Entrén"
         onClose={handleCloseLoginPrompt}
         isOpen={isLoginPromptOpen}
       />
-    </>
+    </div>
   );
 }

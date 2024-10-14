@@ -1,6 +1,13 @@
 import { Place } from "@/src/types/custom.types";
-import { Drawer, DrawerContent } from "../ui/drawer";
-import PlaceInfo from "./PlaceInfo";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+} from "../ui/drawer";
+import PlaceInfoContent from "./PlaceInfoContent";
+import PlaceInfoFooter from "./PlaceInfoFooter";
+import PlaceInfoHeader from "./PlaceInfoHeader";
 
 export default function PlaceInfoDrawer({
   place,
@@ -14,9 +21,13 @@ export default function PlaceInfoDrawer({
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
       <DrawerContent className="bg-white">
-        <div className="p-4">
-          <PlaceInfo place={place} />
-        </div>
+        <DrawerHeader>
+          <PlaceInfoHeader place={place} />
+        </DrawerHeader>
+        <PlaceInfoContent place={place} />
+        <DrawerFooter>
+          <PlaceInfoFooter />
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

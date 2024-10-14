@@ -1,14 +1,26 @@
-import { Card, CardHeader, CardTitle } from "@/src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/src/components/ui/card";
 import { Place } from "../../types/custom.types";
-import PlaceInfo from "./PlaceInfo";
+import PlaceInfoContent from "./PlaceInfoContent";
+import PlaceInfoFooter from "./PlaceInfoFooter";
+import PlaceInfoHeader from "./PlaceInfoHeader";
 
 export default function PlaceInfoCard({ place }: { place: Place }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{place.name}</CardTitle>
+        <PlaceInfoHeader place={place} />
       </CardHeader>
-      <PlaceInfo place={place} />
+      <CardContent>
+        <PlaceInfoContent place={place} />
+      </CardContent>
+      <CardFooter>
+        <PlaceInfoFooter />
+      </CardFooter>
     </Card>
   );
 }
