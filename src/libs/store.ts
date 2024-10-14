@@ -44,6 +44,18 @@ type StoreState = {
   setUserLocation: (
     location: { latitude: number; longitude: number } | null,
   ) => void;
+
+  // New entrance dialog state
+  isAddEntranceDialogOpen: boolean;
+  setIsAddEntranceDialogOpen: (isOpen: boolean) => void;
+
+  // Login prompt state
+  isLoginPromptOpen: boolean;
+  setIsLoginPromptOpen: (isOpen: boolean) => void;
+
+  // User authentication state
+  isUserAuthenticated: boolean;
+  setIsUserAuthenticated: (isAuthenticated: boolean) => void;
 };
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -106,4 +118,16 @@ export const useStore = create<StoreState>((set, get) => ({
   // User location state
   userLocation: null,
   setUserLocation: (location) => set({ userLocation: location }),
+
+  // New entrance dialog state
+  isAddEntranceDialogOpen: false,
+  setIsAddEntranceDialogOpen: (isOpen) => set({ isAddEntranceDialogOpen: isOpen }),
+
+  // Login prompt state
+  isLoginPromptOpen: false,
+  setIsLoginPromptOpen: (isOpen) => set({ isLoginPromptOpen: isOpen }),
+
+  // User authentication state
+  isUserAuthenticated: false,
+  setIsUserAuthenticated: (isAuthenticated) => set({ isUserAuthenticated: isAuthenticated }),
 }));

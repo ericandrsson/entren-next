@@ -33,10 +33,24 @@ import { Entrance, EntrancePhoto, Place } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
+import { useStore } from "@/src/libs/store";
 
 const log = logger.child({ module: "PlaceInfoContent" });
 
-export default function PlaceInfoContent({ place }: { place: Place }) {
+export default function PlaceInfoContent({
+  place,
+  onEntranceCountChange,
+}: {
+  place: Place;
+  onEntranceCountChange: (count: number) => void;
+}) {
+  const { 
+    isAddEntranceDialogOpen, 
+    setIsAddEntranceDialogOpen, 
+    isLoginPromptOpen, 
+    setIsLoginPromptOpen,
+    isUserAuthenticated
+  } = useStore();
   const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
     new Set(),
   );
@@ -44,9 +58,6 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
-  const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
-  const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,7 +85,6 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      setIsUserAuthenticated(!!user);
       setUser(user);
       log.info("user authentication checked", { isAuthenticated: !!user });
     };
@@ -107,6 +117,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
       );
 
       setEntrances(filteredEntrances);
+      onEntranceCountChange(filteredEntrances.length);
       if (filteredEntrances.length > 0) {
         setExpandedEntrances(new Set([filteredEntrances[0].entrance_id]));
       }
@@ -124,7 +135,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
     };
 
     fetchEntrances();
-  }, [place.place_id, supabase, user]);
+  }, [place.place_id, supabase, user, onEntranceCountChange]);
 
   const handleEntranceExpand = useCallback((entranceId: number) => {
     setExpandedEntrances((prev) => {
@@ -158,7 +169,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
     log.debug("photo dialog closed");
   };
 
-  const handleAddEntrance = useCallback(() => {
+  const handleAddEntranceClick = useCallback(() => {
     if (isUserAuthenticated) {
       setIsAddEntranceDialogOpen(true);
       log.info("add entrance dialog opened", { isAuthenticated: true });
@@ -168,7 +179,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
         isAuthenticated: false,
       });
     }
-  }, [isUserAuthenticated]);
+  }, [isUserAuthenticated, setIsAddEntranceDialogOpen, setIsLoginPromptOpen]);
 
   const handleCloseAddEntranceDialog = () => {
     setIsAddEntranceDialogOpen(false);
@@ -184,7 +195,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
   const handleCloseLoginPrompt = useCallback(() => {
     setIsLoginPromptOpen(false);
     log.debug("login prompt closed");
-  }, []);
+  }, [setIsLoginPromptOpen]);
 
   const getEntranceTypeIcon = (entranceType: string) => {
     switch (entranceType.toLowerCase()) {
@@ -202,50 +213,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
       return <div className="py-4">Loading...</div>;
     }
 
-    if (entrances.length > 0) {
-      const verifiedEntrances = entrances.filter((e) => e.status !== "pending");
-      const pendingEntrances = entrances.filter((e) => e.status === "pending");
-
-      return (
-        <>
-          {verifiedEntrances.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
-                Verifierade entréer
-              </h3>
-              <ul className="space-y-4">
-                {verifiedEntrances.map((entrance) => (
-                  <EntranceItem
-                    key={entrance.entrance_id}
-                    entrance={entrance}
-                    isVerified={true}
-                  />
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {pendingEntrances.length > 0 && (
-            <div className="space-y-4 mt-6">
-              <h3 className="text-lg font-semibold flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-yellow-600" />
-                Obekräftade entréer
-              </h3>
-              <ul className="space-y-4">
-                {pendingEntrances.map((entrance) => (
-                  <EntranceItem
-                    key={`pending-${entrance.entrance_id}`}
-                    entrance={entrance}
-                    isVerified={false}
-                  />
-                ))}
-              </ul>
-            </div>
-          )}
-        </>
-      );
-    } else {
+    if (entrances.length === 0) {
       return (
         <div className="text-center py-6">
           <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
@@ -258,16 +226,52 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
             tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
             platsen en välkomnande high-five för alla besökare!
           </p>
-          <Button
-            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200"
-            onClick={handleAddEntrance}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Skapa ny entré
-          </Button>
         </div>
       );
     }
+
+    const verifiedEntrances = entrances.filter((e) => e.status !== "pending");
+    const pendingEntrances = entrances.filter((e) => e.status === "pending");
+
+    return (
+      <>
+        {verifiedEntrances.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold flex items-center">
+              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+              Verifierade entréer
+            </h3>
+            <ul className="space-y-4">
+              {verifiedEntrances.map((entrance) => (
+                <EntranceItem
+                  key={entrance.entrance_id}
+                  entrance={entrance}
+                  isVerified={true}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {pendingEntrances.length > 0 && (
+          <div className="space-y-4 mt-6">
+            <h3 className="text-lg font-semibold flex items-center">
+              <Clock className="w-5 h-5 mr-2 text-yellow-600" />
+              Obekräftade entréer
+            </h3>
+            <ul className="space-y-4">
+              {pendingEntrances.map((entrance) => (
+                <EntranceItem
+                  key={`pending-${entrance.entrance_id}`}
+                  entrance={entrance}
+                  isVerified={false}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+      </>
+    );
   };
 
   const EntranceItem = ({
@@ -374,19 +378,6 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center p-4">
-        <h2 id="entrances-heading" className="text-xl font-bold">
-          Entréer
-        </h2>
-        <Button
-          variant="outline"
-          onClick={handleAddEntrance}
-          className="border-blue-300 hover:border-blue-400 transition-colors duration-200"
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Skapa ny entré
-        </Button>
-      </div>
       <ScrollArea className="flex-grow">
         <div className="p-4 space-y-6">{renderEntranceSection()}</div>
       </ScrollArea>
