@@ -202,7 +202,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
 
   const renderEntranceSection = () => {
     if (isLoading) {
-      return <div>Loading...</div>;
+      return <div className="py-4">Loading...</div>;
     }
 
     if (entrances.length > 0) {
@@ -210,9 +210,9 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
       const pendingEntrances = entrances.filter((e) => e.status === "pending");
 
       return (
-        <section aria-labelledby="entrances-heading" className="space-y-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 id="entrances-heading" className="text-2xl font-bold">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 id="entrances-heading" className="text-xl font-bold">
               Entréer
             </h2>
             <Button
@@ -227,7 +227,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
 
           {verifiedEntrances.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold flex items-center">
+              <h3 className="text-lg font-semibold flex items-center">
                 <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Verifierade entréer
               </h3>
@@ -244,8 +244,8 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
           )}
 
           {pendingEntrances.length > 0 && (
-            <div className="space-y-4 mt-8">
-              <h3 className="text-xl font-semibold flex items-center">
+            <div className="space-y-4 mt-6">
+              <h3 className="text-lg font-semibold flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-yellow-600" />
                 Väntande entréer
               </h3>
@@ -260,20 +260,13 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
               </ul>
             </div>
           )}
-
-          {verifiedEntrances.length === 0 && pendingEntrances.length === 0 && (
-            <p>No entrances found.</p>
-          )}
-        </section>
+        </div>
       );
     } else {
       return (
-        <section
-          aria-labelledby="no-entrances-heading"
-          className="text-center py-6"
-        >
+        <div className="text-center py-6">
           <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
-          <h2 id="no-entrances-heading" className="text-xl font-semibold mb-2">
+          <h2 className="text-xl font-semibold mb-2">
             Oj då! Den här platsen saknar entréinformation
           </h2>
           <p className="text-muted-foreground mb-4">
@@ -289,7 +282,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
             <PlusCircle className="mr-2 h-4 w-4" />
             Skapa ny entré
           </Button>
-        </section>
+        </div>
       );
     }
   };
@@ -304,13 +297,13 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
     const isExpanded = expandedEntrances.has(entrance.entrance_id!);
 
     return (
-      <li>
+      <li className="bg-gray-50 rounded-lg overflow-hidden">
         <Collapsible
           open={isExpanded}
           onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}
         >
           <CollapsibleTrigger asChild>
-            <Button variant="outline" className="w-full justify-between">
+            <Button variant="ghost" className="w-full justify-between p-4">
               <span className="flex items-center">
                 {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
                 <span className="ml-2">{entrance.entrance_type_name_sv}</span>
@@ -341,7 +334,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
               )}
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent className="p-2">
+          <CollapsibleContent className="p-4">
             {!isVerified && (
               <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
                 <p className="text-sm font-medium text-gray-900">
@@ -360,7 +353,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
                 </p>
               </div>
             )}
-            <div className="grid grid-cols-1 gap-2 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {entrance.photos?.map((photo: EntrancePhoto) => (
                 <div key={photo.photo_id} className="relative">
                   <Button
@@ -379,7 +372,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
                       alt={photo.description || ""}
                       width={300}
                       height={200}
-                      className="rounded-md object-cover w-full max-w-[300px] max-h-[200px]"
+                      className="rounded-md object-cover w-full h-[200px]"
                     />
                   </Button>
                   {!isVerified && (
@@ -397,8 +390,8 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4">
-      <div className="space-y-6">{renderEntranceSection()}</div>
+    <div className="space-y-6">
+      {renderEntranceSection()}
       <AddEntranceDialog
         place={place}
         isOpen={isAddEntranceDialogOpen}
