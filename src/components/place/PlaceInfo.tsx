@@ -1,11 +1,15 @@
 import { Button } from "@/src/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
+import {
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/src/components/ui/collapsible";
-import { ScrollArea } from "@/src/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
@@ -40,26 +44,6 @@ import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 
 const log = logger.child({ module: "PlaceInfo" });
-
-const getCategoryIcon = (category: string) => {
-  switch (category.toLowerCase()) {
-    case "coffee shop":
-      return <Coffee className="w-5 h-5" />;
-    default:
-      return <MapPin className="w-5 h-5" />;
-  }
-};
-
-const getEntranceTypeIcon = (entranceType: string) => {
-  switch (entranceType.toLowerCase()) {
-    case "huvudentré":
-      return <DoorOpen className="w-6 h-6 text-blue-600" />;
-    case "sidoentré":
-      return <DoorClosed className="w-6 h-6 text-green-600" />;
-    default:
-      return <MapPin className="w-6 h-6 text-gray-600" />;
-  }
-};
 
 export default function PlaceInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
@@ -176,6 +160,31 @@ export default function PlaceInfo({ place }: { place: Place }) {
     // Logic to save the entrance and reset the form
     // This will be implemented in the AddEntranceDialog component
     log.info("save and add another entrance requested");
+  };
+
+  const handleCloseLoginPrompt = useCallback(() => {
+    setIsLoginPromptOpen(false);
+    log.debug("login prompt closed");
+  }, []);
+
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "coffee shop":
+        return <Coffee className="w-5 h-5" />;
+      default:
+        return <MapPin className="w-5 h-5" />;
+    }
+  };
+
+  const getEntranceTypeIcon = (entranceType: string) => {
+    switch (entranceType.toLowerCase()) {
+      case "huvudentré":
+        return <DoorOpen className="w-6 h-6 text-blue-600" />;
+      case "sidoentré":
+        return <DoorClosed className="w-6 h-6 text-green-600" />;
+      default:
+        return <MapPin className="w-6 h-6 text-gray-600" />;
+    }
   };
 
   const renderEntranceSection = () => {
@@ -365,14 +374,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
     </li>
   );
 
-  const handleCloseLoginPrompt = useCallback(() => {
-    setIsLoginPromptOpen(false);
-    log.debug("login prompt closed");
-  }, []);
-
   return (
     <>
       <CardHeader>
+        {/* Header content */}
         <div className="flex flex-col w-full">
           <div className="flex items-start space-x-2 w-full">
             {getCategoryIcon(place.category_name || "unknown")}
@@ -389,42 +394,44 @@ export default function PlaceInfo({ place }: { place: Place }) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <ScrollArea>
-          <div className="space-y-6">
-            {renderEntranceSection()}
 
-            <section aria-labelledby="actions-heading" className="mt-6">
-              <h2 id="actions-heading" className="sr-only">
-                User Actions
-              </h2>
-              <div className="flex flex-col items-center space-y-4">
-                <Button
-                  variant="outline"
-                  className="w-full max-w-md h-12 flex items-center justify-center"
-                  onClick={() => {
-                    /* Add your report problem logic here */
-                  }}
-                >
-                  <AlertTriangle className="mr-2 h-4 w-4" />
-                  Rapportera ett problem
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full max-w-md h-12 flex items-center justify-center"
-                  onClick={() => {
-                    /* Add your open in maps logic here */
-                  }}
-                >
-                  <MapPin className="mr-2 h-4 w-4" />
-                  Öppna i Kartor
-                </Button>
-              </div>
-            </section>
-          </div>
-        </ScrollArea>
+      <CardContent className="flex-1 overflow-y-auto">
+        {/* Scrollable content */}
+        <div className="space-y-6">{renderEntranceSection()}</div>
       </CardContent>
 
+      <CardFooter>
+        {/* Footer buttons */}
+        <section aria-labelledby="actions-heading" className="mt-6 w-full">
+          <h2 id="actions-heading" className="sr-only">
+            User Actions
+          </h2>
+          <div className="flex flex-col items-center space-y-4">
+            <Button
+              variant="outline"
+              className="w-full max-w-md h-12 flex items-center justify-center"
+              onClick={() => {
+                /* Add your report problem logic here */
+              }}
+            >
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Rapportera ett problem
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full max-w-md h-12 flex items-center justify-center"
+              onClick={() => {
+                /* Add your open in maps logic here */
+              }}
+            >
+              <MapPin className="mr-2 h-4 w-4" />
+              Öppna i Kartor
+            </Button>
+          </div>
+        </section>
+      </CardFooter>
+
+      {/* Modals and dialogs */}
       <AddEntranceDialog
         place={place}
         isOpen={isAddEntranceDialogOpen}

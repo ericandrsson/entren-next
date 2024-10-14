@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: [
+      "localhost",
       "http://supabasekong-dgs0g8gwgs8s8kg08ss4k8gk.135.181.108.171.sslip.io",
       "images.unsplash.com",
       "plus.unsplash.com",
