@@ -37,7 +37,7 @@ export default function PlacePhotoGallery({
     <div className="relative">
       <div className="flex justify-center items-center">
         <Image
-          src={currentPhoto.photo_url!}
+          src={currentPhoto.photo_filename!}
           alt={currentPhoto.description || ""}
           width={800}
           height={600}

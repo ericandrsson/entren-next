@@ -266,22 +266,18 @@ export default function AddEntranceDialog({
     }
 
     try {
-      let photoUrl = null;
+      let photoFileName = null;
       if (data.photo) {
         log.debug("uploading photo");
-        const fileName = `entrance_${Date.now()}.jpg`;
+        const fileName = `place_${place.place_id}_entrance_${Date.now()}.jpg`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("place_entrance_photos")
           .upload(fileName, data.photo);
 
         if (uploadError) throw uploadError;
 
-        const { data: urlData } = supabase.storage
-          .from("place_entrance_photos")
-          .getPublicUrl(fileName);
-
-        photoUrl = urlData.publicUrl;
-        log.debug({ photoUrl }, "photo uploaded successfully");
+        photoFileName = fileName;
+        log.debug({ photoFileName }, "photo uploaded successfully");
       }
 
       const changeData: EntranceEntitySchema = {
@@ -291,7 +287,7 @@ export default function AddEntranceDialog({
           long: parseFloat(data.location.lng!),
         },
         place_id: place.place_id || "",
-        photo_url: photoUrl || "",
+        photo_filename: photoFileName || "",
       };
 
       log.debug({ changeData }, "adding entity change");

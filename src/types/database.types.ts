@@ -4,506 +4,506 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export type Database = {
   public: {
     Tables: {
       custom_places: {
         Row: {
-          category_id: number | null
-          created_at: string
-          created_by: string | null
-          id: number
-          location: unknown | null
-          name: string | null
-          updated_at: string
-        }
+          category_id: number | null;
+          created_at: string;
+          created_by: string | null;
+          id: number;
+          location: unknown | null;
+          name: string | null;
+          updated_at: string;
+        };
         Insert: {
-          category_id?: number | null
-          created_at?: string
-          created_by?: string | null
-          id?: number
-          location?: unknown | null
-          name?: string | null
-          updated_at?: string
-        }
+          category_id?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: number;
+          location?: unknown | null;
+          name?: string | null;
+          updated_at?: string;
+        };
         Update: {
-          category_id?: number | null
-          created_at?: string
-          created_by?: string | null
-          id?: number
-          location?: unknown | null
-          name?: string | null
-          updated_at?: string
-        }
+          category_id?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: number;
+          location?: unknown | null;
+          name?: string | null;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "custom_places_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "custom_places_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       "entity_changes_audit ": {
         Row: {
-          action_type: string
-          audit_timestamp: string | null
-          change_data: Json
-          entity_id: number
-          entity_type: string
-          id: number
-          reviewed_at: string
-          reviewed_by: string | null
-          staging_change_id: number | null
-          status: string
-          user_id: string | null
-        }
+          action_type: string;
+          audit_timestamp: string | null;
+          change_data: Json;
+          entity_id: number;
+          entity_type: string;
+          id: number;
+          reviewed_at: string;
+          reviewed_by: string | null;
+          staging_change_id: number | null;
+          status: string;
+          user_id: string | null;
+        };
         Insert: {
-          action_type: string
-          audit_timestamp?: string | null
-          change_data: Json
-          entity_id: number
-          entity_type: string
-          id?: number
-          reviewed_at: string
-          reviewed_by?: string | null
-          staging_change_id?: number | null
-          status: string
-          user_id?: string | null
-        }
+          action_type: string;
+          audit_timestamp?: string | null;
+          change_data: Json;
+          entity_id: number;
+          entity_type: string;
+          id?: number;
+          reviewed_at: string;
+          reviewed_by?: string | null;
+          staging_change_id?: number | null;
+          status: string;
+          user_id?: string | null;
+        };
         Update: {
-          action_type?: string
-          audit_timestamp?: string | null
-          change_data?: Json
-          entity_id?: number
-          entity_type?: string
-          id?: number
-          reviewed_at?: string
-          reviewed_by?: string | null
-          staging_change_id?: number | null
-          status?: string
-          user_id?: string | null
-        }
+          action_type?: string;
+          audit_timestamp?: string | null;
+          change_data?: Json;
+          entity_id?: number;
+          entity_type?: string;
+          id?: number;
+          reviewed_at?: string;
+          reviewed_by?: string | null;
+          staging_change_id?: number | null;
+          status?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "entity_changes_audit _reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "entity_changes_audit _reviewed_by_fkey";
+            columns: ["reviewed_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "entity_changes_audit _user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "entity_changes_audit _user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       entity_changes_staging: {
         Row: {
-          action_type: string
-          change_data: Json
-          entity_id: string | null
-          entity_type: string
-          id: number
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          submitted_at: string
-          user_id: string | null
-        }
+          action_type: string;
+          change_data: Json;
+          entity_id: string | null;
+          entity_type: string;
+          id: number;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: string;
+          submitted_at: string;
+          user_id: string | null;
+        };
         Insert: {
-          action_type: string
-          change_data: Json
-          entity_id?: string | null
-          entity_type: string
-          id?: number
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          submitted_at?: string
-          user_id?: string | null
-        }
+          action_type: string;
+          change_data: Json;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: number;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          submitted_at?: string;
+          user_id?: string | null;
+        };
         Update: {
-          action_type?: string
-          change_data?: Json
-          entity_id?: string | null
-          entity_type?: string
-          id?: number
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          submitted_at?: string
-          user_id?: string | null
-        }
+          action_type?: string;
+          change_data?: Json;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: number;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          submitted_at?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "entity_changes_staging_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "entity_changes_staging_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       entity_json_schemas: {
         Row: {
-          entity_type: string
-          json_schema: Json
-        }
+          entity_type: string;
+          json_schema: Json;
+        };
         Insert: {
-          entity_type: string
-          json_schema: Json
-        }
+          entity_type: string;
+          json_schema: Json;
+        };
         Update: {
-          entity_type?: string
-          json_schema?: Json
-        }
-        Relationships: []
-      }
+          entity_type?: string;
+          json_schema?: Json;
+        };
+        Relationships: [];
+      };
       entrance_types: {
         Row: {
-          created_at: string
-          description: string | null
-          description_sv: string | null
-          id: number
-          is_active: boolean
-          max_per_place: number | null
-          name: string
-          name_sv: string
-          updated_at: string
-        }
+          created_at: string;
+          description: string | null;
+          description_sv: string | null;
+          id: number;
+          is_active: boolean;
+          max_per_place: number | null;
+          name: string;
+          name_sv: string;
+          updated_at: string;
+        };
         Insert: {
-          created_at?: string
-          description?: string | null
-          description_sv?: string | null
-          id?: number
-          is_active?: boolean
-          max_per_place?: number | null
-          name: string
-          name_sv: string
-          updated_at?: string
-        }
+          created_at?: string;
+          description?: string | null;
+          description_sv?: string | null;
+          id?: number;
+          is_active?: boolean;
+          max_per_place?: number | null;
+          name: string;
+          name_sv: string;
+          updated_at?: string;
+        };
         Update: {
-          created_at?: string
-          description?: string | null
-          description_sv?: string | null
-          id?: number
-          is_active?: boolean
-          max_per_place?: number | null
-          name?: string
-          name_sv?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          description?: string | null;
+          description_sv?: string | null;
+          id?: number;
+          is_active?: boolean;
+          max_per_place?: number | null;
+          name?: string;
+          name_sv?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       place_categories: {
         Row: {
-          category_id: number
-          created_at: string
-          name: string
-          name_sv: string
-          parent_category_id: number | null
-          updated_at: string | null
-        }
+          category_id: number;
+          created_at: string;
+          name: string;
+          name_sv: string;
+          parent_category_id: number | null;
+          updated_at: string | null;
+        };
         Insert: {
-          category_id?: number
-          created_at?: string
-          name: string
-          name_sv: string
-          parent_category_id?: number | null
-          updated_at?: string | null
-        }
+          category_id?: number;
+          created_at?: string;
+          name: string;
+          name_sv: string;
+          parent_category_id?: number | null;
+          updated_at?: string | null;
+        };
         Update: {
-          category_id?: number
-          created_at?: string
-          name?: string
-          name_sv?: string
-          parent_category_id?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+          category_id?: number;
+          created_at?: string;
+          name?: string;
+          name_sv?: string;
+          parent_category_id?: number | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       place_entrance_photos: {
         Row: {
-          created_at: string
-          description: string | null
-          entrance_id: number | null
-          photo_id: number
-          photo_url: string | null
-          place_id: string | null
-          updated_at: string | null
-          uploaded_by: string | null
-        }
+          created_at: string;
+          description: string | null;
+          entrance_id: number | null;
+          photo_id: number;
+          photo_filename: string | null;
+          place_id: string | null;
+          updated_at: string | null;
+          uploaded_by: string | null;
+        };
         Insert: {
-          created_at?: string
-          description?: string | null
-          entrance_id?: number | null
-          photo_id?: number
-          photo_url?: string | null
-          place_id?: string | null
-          updated_at?: string | null
-          uploaded_by?: string | null
-        }
+          created_at?: string;
+          description?: string | null;
+          entrance_id?: number | null;
+          photo_id?: number;
+          photo_filename?: string | null;
+          place_id?: string | null;
+          updated_at?: string | null;
+          uploaded_by?: string | null;
+        };
         Update: {
-          created_at?: string
-          description?: string | null
-          entrance_id?: number | null
-          photo_id?: number
-          photo_url?: string | null
-          place_id?: string | null
-          updated_at?: string | null
-          uploaded_by?: string | null
-        }
+          created_at?: string;
+          description?: string | null;
+          entrance_id?: number | null;
+          photo_id?: number;
+          photo_filename?: string | null;
+          place_id?: string | null;
+          updated_at?: string | null;
+          uploaded_by?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "place_entrance_photos_uploaded_by_fkey"
-            columns: ["uploaded_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "place_entrance_photos_uploaded_by_fkey";
+            columns: ["uploaded_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       place_entrances: {
         Row: {
-          accessibility_info: Json | null
-          created_at: string | null
-          created_by: string | null
-          entrance_id: number
-          entrance_type_id: number
-          location: unknown | null
-          place_id: string
-          updated_at: string | null
-        }
+          accessibility_info: Json | null;
+          created_at: string | null;
+          created_by: string | null;
+          entrance_id: number;
+          entrance_type_id: number;
+          location: unknown | null;
+          place_id: string;
+          updated_at: string | null;
+        };
         Insert: {
-          accessibility_info?: Json | null
-          created_at?: string | null
-          created_by?: string | null
-          entrance_id?: number
-          entrance_type_id: number
-          location?: unknown | null
-          place_id: string
-          updated_at?: string | null
-        }
+          accessibility_info?: Json | null;
+          created_at?: string | null;
+          created_by?: string | null;
+          entrance_id?: number;
+          entrance_type_id: number;
+          location?: unknown | null;
+          place_id: string;
+          updated_at?: string | null;
+        };
         Update: {
-          accessibility_info?: Json | null
-          created_at?: string | null
-          created_by?: string | null
-          entrance_id?: number
-          entrance_type_id?: number
-          location?: unknown | null
-          place_id?: string
-          updated_at?: string | null
-        }
+          accessibility_info?: Json | null;
+          created_at?: string | null;
+          created_by?: string | null;
+          entrance_id?: number;
+          entrance_type_id?: number;
+          location?: unknown | null;
+          place_id?: string;
+          updated_at?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "place_entrances_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "place_entrances_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       place_osm_tag_to_category: {
         Row: {
-          category_id: number | null
-          created_at: string
-          id: number
-          priority: number
-          tag_key: string
-          tag_value: string
-          updated_at: string | null
-        }
+          category_id: number | null;
+          created_at: string;
+          id: number;
+          priority: number;
+          tag_key: string;
+          tag_value: string;
+          updated_at: string | null;
+        };
         Insert: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          priority?: number
-          tag_key: string
-          tag_value: string
-          updated_at?: string | null
-        }
+          category_id?: number | null;
+          created_at?: string;
+          id?: number;
+          priority?: number;
+          tag_key: string;
+          tag_value: string;
+          updated_at?: string | null;
+        };
         Update: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          priority?: number
-          tag_key?: string
-          tag_value?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+          category_id?: number | null;
+          created_at?: string;
+          id?: number;
+          priority?: number;
+          tag_key?: string;
+          tag_value?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       user_notifications: {
         Row: {
-          created_at: string | null
-          is_read: boolean | null
-          message: string
-          notification_id: number
-          user_id: string | null
-        }
+          created_at: string | null;
+          is_read: boolean | null;
+          message: string;
+          notification_id: number;
+          user_id: string | null;
+        };
         Insert: {
-          created_at?: string | null
-          is_read?: boolean | null
-          message: string
-          notification_id?: number
-          user_id?: string | null
-        }
+          created_at?: string | null;
+          is_read?: boolean | null;
+          message: string;
+          notification_id?: number;
+          user_id?: string | null;
+        };
         Update: {
-          created_at?: string | null
-          is_read?: boolean | null
-          message?: string
-          notification_id?: number
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+          created_at?: string | null;
+          is_read?: boolean | null;
+          message?: string;
+          notification_id?: number;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
-          created_at: string
-          email: string | null
-          first_name: string | null
-          id: string
-          last_name: string | null
-          updated_at: string | null
-        }
+          created_at: string;
+          email: string | null;
+          first_name: string | null;
+          id: string;
+          last_name: string | null;
+          updated_at: string | null;
+        };
         Insert: {
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          updated_at?: string | null
-        }
+          created_at?: string;
+          email?: string | null;
+          first_name?: string | null;
+          id: string;
+          last_name?: string | null;
+          updated_at?: string | null;
+        };
         Update: {
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-    }
+          created_at?: string;
+          email?: string | null;
+          first_name?: string | null;
+          id?: string;
+          last_name?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Views: {
       detailed_entrances_view: {
         Row: {
-          accessibility_info: Json | null
-          created_at: string | null
-          created_by: string | null
-          entrance_id: string | null
-          entrance_type_description: string | null
-          entrance_type_description_sv: string | null
-          entrance_type_id: number | null
-          entrance_type_name: string | null
-          entrance_type_name_sv: string | null
-          location: unknown | null
-          photos: Json | null
-          place_id: string | null
-          status: string | null
-          updated_at: string | null
-        }
-        Relationships: []
-      }
+          accessibility_info: Json | null;
+          created_at: string | null;
+          created_by: string | null;
+          entrance_id: string | null;
+          entrance_type_description: string | null;
+          entrance_type_description_sv: string | null;
+          entrance_type_id: number | null;
+          entrance_type_name: string | null;
+          entrance_type_name_sv: string | null;
+          location: unknown | null;
+          photos: Json | null;
+          place_id: string | null;
+          status: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [];
+      };
       detailed_places_view: {
         Row: {
-          category_id: number | null
-          category_name: string | null
-          category_name_sv: string | null
-          created_at: string | null
-          created_by: string | null
-          has_entrances: boolean | null
-          lat: number | null
-          location: unknown | null
-          long: number | null
-          name: string | null
-          parent_category_id: number | null
-          parent_category_name: string | null
-          parent_category_name_sv: string | null
-          place_id: string | null
-          source: string | null
-          updated_at: string | null
-        }
-        Relationships: []
-      }
-    }
+          category_id: number | null;
+          category_name: string | null;
+          category_name_sv: string | null;
+          created_at: string | null;
+          created_by: string | null;
+          has_entrances: boolean | null;
+          lat: number | null;
+          location: unknown | null;
+          long: number | null;
+          name: string | null;
+          parent_category_id: number | null;
+          parent_category_name: string | null;
+          parent_category_name_sv: string | null;
+          place_id: string | null;
+          source: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       add_entity_change: {
         Args: {
-          p_user_id: string
-          p_entity_id?: string
-          p_entity_type?: string
-          p_action_type?: string
-          p_change_data?: Json
-        }
-        Returns: number
-      }
+          p_user_id: string;
+          p_entity_id?: string;
+          p_entity_type?: string;
+          p_action_type?: string;
+          p_change_data?: Json;
+        };
+        Returns: number;
+      };
       check_email_exists: {
         Args: {
-          email: string
-        }
-        Returns: boolean
-      }
+          email: string;
+        };
+        Returns: boolean;
+      };
       get_category_id_from_osm_tags: {
         Args: {
-          tags: unknown
-        }
-        Returns: number
-      }
+          tags: unknown;
+        };
+        Returns: number;
+      };
       get_entrance_type_counts: {
         Args: {
-          p_place_id: string
-        }
+          p_place_id: string;
+        };
         Returns: {
-          entrance_type_id: number
-          count: number
-        }[]
-      }
+          entrance_type_id: number;
+          count: number;
+        }[];
+      };
       get_nearest_places: {
         Args: {
-          user_lat: number
-          user_long: number
-          limit_count?: number
-          max_distance_meters?: number
-        }
+          user_lat: number;
+          user_long: number;
+          limit_count?: number;
+          max_distance_meters?: number;
+        };
         Returns: {
-          id: string
-          name: string
-          lat: number
-          long: number
-          distance_meters: number
-          created_at: string
-          updated_at: string
-          osm_tags: Json
-          user_id: string
-          category_name: string
-          parent_category_name: string
-        }[]
-      }
+          id: string;
+          name: string;
+          lat: number;
+          long: number;
+          distance_meters: number;
+          created_at: string;
+          updated_at: string;
+          osm_tags: Json;
+          user_id: string;
+          category_name: string;
+          parent_category_name: string;
+        }[];
+      };
       refresh_detailed_places_view: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-    }
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+    };
     Enums: {
-      contribution_action: "ADD" | "UPDATE" | "REPORT" | "PHOTO_UPLOAD"
-      contribution_status: "PENDING" | "APPROVED" | "REJECTED"
-    }
+      contribution_action: "ADD" | "UPDATE" | "REPORT" | "PHOTO_UPLOAD";
+      contribution_status: "PENDING" | "APPROVED" | "REJECTED";
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type PublicSchema = Database[Extract<keyof Database, "public">];
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -516,7 +516,7 @@ export type Tables<
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
@@ -524,11 +524,11 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
+        Row: infer R;
       }
       ? R
       : never
-    : never
+    : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -539,17 +539,17 @@ export type TablesInsert<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
+        Insert: infer I;
       }
       ? I
       : never
-    : never
+    : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -560,17 +560,17 @@ export type TablesUpdate<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
+        Update: infer U;
       }
       ? U
       : never
-    : never
+    : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -583,5 +583,4 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
-
+    : never;

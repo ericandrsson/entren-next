@@ -24,6 +24,8 @@ import {
   AlertCircle,
   AlertTriangle,
   CheckCircle,
+  ChevronDown,
+  ChevronUp,
   Clock,
   Coffee,
   DoorClosed,
@@ -31,8 +33,6 @@ import {
   Info,
   MapPin,
   PlusCircle,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -48,7 +48,9 @@ import PlacePhotoModal from "./PlacePhotoModal";
 const log = logger.child({ module: "PlaceInfo" });
 
 export default function PlaceInfo({ place }: { place: Place }) {
-  const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(new Set());
+  const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
+    new Set(),
+  );
   const [entrances, setEntrances] = useState<DetailedEntrance[]>([]);
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
@@ -60,6 +62,24 @@ export default function PlaceInfo({ place }: { place: Place }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
+
+  // Add this function to get the public URL with transformations
+  const getImageUrl = useCallback(
+    (imagePath: string) => {
+      const { data } = supabase.storage
+        .from("place_entrance_photos")
+        .getPublicUrl(imagePath, {
+          transform: {
+            width: 300,
+            height: 200,
+            resize: "cover",
+          },
+        });
+      log.debug("image url", { publicUrl: data?.publicUrl });
+      return data?.publicUrl;
+    },
+    [supabase],
+  );
 
   useEffect(() => {
     const checkUserAuth = async () => {
@@ -125,13 +145,13 @@ export default function PlaceInfo({ place }: { place: Place }) {
         newSet.delete(entranceId);
         log.debug("entrance expansion toggled", {
           entranceId,
-          newState: 'collapsed',
+          newState: "collapsed",
         });
       } else {
         newSet.add(entranceId);
         log.debug("entrance expansion toggled", {
           entranceId,
-          newState: 'expanded',
+          newState: "expanded",
         });
       }
       return newSet;
@@ -373,7 +393,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
                     }
                   >
                     <Image
-                      src={photo.photo_url}
+                      src={getImageUrl(photo.photo_filename)}
                       alt={photo.description || ""}
                       width={300}
                       height={200}
@@ -398,19 +418,15 @@ export default function PlaceInfo({ place }: { place: Place }) {
     <>
       <CardHeader>
         {/* Header content */}
-        <div className="flex flex-col w-full">
-          <div className="flex items-start space-x-2 w-full">
+        <div className="grid grid-cols-[auto,1fr] gap-x-2 w-full">
+          <div className="row-span-2 flex items-center">
             {getCategoryIcon(place.category_name || "unknown")}
-            <div className="flex-grow">
-              <CardTitle className="text-2xl font-bold">{place.name}</CardTitle>
-              <div className="flex items-center space-x-2">
-                <p className="text-muted-foreground">
-                  {place.category_name_sv}
-                </p>
-                <span className="text-muted-foreground">•</span>
-                <p className="text-sm text-muted-foreground">placeholder</p>
-              </div>
-            </div>
+          </div>
+          <div className="flex-grow">
+            <CardTitle className="text-2xl font-bold">{place.name}</CardTitle>
+          </div>
+          <div className="flex items-center">
+            <p className="text-muted-foreground">{place.category_name_sv}</p>
           </div>
         </div>
       </CardHeader>
@@ -460,7 +476,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
       />
 
       <PlacePhotoModal
-        photos={allPlacePhotos}
+        photos={allPlacePhotos.map((photo) => ({
+          ...photo,
+          photo_filename: getImageUrl(photo.photo_filename),
+        }))}
         initialPhotoIndex={selectedPhotoIndex}
         onClose={handleClosePhotoDialog}
         isOpen={isPhotoDialogOpen}

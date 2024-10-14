@@ -6,14 +6,14 @@ export type EntranceEntitySchema = {
     lat: number;
     long: number;
   };
-  photo_url: string;
+  photo_filename: string;
   place_id: string;
 };
 
 export type EntrancePhoto = {
   description: string | null;
   photo_id: string;
-  photo_url: string;
+  photo_filename: string;
 };
 
 export type EntranceType =
@@ -31,7 +31,7 @@ export interface Entrances extends EntrancesBase {
 
 export type PhotoEntitySchema = {
   description: string;
-  photo_url: string;
+  photo_filename: string;
   place_id: string;
 };
 
