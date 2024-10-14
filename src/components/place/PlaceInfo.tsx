@@ -54,6 +54,8 @@ export default function PlaceInfo({ place }: { place: Place }) {
   const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
 
@@ -63,6 +65,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
         data: { user },
       } = await supabase.auth.getUser();
       setIsUserAuthenticated(!!user);
+      setUser(user);
       log.info("user authentication checked", { isAuthenticated: !!user });
     };
 
@@ -71,6 +74,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
 
   useEffect(() => {
     const fetchEntrances = async () => {
+      setIsLoading(true);
       log.info("fetching entrances", { placeId: place.place_id });
       const { data, error } = await supabase
         .from("detailed_entrances_view")
@@ -82,27 +86,34 @@ export default function PlaceInfo({ place }: { place: Place }) {
           error: error.message,
           placeId: place.place_id,
         });
+        setIsLoading(false);
         return;
       }
 
       const entrancesData = data as DetailedEntrance[];
-      setEntrances(entrancesData);
-      if (entrancesData.length > 0) {
-        setExpandedEntrance(entrancesData[0].entrance_id);
+      const filteredEntrances = entrancesData.filter(
+        (entrance) =>
+          entrance.status !== "pending" || entrance.created_by === user?.id
+      );
+
+      setEntrances(filteredEntrances);
+      if (filteredEntrances.length > 0) {
+        setExpandedEntrance(filteredEntrances[0].entrance_id);
       }
       setAllPlacePhotos(
-        entrancesData.flatMap((e) => e.photos as EntrancePhoto[]),
+        filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
       );
-      log.info("entrances fetched successfully", {
+      log.info("entrances fetched and filtered successfully", {
         placeId: place.place_id,
-        entranceCount: entrancesData.length,
-        photoCount: entrancesData.flatMap((e) => e.photos as EntrancePhoto[])
+        entranceCount: filteredEntrances.length,
+        photoCount: filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
           .length,
       });
+      setIsLoading(false);
     };
 
     fetchEntrances();
-  }, [place.place_id, supabase]);
+  }, [place.place_id, supabase, user]);
 
   const handleEntranceExpand = useCallback((entranceId: number) => {
     setExpandedEntrance((prev) => {
@@ -151,6 +162,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
   };
 
   const renderEntranceSection = () => {
+    if (isLoading) {
+      return <div>Loading...</div>; // Or a more sophisticated loading indicator
+    }
+
     if (entrances.length > 0) {
       return (
         <section aria-labelledby="entrances-heading">
