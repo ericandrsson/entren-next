@@ -29,11 +29,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import {
-  DetailedEntrance,
-  EntrancePhoto,
-  Place,
-} from "../../types/custom.types";
+import { Entrance, EntrancePhoto, Place } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
@@ -44,7 +40,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
   const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
     new Set(),
   );
-  const [entrances, setEntrances] = useState<DetailedEntrance[]>([]);
+  const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
@@ -104,7 +100,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
         return;
       }
 
-      const entrancesData = data as DetailedEntrance[];
+      const entrancesData = data as Entrance[];
       const filteredEntrances = entrancesData.filter(
         (entrance) =>
           entrance.status !== "pending" || entrance.created_by === user?.id,
@@ -234,7 +230,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
             <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-yellow-600" />
-                Väntande entréer
+                Obekräftade entréer
               </h3>
               <ul className="space-y-4">
                 {pendingEntrances.map((entrance) => (
@@ -278,7 +274,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
     entrance,
     isVerified,
   }: {
-    entrance: DetailedEntrance;
+    entrance: Entrance;
     isVerified: boolean;
   }) => {
     const isExpanded = expandedEntrances.has(entrance.entrance_id!);
@@ -392,9 +388,7 @@ export default function PlaceInfoContent({ place }: { place: Place }) {
         </Button>
       </div>
       <ScrollArea className="flex-grow">
-        <div className="p-4 space-y-6">
-          {renderEntranceSection()}
-        </div>
+        <div className="p-4 space-y-6">{renderEntranceSection()}</div>
       </ScrollArea>
       <AddEntranceDialog
         place={place}
