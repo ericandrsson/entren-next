@@ -20,12 +20,14 @@ export default function PlaceInfoDrawer({
 }) {
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="bg-white">
-        <DrawerHeader>
+      <DrawerContent className="flex flex-col h-[85vh]">
+        <DrawerHeader className="px-4 py-2">
           <PlaceInfoHeader place={place} />
         </DrawerHeader>
-        <PlaceInfoContent place={place} />
-        <DrawerFooter>
+        <div className="flex-grow overflow-hidden">
+          <PlaceInfoContent place={place} />
+        </div>
+        <DrawerFooter className="px-4 py-2">
           <PlaceInfoFooter />
         </DrawerFooter>
       </DrawerContent>
