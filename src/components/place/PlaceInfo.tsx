@@ -26,9 +26,9 @@ import {
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import {
+  DetailedEntrance,
+  EntrancePhoto,
   Place,
-  PlaceEntrancePhoto,
-  PlaceEntranceWithPending,
 } from "../../types/custom.types";
 import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import LoginPromptDialog from "../LoginPromptDialog";
@@ -47,10 +47,8 @@ const getCategoryIcon = (category: string) => {
 
 export default function PlaceInfo({ place }: { place: Place }) {
   const [expandedEntrance, setExpandedEntrance] = useState<number | null>(null);
-  const [entrances, setEntrances] = useState<PlaceEntranceWithPending[]>([]);
-  const [allPlacePhotos, setAllPlacePhotos] = useState<PlaceEntrancePhoto[]>(
-    [],
-  );
+  const [entrances, setEntrances] = useState<DetailedEntrance[]>([]);
+  const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [isAddEntranceDialogOpen, setIsAddEntranceDialogOpen] = useState(false);
@@ -74,12 +72,10 @@ export default function PlaceInfo({ place }: { place: Place }) {
   useEffect(() => {
     const fetchEntrances = async () => {
       log.info("fetching entrances", { placeId: place.place_id });
-      const { data, error } = await supabase.rpc(
-        "get_place_entrances_with_pending",
-        {
-          p_place_id: place.place_id,
-        },
-      );
+      const { data, error } = await supabase
+        .from("detailed_entrances_view")
+        .select("*")
+        .eq("place_id", place.place_id);
 
       if (error) {
         log.error("error fetching entrances", {
@@ -89,20 +85,19 @@ export default function PlaceInfo({ place }: { place: Place }) {
         return;
       }
 
-      const entrancesData = data as PlaceEntranceWithPending[];
+      const entrancesData = data as DetailedEntrance[];
       setEntrances(entrancesData);
       if (entrancesData.length > 0) {
         setExpandedEntrance(entrancesData[0].entrance_id);
       }
       setAllPlacePhotos(
-        entrancesData.flatMap((e) => e.photos as PlaceEntrancePhoto[]),
+        entrancesData.flatMap((e) => e.photos as EntrancePhoto[]),
       );
       log.info("entrances fetched successfully", {
         placeId: place.place_id,
         entranceCount: entrancesData.length,
-        photoCount: entrancesData.flatMap(
-          (e) => e.photos as PlaceEntrancePhoto[],
-        ).length,
+        photoCount: entrancesData.flatMap((e) => e.photos as EntrancePhoto[])
+          .length,
       });
     };
 
@@ -170,7 +165,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
           </div>
           <ul className="space-y-4">
             {entrances.map((entrance) => (
-              <li key={entrance.entrance_id}>
+              <li key={entrance.entrance_id || `pending-${entrance.place_id}`}>
                 <Collapsible
                   open={expandedEntrance === entrance.entrance_id}
                   onOpenChange={() =>
@@ -216,7 +211,7 @@ export default function PlaceInfo({ place }: { place: Place }) {
                       </p>
                     )}
                     <div className="grid grid-cols-1 gap-2 mb-2">
-                      {entrance.photos?.map((photo) => (
+                      {entrance.photos?.map((photo: EntrancePhoto) => (
                         <Button
                           key={photo.photo_id}
                           variant="ghost"

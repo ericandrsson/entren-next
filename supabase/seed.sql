@@ -440,20 +440,20 @@ INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "
     (5, 'Garage Entrance', 'Garageentré', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Entré som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
     (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgång för användning vid nödsituationer eller evakueringar', true, NULL);
 
-INSERT INTO "public"."custom_places" ("id", "name", "location", "category_id", "user_id", "created_at", "updated_at") VALUES
+INSERT INTO "public"."custom_places" ("id", "name", "location", "category_id", "created_by", "created_at", "updated_at") VALUES
     (1, 'Pinchos', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 
     (SELECT category_id FROM "public"."place_categories" WHERE name = 'Food & Drink'), 
     NULL, '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00');
 
 -- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_at", "updated_at") VALUES
-    (1, 'place_1', 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', NOW(), NOW()),
-    (2, 'place_1', 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', NOW(), NOW());
+INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_by", "created_at", "updated_at") VALUES
+    (1, 'place_1', 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW()),
+    (2, 'place_1', 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW());
 
 -- Insert sample images for place entrances
-INSERT INTO "public"."place_entrance_photos" ("entrance_id", "place_id", "photo_url", "created_at", "updated_at") VALUES
-    (1, 'place_1', 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', NOW(), NOW()),
-    (2, 'place_1', 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', NOW(), NOW());
+INSERT INTO "public"."place_entrance_photos" ("entrance_id", "place_id", "photo_url", "uploaded_by", "created_at", "updated_at") VALUES
+    (1, 'place_1', 'https://images.unsplash.com/photo-1511984804822-e16ba72f5848?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZW50cmFuY2V8ZW58MHx8MHx8fDA%3D', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW()),
+    (2, 'place_1', 'https://plus.unsplash.com/premium_photo-1664264356949-2779dff20a47?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGVudHJhbmNlfGVufDB8fDB8fHww', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW());
 
 
 -- Insert sample entity changes
