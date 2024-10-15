@@ -174,6 +174,8 @@ CREATE TABLE "public"."entity_changes_audit " (
     "audit_timestamp" timestamp DEFAULT now()
 );
 
+
+
 CREATE TABLE public.entity_json_schemas (
   entity_type text PRIMARY KEY,
   json_schema jsonb NOT NULL
