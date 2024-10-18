@@ -3,7 +3,7 @@ import { Skeleton } from "@/src/components/ui/skeleton";
 import { useStore } from "@/src/libs/store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
-import PlaceInfoCard from "../place/PlaceInfoCard";
+import PlaceInfoContainer from "../place/PlaceInfoContainer";
 
 const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
   loading: () => <Skeleton className="w-full h-full rounded-lg" />,
@@ -18,11 +18,7 @@ export default function MapView() {
       <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
         <MapWithNoSSR />
       </div>
-      {!isMobile && selectedPlace && (
-        <div className="absolute bottom-8 left-8 z-10 w-full max-w-sm">
-          <PlaceInfoCard place={selectedPlace} />
-        </div>
-      )}
+      <PlaceInfoContainer place={selectedPlace} />
 
       <Button
         variant="outline"

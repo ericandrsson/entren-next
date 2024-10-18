@@ -433,7 +433,7 @@ CREATE INDEX idx_places_view_long ON public.places_view(long);
 CREATE OR REPLACE VIEW public.entrances_view AS
 WITH verified_entrances AS (
   SELECT 
-    se.entrance_id::text AS entrance_id,
+    se.entrance_id,
     se.place_id,
     se.entrance_type_id,
     et.name AS entrance_type_name,
@@ -458,7 +458,7 @@ WITH verified_entrances AS (
 ),
 pending_entrances AS (
   SELECT 
-    ecs.id::text AS entrance_id,
+    ecs.id AS entrance_id,
     (ecs.change_data->>'place_id')::bigint AS place_id,
     (ecs.change_data->>'entrance_type_id')::integer AS entrance_type_id,
     et.name AS entrance_type_name,

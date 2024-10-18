@@ -470,7 +470,7 @@ export type Database = {
           accessibility_info: Json | null
           created_at: string | null
           created_by: string | null
-          entrance_id: string | null
+          entrance_id: number | null
           entrance_type_description: string | null
           entrance_type_description_sv: string | null
           entrance_type_id: number | null

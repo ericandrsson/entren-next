@@ -131,15 +131,6 @@ export default function Page() {
           <MapView />
         </div>
 
-        {/* PlaceDetailDrawer for mobile */}
-        {isMobile && selectedPlace && (
-          <PlaceInfoDrawer
-            place={selectedPlace}
-            isOpen={!!selectedPlace}
-            onClose={() => setSelectedPlace(null)}
-          />
-        )}
-
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">

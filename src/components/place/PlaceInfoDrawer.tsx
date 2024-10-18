@@ -1,39 +1,33 @@
-import { Place } from "@/src/types/custom.types";
+import { Entrance, EntrancePhoto, Place } from "@/src/types/custom.types";
+import { useState } from "react";
 import {
   Drawer,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
 } from "../ui/drawer";
-import PlaceInfoContent, { handleAddEntrance } from "./PlaceInfoContent";
+import PlaceInfoContent from "./PlaceInfoContent";
 import PlaceInfoFooter from "./PlaceInfoFooter";
 import PlaceInfoHeader from "./PlaceInfoHeader";
-import { useState } from "react";
-import { useStore } from "@/src/libs/store";
 
 export default function PlaceInfoDrawer({
   place,
+  entrances,
+  allPlacePhotos,
+  isLoading,
   isOpen,
   onClose,
+  onAddEntrance,
 }: {
   place: Place;
+  entrances: Entrance[];
+  allPlacePhotos: EntrancePhoto[];
+  isLoading: boolean;
   isOpen: boolean;
   onClose: () => void;
+  onAddEntrance: () => void;
 }) {
-  const [entranceCount, setEntranceCount] = useState(0);
-  const { 
-    setIsAddEntranceDialogOpen, 
-    setIsLoginPromptOpen, 
-    isUserAuthenticated 
-  } = useStore();
-
-  const handleAddEntranceClick = () => {
-    if (isUserAuthenticated) {
-      setIsAddEntranceDialogOpen(true);
-    } else {
-      setIsLoginPromptOpen(true);
-    }
-  };
+  const [entranceCount, setEntranceCount] = useState(entrances.length);
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
@@ -42,8 +36,11 @@ export default function PlaceInfoDrawer({
           <PlaceInfoHeader place={place} />
         </DrawerHeader>
         <div className="flex-grow overflow-hidden">
-          <PlaceInfoContent 
-            place={place} 
+          <PlaceInfoContent
+            place={place}
+            entrances={entrances}
+            allPlacePhotos={allPlacePhotos}
+            isLoading={isLoading}
             onEntranceCountChange={(count) => setEntranceCount(count)}
           />
         </div>
@@ -51,7 +48,7 @@ export default function PlaceInfoDrawer({
           <PlaceInfoFooter
             place={place}
             entranceCount={entranceCount}
-            onAddEntrance={handleAddEntranceClick}
+            onAddEntrance={onAddEntrance}
           />
         </DrawerFooter>
       </DrawerContent>

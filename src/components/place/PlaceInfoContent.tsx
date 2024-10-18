@@ -39,10 +39,17 @@ const log = logger.child({ module: "PlaceInfoContent" });
 
 export default function PlaceInfoContent({
   place,
+  entrances,
+  allPlacePhotos,
+  isLoading,
   onEntranceCountChange,
 }: {
   place: Place;
+  entrances: Entrance[];
+  allPlacePhotos: EntrancePhoto[];
+  isLoading: boolean;
   onEntranceCountChange: (count: number) => void;
+  onAddEntrance: () => void;
 }) {
   const {
     isAddEntranceDialogOpen,
@@ -54,12 +61,9 @@ export default function PlaceInfoContent({
   const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
     new Set(),
   );
-  const [entrances, setEntrances] = useState<Entrance[]>([]);
-  const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
 
@@ -93,49 +97,8 @@ export default function PlaceInfoContent({
   }, []);
 
   useEffect(() => {
-    const fetchEntrances = async () => {
-      setIsLoading(true);
-      log.info("fetching entrances", { placeId: place.place_id });
-      const { data, error } = await supabase
-        .from("entrances_view")
-        .select("*")
-        .eq("place_id", place.place_id);
-
-      if (error) {
-        log.error("error fetching entrances", {
-          error: error.message,
-          placeId: place.place_id,
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const entrancesData = data as Entrance[];
-      const filteredEntrances = entrancesData.filter(
-        (entrance) =>
-          entrance.status !== "pending" || entrance.created_by === user?.id,
-      );
-
-      setEntrances(filteredEntrances);
-      onEntranceCountChange(filteredEntrances.length);
-      if (filteredEntrances.length > 0) {
-        setExpandedEntrances(new Set([filteredEntrances[0].entrance_id]));
-      }
-      setAllPlacePhotos(
-        filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
-      );
-      log.info("entrances fetched and filtered successfully", {
-        placeId: place.place_id,
-        entranceCount: filteredEntrances.length,
-        photoCount: filteredEntrances.flatMap(
-          (e) => e.photos as EntrancePhoto[],
-        ).length,
-      });
-      setIsLoading(false);
-    };
-
-    fetchEntrances();
-  }, [place.place_id, supabase, user, onEntranceCountChange]);
+    onEntranceCountChange(entrances.length);
+  }, [entrances, onEntranceCountChange]);
 
   const handleEntranceExpand = useCallback((entranceId: number) => {
     setExpandedEntrances((prev) => {
@@ -297,7 +260,7 @@ export default function PlaceInfoContent({
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="w-full justify-between p-4">
               <span className="flex items-center">
-                {getEntranceTypeIcon(entrance.entrance_type_name_sv)}
+                {getEntranceTypeIcon(entrance.entrance_type_name_sv || "")}
                 <span className="ml-2">{entrance.entrance_type_name_sv}</span>
                 {isVerified ? (
                   <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
@@ -354,7 +317,7 @@ export default function PlaceInfoContent({
                 </p>
                 <p className="text-sm text-gray-800 mt-1">
                   Inskickad{" "}
-                  {formatDistanceToNow(new Date(entrance.created_at), {
+                  {formatDistanceToNow(new Date(entrance.created_at || ""), {
                     addSuffix: true,
                     locale: sv,
                   })}
