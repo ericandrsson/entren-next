@@ -18,11 +18,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Data for Name: audit_log_entries; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-SELECT refresh_detailed_places_view();
 
 INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created_at", "ip_address") VALUES
 	('00000000-0000-0000-0000-000000000000', '969374ce-c4d8-43b7-990f-89df2a8e5db7', '{"action":"user_signedup","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"eric.andrsson@gmail.com","user_id":"1571ff46-8afa-470a-aef4-c786f72c5a36","user_phone":""}}', '2024-10-02 12:47:33.600138+00', ''),
@@ -116,15 +111,6 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 	('00000000-0000-0000-0000-000000000000', '95cbd262-004e-4ac9-84da-500b3f64700b', '{"action":"token_revoked","actor_id":"1d8762d3-dcad-404f-999c-571aad22d2f5","actor_username":"abc123@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-10-09 19:44:31.57523+00', '');
 
 
---
--- Data for Name: flow_state; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
 
 INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encrypted_password", "email_confirmed_at", "invited_at", "confirmation_token", "confirmation_sent_at", "recovery_token", "recovery_sent_at", "email_change_token_new", "email_change", "email_change_sent_at", "last_sign_in_at", "raw_app_meta_data", "raw_user_meta_data", "is_super_admin", "created_at", "updated_at", "phone", "phone_confirmed_at", "phone_change", "phone_change_token", "phone_change_sent_at", "email_change_token_current", "email_change_confirm_status", "banned_until", "reauthentication_token", "reauthentication_sent_at", "is_sso_user", "deleted_at", "is_anonymous") VALUES
 	('00000000-0000-0000-0000-000000000000', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'authenticated', 'authenticated', 'eric.andrsson@gmail.com', '$2a$10$mlIdoHriwfMhALFJMNb.6ul61xxbwBe6SJkfJ607A5zfDgnisJ7yG', '2024-10-08 20:45:36.660014+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-09 16:08:24.879425+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "e7e479c8-db0c-47d4-82c6-11b35d8795ca", "name": "", "email": "eric.andrsson@gmail.com", "avatar_url": "", "email_verified": false, "phone_verified": false}', NULL, '2024-10-08 20:45:36.623756+00', '2024-10-09 16:08:24.883553+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
@@ -133,9 +119,6 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 	('00000000-0000-0000-0000-000000000000', '1d8762d3-dcad-404f-999c-571aad22d2f5', 'authenticated', 'authenticated', 'abc123@gmail.com', '$2a$10$va2CiR2oFuTcZllFKVY2dOpme9vGhVsQXivu1O7LLThUmgE4Z5Iwa', '2024-10-09 16:08:10.555244+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-09 16:08:10.562636+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "1d8762d3-dcad-404f-999c-571aad22d2f5", "email": "abc123@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-09 16:08:10.525781+00', '2024-10-09 19:44:31.583312+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
 
 
---
--- Data for Name: identities; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
 
 INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "provider", "last_sign_in_at", "created_at", "updated_at", "id") VALUES
 	('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', '{"sub": "e7e479c8-db0c-47d4-82c6-11b35d8795ca", "email": "eric.andrsson@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-08 20:45:36.639713+00', '2024-10-08 20:45:36.63988+00', '2024-10-08 20:45:36.63988+00', '64c0265f-af3e-4338-82ee-977c5bbdc756'),
@@ -144,51 +127,17 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 	('76383309-22f3-46ac-8341-683cd8bdcbd0', '76383309-22f3-46ac-8341-683cd8bdcbd0', '{"sub": "76383309-22f3-46ac-8341-683cd8bdcbd0", "email": "ch@christianhedberg.se", "email_verified": false, "phone_verified": false}', 'email', '2024-10-09 17:23:45.513361+00', '2024-10-09 17:23:45.513473+00', '2024-10-09 17:23:45.513473+00', 'cac89a0b-4b7f-4b52-b834-3130604ffb12');
 
 
---
--- Data for Name: instances; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: sessions; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
 
 INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "factor_id", "aal", "not_after", "refreshed_at", "user_agent", "ip", "tag") VALUES
 	('f7eae1a3-30c8-4c80-b569-41b6c9a91df6', '76383309-22f3-46ac-8341-683cd8bdcbd0', '2024-10-09 17:23:45.526075+00', '2024-10-09 17:23:45.526075+00', NULL, 'aal1', NULL, NULL, 'Mozilla/5.0 (Linux; Android 12; M2002J9G Build/SKQ1.211006.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/129.0.6668.70 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/478.0.0.47.115;]', '212.85.92.115', NULL),
 	('6845fa4a-59cb-45b9-82d2-58d1493ca31a', '1d8762d3-dcad-404f-999c-571aad22d2f5', '2024-10-09 16:08:10.562765+00', '2024-10-09 19:44:31.585881+00', NULL, 'aal1', NULL, '2024-10-09 19:44:31.585637', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0.1 Mobile/15E148 Safari/604.1', '81.237.104.223', NULL);
 
 
---
--- Data for Name: mfa_amr_claims; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
 INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "authentication_method", "id") VALUES
 	('6845fa4a-59cb-45b9-82d2-58d1493ca31a', '2024-10-09 16:08:10.568043+00', '2024-10-09 16:08:10.568043+00', 'password', '4d55e296-eabc-41fa-b866-c3af5cd9af9e'),
 	('f7eae1a3-30c8-4c80-b569-41b6c9a91df6', '2024-10-09 17:23:45.530546+00', '2024-10-09 17:23:45.530546+00', 'password', 'b3a9953d-7cd2-4b74-bf44-abd0ae96827e');
 
 
---
--- Data for Name: mfa_factors; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: mfa_challenges; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: one_time_tokens; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: refresh_tokens; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
 
 INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "revoked", "created_at", "updated_at", "parent", "session_id") VALUES
 	('00000000-0000-0000-0000-000000000000', 41, '4gUZA2gEyEQftdcJLtYQDQ', '76383309-22f3-46ac-8341-683cd8bdcbd0', false, '2024-10-09 17:23:45.52795+00', '2024-10-09 17:23:45.52795+00', NULL, 'f7eae1a3-30c8-4c80-b569-41b6c9a91df6'),
@@ -196,195 +145,24 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 	('00000000-0000-0000-0000-000000000000', 42, 'CXiHlG3IpocVPnxuuieCHg', '1d8762d3-dcad-404f-999c-571aad22d2f5', false, '2024-10-09 19:44:31.580727+00', '2024-10-09 19:44:31.580727+00', 'iu00Qtm8J5kqieNNML8XoA', '6845fa4a-59cb-45b9-82d2-58d1493ca31a');
 
 
---
--- Data for Name: sso_providers; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
+INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
+	('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'eric.andrsson@gmail.com', NULL, NULL),
+	('1d8762d3-dcad-404f-999c-571aad22d2f5', 'abc123@gmail.com', NULL, NULL),
+	('26b6feef-f299-4c95-99a6-13cebb4f04da', 'asdasdasdaksjldasd@gmail.com', NULL, NULL),
+	('76383309-22f3-46ac-8341-683cd8bdcbd0', 'ch@christianhedberg.se', NULL, NULL),
+	('00000000-0000-0000-0000-000000000000', 'admin@entra.se', NULL, NULL),
+	('00000000-0000-0000-0000-000000000001', 'user@entra.se', NULL, NULL);
 
 
 
---
--- Data for Name: saml_providers; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
+INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
+	('entrance_photos', 'entrance_photos', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', true, false, 10485760, '{image/*}', NULL);
 
 
 
---
--- Data for Name: saml_relay_states; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
+-- Updated table for osm_tag_to_place_category
 
-
-
---
--- Data for Name: sso_domains; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
---
-
-
-
---
--- Data for Name: key; Type: TABLE DATA; Schema: pgsodium; Owner: supabase_admin
---
-
-
-
---
--- Data for Name: user_notifications; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-
-
---
--- Data for Name: place_categories; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
--- Updated table for place_categories with a new column 'name_sv'
-
--- First, insert parent categories
-
-
--- Updated table for place_osm_tag_to_category
-
-INSERT INTO "public"."place_osm_tag_to_category" ("tag_key", "tag_value", "category_id", "created_at", "updated_at", "priority") VALUES
--- Finance (higher priority for specific tags)
-('amenity', 'atm', (SELECT category_id FROM "public"."place_categories" WHERE name = 'ATM'), NOW(), NOW(), 2),
-('amenity', 'bank', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bank'), NOW(), NOW(), 2),
-
--- Food & Drink (higher priority for cuisine tags)
-('amenity', 'bar', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
-('amenity', 'pub', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bar/Pub'), NOW(), NOW(), 1),
-('shop', 'bakery', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Bakery'), NOW(), NOW(), 1),
-('amenity', 'cafe', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 1),
-('amenity', 'fast_food', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Fast Food'), NOW(), NOW(), 1),
-('amenity', 'restaurant', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Restaurant'), NOW(), NOW(), 1),
-('cuisine', 'burger', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Burger Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'pizza', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Pizzeria'), NOW(), NOW(), 2),
-('cuisine', 'kebab', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Kebab Shop'), NOW(), NOW(), 2),
-('cuisine', 'sushi', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sushi Bar'), NOW(), NOW(), 2),
-('amenity', 'ice_cream', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Ice Cream Parlor'), NOW(), NOW(), 2),
-('cuisine', 'italian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Italian Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'chinese', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Chinese Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'indian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Indian Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'mexican', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Mexican Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'japanese', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Japanese Restaurant'), NOW(), NOW(), 2),
-('cuisine', 'coffee_shop', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Coffee Shop'), NOW(), NOW(), 2),
-('cuisine', 'sandwich', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sandwich Shop'), NOW(), NOW(), 2),
-
--- Leisure (keep default priority)
-('shop', 'hairdresser', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('shop', 'beauty', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('amenity', 'nightclub', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('tourism', 'theme_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('amenity', 'bench', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'pitch', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'swimming_pool', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Swimming Pool'), NOW(), NOW(), 0),
-('leisure', 'garden', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'playground', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Playground'), NOW(), NOW(), 0),
-('leisure', 'picnic_table', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'track', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'nature_reserve', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'fitness_station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Fitness Station'), NOW(), NOW(), 0),
-('leisure', 'outdoor_seating', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'slipway', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'stadium', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bleachers', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'golf_course', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'firepit', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'common', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'sports_hall', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'marina', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'dog_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'resort', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'horse_riding', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'fishing', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'sauna', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'beach_resort', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'water_park', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'dance', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'miniature_golf', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'ice_rink', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'recreation_ground', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bird_hide', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bandstand', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'amusement_arcade', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'swimming_area', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'bowling_alley', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Leisure'), NOW(), NOW(), 0),
-('leisure', 'gym', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Gym'), NOW(), NOW(), 0),
-
--- Culture (keep default priority)
-('amenity', 'cinema', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'theatre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'library', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('tourism', 'museum', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'place_of_worship', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'christian', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'muslim', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('religion', 'jewish', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'fountain', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'community_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-('amenity', 'grave_yard', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Culture'), NOW(), NOW(), 0),
-
--- Health (keep default priority)
-('amenity', 'dentist', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'doctors', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'clinic', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'hospital', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'pharmacy', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'veterinary', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-('amenity', 'nursing_home', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Health'), NOW(), NOW(), 0),
-
--- Shopping (keep default priority)
---('shop', 'convenience', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'supermarket', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'clothes', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'electronics', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'furniture', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'jewelry', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'mobile_phone', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'books', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'florist', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'gift', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
---('shop', 'sports', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
-('amenity', 'vending_machine', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), 0),
-
--- Education (keep default priority)
-('amenity', 'school', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'university', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'college', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'kindergarten', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-('amenity', 'childcare', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Education'), NOW(), NOW(), 0),
-
--- Sport (keep default priority)
-('leisure', 'fitness_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
-('leisure', 'sports_centre', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Sport'), NOW(), NOW(), 0),
-
--- Transport (keep default priority)
-('amenity', 'parking', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'taxi', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('public_transport', 'station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'car_repair', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'charging_station', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'bicycle_parking', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-('amenity', 'parking_space', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Transport'), NOW(), NOW(), 0),
-
--- Authorities (keep default priority)
-('amenity', 'post_office', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('office', 'government', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'post_box', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'recycling', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'townhall', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-('amenity', 'police', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Authorities'), NOW(), NOW(), 0),
-
--- Tourism (keep default priority)
-('tourism', 'attraction', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
-('tourism', 'zoo', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), 0),
-
--- Toilets (keep default priority)
-('amenity', 'toilets', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
-('amenity', 'waste_basket', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
-('amenity', 'drinking_water', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Toilets'), NOW(), NOW(), 0),
-
--- Fallbacks -- 
-
+INSERT INTO "public"."osm_tag_to_place_category" ("tag_key", "tag_value", "category_id", "created_at", "updated_at", "priority") VALUES
 -- Shopping fallbacks
 ('shop', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Shopping'), NOW(), NOW(), -1),
 
@@ -417,20 +195,6 @@ INSERT INTO "public"."place_osm_tag_to_category" ("tag_key", "tag_value", "categ
 -- Tourism fallbacks
 ('tourism', '*', (SELECT category_id FROM "public"."place_categories" WHERE name = 'Tourism'), NOW(), NOW(), -1);
 
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
-	('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'eric.andrsson@gmail.com', NULL, NULL),
-	('1d8762d3-dcad-404f-999c-571aad22d2f5', 'abc123@gmail.com', NULL, NULL),
-	('26b6feef-f299-4c95-99a6-13cebb4f04da', 'asdasdasdaksjldasd@gmail.com', NULL, NULL),
-	('76383309-22f3-46ac-8341-683cd8bdcbd0', 'ch@christianhedberg.se', NULL, NULL);
-
-
---
--- Data for Name: places; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
 
 INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "description_sv", "is_active", "max_per_place") VALUES
     (1, 'Main Entrance', 'Huvudentré', 'Primary access point for general public entry to the establishment', 'Primär entré för allmänhetens tillträde till anläggningen', true, 1),
@@ -440,38 +204,55 @@ INSERT INTO "public"."entrance_types" ("id", "name", "name_sv", "description", "
     (5, 'Garage Entrance', 'Garageentré', 'Access point leading from a parking structure or enclosed vehicle storage area', 'Entré som leder från en parkeringsanläggning eller inbyggt fordonsutrymme', true, 1),
     (6, 'Emergency Exit', 'Nödutgång', 'Designated exit point for use during emergencies or evacuations', 'Särskild utgång för användning vid nödsituationer eller evakueringar', true, NULL);
 
-INSERT INTO "public"."custom_places" ("id", "name", "location", "category_id", "created_by", "created_at", "updated_at") VALUES
-    (1, 'Pinchos', '0101000020E61000002829B000A64E31406F078FDBD4314F40', 
-    (SELECT category_id FROM "public"."place_categories" WHERE name = 'Food & Drink'), 
-    NULL, '2024-10-07 15:30:15.56342+00', '2024-10-07 15:30:15.56342+00');
 
--- Insert hardcoded place entrances
-INSERT INTO "public"."place_entrances" ("entrance_id", "place_id", "entrance_type_id", "location", "accessibility_info", "created_by", "created_at", "updated_at") VALUES
-    (1, 'place_1', 1, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": null, "automatic_door": false}', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW()),
-    (2, 'place_1', 2, '0101000020E610000099A8948DBD3D2C40230736F80CB74B40', '{"has_ramp": true, "door_width": 1.2, "automatic_door": true}', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW());
+SELECT public.insert_place_staging_osm(
+	2352733325,
+	'e7e479c8-db0c-47d4-82c6-11b35d8795ca',
+	TRUE
+);
 
--- Insert sample images for place entrances
-INSERT INTO "public"."place_entrance_photos" ("entrance_id", "place_id", "photo_filename", "uploaded_by", "created_at", "updated_at") VALUES
-    (1, 'place_1', 'test_image', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW()),
-    (2, 'place_1', 'test_image', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca', NOW(), NOW());
+REFRESH MATERIALIZED VIEW CONCURRENTLY public.places_view;
 
 
--- Insert sample entity changes
-INSERT INTO "public"."entity_changes_staging" (user_id, entity_id, entity_type, action_type, change_data, status, submitted_at) VALUES
-    -- Add a new entrance
-    ('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'place_1', 'entrance', 'add', '{
-        "entrance_type_id": 3,
-        "location": {"lat": 55.6044, "long": 13.0038},
-        "photo_filename": "test_image"
-    }', 'pending', NOW());
+-- Add this after the existing INSERT statements and before the REFRESH MATERIALIZED VIEW command
 
+-- First, let's get the place_id of the place we just inserted
+DO $$
+DECLARE
+    v_place_id BIGINT;
+BEGIN
+    -- Get the place_id of the place we just inserted
+    SELECT place_id INTO v_place_id
+    FROM public.places
+    WHERE external_id = '2352733325'
+    LIMIT 1;
 
---
--- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
---
+    -- If we found the place, insert an entrance for it
+    IF v_place_id IS NOT NULL THEN
+        -- Insert a new entrance into the staging table
+        PERFORM public.insert_entrance_staging(
+            jsonb_build_object(
+                'place_id', v_place_id,
+                'entrance_type_id', 1, -- Main Entrance
+                'location', jsonb_build_object(
+                    'coordinates', json_build_object(
+                        'lat', 59.3366, -- Example latitude
+                        'long', 18.0627  -- Example longitude
+                    )
+                ),
+                'accessibility_info', jsonb_build_object(
+                    'has_ramp', true,
+                    'door_width', 90
+                ),
+                'submitted_by', 'e7e479c8-db0c-47d4-82c6-11b35d8795ca'::UUID,
+                'source', 'user'
+            )
+        );
 
-INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
-	('place_entrance_photos', 'place_entrance_photos', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', true, false, 10485760, '{image/*}', NULL);
+    ELSE
+        RAISE NOTICE 'Place with external_id 2352733325 not found. Entrance not added.';
+    END IF;
+END $$;
 
-
-SELECT pg_stat_clear_snapshot();
+-- Keep the REFRESH MATERIALIZED VIEW command at the end
+REFRESH MATERIALIZED VIEW CONCURRENTLY public.places_view;

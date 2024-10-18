@@ -75,7 +75,7 @@ export default function LoginPromptDialog({
         </div>
         <DialogFooter className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:justify-end">
           <Button className="w-full sm:w-auto" onClick={handleGoToLoginPage}>
-            Gå till inloggningssidan 🚀
+            Gå till inloggningssidan
           </Button>
           <Button
             variant="outline"

@@ -5,9 +5,9 @@ export function addPlacesLayer(map: maplibregl.Map) {
     id: "placesLayer",
     type: "symbol",
     source: "placesSource",
-    "source-layer": "detailed_places_view",
+    "source-layer": "places_view",
     layout: {
-      "icon-image": ["get", "category_name"],
+      "icon-image": ["get", "/sprite/food.png"],
       "icon-size": 0.65,
       "icon-anchor": "bottom",
       "text-field": "{name}",

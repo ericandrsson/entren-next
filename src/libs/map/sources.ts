@@ -3,7 +3,7 @@ import maplibregl from "maplibre-gl";
 export function addPlacesSource(map: maplibregl.Map) {
   map.addSource("placesSource", {
     type: "vector",
-    url: `${process.env.NEXT_PUBLIC_TILE_SERVER_URL}/detailed_places_view`,
+    url: `${process.env.NEXT_PUBLIC_TILE_SERVER_URL}/places_view`,
   });
 }
 

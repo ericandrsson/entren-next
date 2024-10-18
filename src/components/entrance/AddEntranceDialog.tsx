@@ -267,44 +267,65 @@ export default function AddEntranceDialog({
 
     try {
       let photoFileName = null;
+      console.log(user.data.user);
       if (data.photo) {
         log.debug("uploading photo");
         const fileName = `place_${place.place_id}_entrance_${Date.now()}.jpg`;
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("place_entrance_photos")
+          .from("entrance_photos")
           .upload(fileName, data.photo);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          log.error({ error: uploadError }, "Error uploading photo");
+          if (uploadError.message.includes("row-level security policy")) {
+            toast({
+              title: "Behörighetsproblem",
+              description:
+                "Du har inte behörighet att ladda upp bilder. Kontakta administratören om detta är ett fel.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Fel vid uppladdning av bild",
+              description:
+                "Ett problem uppstod när bilden skulle laddas upp. Försök igen senare.",
+              variant: "destructive",
+            });
+          }
+          return; // Exit the function early
+        }
 
         photoFileName = fileName;
         log.debug({ photoFileName }, "photo uploaded successfully");
       }
 
       const changeData: EntranceEntitySchema = {
+        place_id: place.place_id!,
         entrance_type_id: parseInt(data.entranceType),
         location: {
-          lat: parseFloat(data.location.lat!),
-          long: parseFloat(data.location.lng!),
+          coordinates: {
+            lat: parseFloat(data.location.lat!),
+            long: parseFloat(data.location.lng!),
+          },
         },
-        place_id: place.place_id || "",
         photo_filename: photoFileName || "",
+        source: "user",
+        submitted_by: user.data.user.id,
       };
 
-      log.debug({ changeData }, "adding entity change");
-      const { error } = await supabase.rpc("add_entity_change", {
-        p_user_id: user.data.user.id,
-        p_entity_id: place.place_id,
-        p_entity_type: "entrance",
-        p_action_type: "add",
+      log.debug({ changeData }, "adding entrance");
+      const { error } = await supabase.rpc("insert_entrance_staging", {
         p_change_data: changeData,
+        p_auto_approve: false,
       });
 
       if (error) {
-        log.error({ error }, "error adding entity change");
+        log.error({ error }, "error adding entrance");
         toast({
           title: "Fel vid sparande av entré",
           description:
-            "Ett fel uppstod när entrén skulle sparas. Försök igen senare.",
+            "Ett fel uppstod när entrén skulle sparas. Försök igen senare." +
+            error.message,
           variant: "destructive",
         });
         return;
@@ -360,6 +381,7 @@ export default function AddEntranceDialog({
       }
     } catch (error) {
       log.error({ error }, "unexpected error while saving entrance");
+      console.error({ error });
       toast({
         title: "Fel vid sparande av entré",
         description: "Ett oväntat fel uppstod. Försök igen senare.",

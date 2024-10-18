@@ -59,7 +59,7 @@ export async function registerMapEvents(map: maplibregl.Map) {
     const supabase = createClient();
 
     const { data: visiblePlaces, error } = await supabase
-      .from("detailed_places_view")
+      .from("places_view")
       .select("*")
       .in("place_id", visiblePlaceIds)
       .order("name", { ascending: true });

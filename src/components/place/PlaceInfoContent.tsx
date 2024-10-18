@@ -66,7 +66,7 @@ export default function PlaceInfoContent({
   const getImageUrl = useCallback(
     (imagePath: string) => {
       const { data } = supabase.storage
-        .from("place_entrance_photos")
+        .from("entrance_photos")
         .getPublicUrl(imagePath, {
           transform: {
             width: 300,
@@ -97,7 +97,7 @@ export default function PlaceInfoContent({
       setIsLoading(true);
       log.info("fetching entrances", { placeId: place.place_id });
       const { data, error } = await supabase
-        .from("detailed_entrances_view")
+        .from("entrances_view")
         .select("*")
         .eq("place_id", place.place_id);
 

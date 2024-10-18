@@ -1,22 +1,22 @@
 import { Card, CardContent, CardFooter } from "@/src/components/ui/card";
+import { logger } from "@/src/libs/logger";
+import { useStore } from "@/src/libs/store";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 import { Place } from "../../types/custom.types";
 import PlaceInfoContent from "./PlaceInfoContent";
 import PlaceInfoFooter from "./PlaceInfoFooter";
 import PlaceInfoHeader from "./PlaceInfoHeader";
-import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { logger } from "@/src/libs/logger";
-import { useStore } from "@/src/libs/store";
 
 const log = logger.child({ module: "PlaceInfoCard" });
 
 export default function PlaceInfoCard({ place }: { place: Place }) {
   const [entranceCount, setEntranceCount] = useState(0);
-  const { 
-    setIsAddEntranceDialogOpen, 
-    setIsLoginPromptOpen, 
-    isUserAuthenticated, 
-    setIsUserAuthenticated 
+  const {
+    setIsAddEntranceDialogOpen,
+    setIsLoginPromptOpen,
+    isUserAuthenticated,
+    setIsUserAuthenticated,
   } = useStore();
 
   const supabase = createClient();
@@ -46,11 +46,11 @@ export default function PlaceInfoCard({ place }: { place: Place }) {
   };
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-400px)]">
+    <Card className="flex flex-col h-[calc(100vh-250px)]">
       <PlaceInfoHeader place={place} />
       <CardContent className="flex-grow overflow-hidden p-0">
-        <PlaceInfoContent 
-          place={place} 
+        <PlaceInfoContent
+          place={place}
           onEntranceCountChange={(count) => setEntranceCount(count)}
         />
       </CardContent>

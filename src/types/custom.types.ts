@@ -5,11 +5,10 @@ type EntranceTypeDB = Database["public"]["Tables"]["entrance_types"]["Row"];
 type EntityChangeStagingDB =
   Database["public"]["Tables"]["entity_changes_staging"]["Row"];
 type DetailedEntranceViewDB =
-  Database["public"]["Views"]["detailed_entrances_view"]["Row"];
-type DetailedPlaceViewDB =
-  Database["public"]["Views"]["detailed_places_view"]["Row"];
+  Database["public"]["Views"]["entrances_view"]["Row"];
+type DetailedPlaceViewDB = Database["public"]["Views"]["places_view"]["Row"];
 type PlaceEntrancePhotoDB =
-  Database["public"]["Tables"]["place_entrance_photos"]["Row"];
+  Database["public"]["Tables"]["entrance_photos"]["Row"];
 
 // Extended types
 export type EntrancePhoto = {
@@ -29,29 +28,43 @@ export type PlaceEntrance = DetailedEntranceViewDB;
 export type PlaceEntranceImage = PlaceEntrancePhotoDB;
 
 // Custom types for API schemas
-export type EntranceEntitySchema = {
-  entrance_type_id: number;
+export type PlaceEntitySchema = {
+  name: string;
   location: {
-    lat: number;
-    long: number;
+    coordinates: {
+      lat: number;
+      long: number;
+    };
   };
-  photo_filename: string;
-  place_id: string;
+  category_id: number;
+  source: string;
+  external_id?: string;
+  submitted_by: string; // UUID
+  is_active?: boolean;
+  overridden_fields?: Record<string, any>;
+};
+
+export type EntranceEntitySchema = {
+  place_id: number;
+  entrance_type_id: number;
+  photo_filename?: string;
+  location: {
+    coordinates: {
+      lat: number;
+      long: number;
+    };
+  };
+  accessibility_info?: Record<string, any>;
+  source: string;
+  submitted_by: string; // UUID
 };
 
 export type PhotoEntitySchema = {
-  description: string;
   photo_filename: string;
-  place_id: string;
-};
-
-export type PlaceEntitySchema = {
-  category_id: string;
-  location: {
-    lat: number;
-    long: number;
-  };
-  name: string;
+  description?: string;
+  place_id: number;
+  submitted_by: string; // UUID
+  source: string;
 };
 
 export interface Entrances extends Array<DetailedEntranceViewDB> {
