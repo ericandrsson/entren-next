@@ -1,7 +1,7 @@
 "use client";
 
 import LoginForm from "@/src/components/auth/LoginForm";
-import { ResetPasswordForm } from "@/src/components/auth/ResetPasswordForm";
+import { RequestResetPasswordForm } from "@/src/components/auth/RequestResetPasswordForm";
 import { useToast } from "@/src/hooks/use-toast";
 import { useEffect, useState } from "react";
 
@@ -19,12 +19,14 @@ export default function LoginPage() {
   }, [toast]);
 
   return (
-    <div className="flex justify-center bg-white">
+    <>
       {showResetPassword ? (
-        <ResetPasswordForm onCancel={() => setShowResetPassword(false)} />
+        <RequestResetPasswordForm
+          onCancel={() => setShowResetPassword(false)}
+        />
       ) : (
         <LoginForm onResetPassword={() => setShowResetPassword(true)} />
       )}
-    </div>
+    </>
   );
 }

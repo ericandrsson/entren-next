@@ -24,7 +24,10 @@ interface ResetPasswordFormProps {
   initialEmail?: string;
 }
 
-export function ResetPasswordForm({ onCancel, initialEmail = "" }: ResetPasswordFormProps) {
+export function RequestResetPasswordForm({
+  onCancel,
+  initialEmail = "",
+}: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const supabase = createClient();
@@ -72,7 +75,12 @@ export function ResetPasswordForm({ onCancel, initialEmail = "" }: ResetPassword
               <FormItem>
                 <FormLabel>E-postadress</FormLabel>
                 <FormControl>
-                  <Input {...field} type="email" className="bg-white" disabled={!!initialEmail} />
+                  <Input
+                    {...field}
+                    type="email"
+                    className="bg-white"
+                    disabled={!!initialEmail}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

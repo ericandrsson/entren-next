@@ -19,6 +19,11 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 import { useToast } from "@/src/hooks/use-toast";
+import {
+  loginFormSchema,
+  LoginFormValues,
+  passwordSchema,
+} from "@/src/lib/schemas/auth";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, HelpCircle, Loader2, Lock, Mail } from "lucide-react";
@@ -26,18 +31,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-// Define the form schema
-const formSchema = z.object({
-  email: z.string().email({ message: "Ogiltig e-postadress" }),
-  password: z
-    .string()
-    .min(6, { message: "Lösenord måste vara minst 6 tecken" })
-    .optional(),
-  subscribeNewsletter: z.boolean().optional(),
-  acceptTerms: z.boolean().optional(),
-});
 
 interface LoginFormProps {
   onResetPassword: () => void;
@@ -70,15 +63,16 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
 
   const supabase = createClient();
 
-  // Initialize the form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  // Initialize the form with the new schema
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
       password: "",
       subscribeNewsletter: false,
       acceptTerms: false,
     },
+    mode: "onChange", // Enable real-time validation
   });
 
   // Check if email exists
@@ -104,7 +98,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
   }, []);
 
   // Handle form submission
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: LoginFormValues) => {
     console.log("onSubmit called with values:", values);
     console.log("Current formState:", formState);
     console.log("showPassword:", showPassword);
@@ -124,7 +118,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
   };
 
   // Handle sign up
-  const handleSignUp = async (values: z.infer<typeof formSchema>) => {
+  const handleSignUp = async (values: LoginFormValues) => {
     if (cooldown > 0) {
       toast({
         title: "Vänta lite",
@@ -176,7 +170,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
   };
 
   // Handle password login
-  const handlePasswordLogin = async (values: z.infer<typeof formSchema>) => {
+  const handlePasswordLogin = async (values: LoginFormValues) => {
     setLoginError(null); // Reset error state before attempting login
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
@@ -199,7 +193,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
   };
 
   // Handle OTP login
-  const handleOtpLogin = async (values: z.infer<typeof formSchema>) => {
+  const handleOtpLogin = async (values: LoginFormValues) => {
     console.log("handleOtpLogin called with email:", values.email);
     setIsLoading(true);
     setLoginError(null);

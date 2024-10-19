@@ -81,11 +81,11 @@ export default function Page() {
   }, [setIsMobile, setView]);
 
   useEffect(() => {
-    const storedToast = localStorage.getItem("authToast");
+    const storedToast = localStorage.getItem("toastMessage");
     if (storedToast) {
       const toastData = JSON.parse(storedToast);
       toast(toastData);
-      localStorage.removeItem("authToast");
+      localStorage.removeItem("toastMessage");
     }
   }, [toast]);
 

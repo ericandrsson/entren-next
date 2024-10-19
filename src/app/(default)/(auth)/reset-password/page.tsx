@@ -1,9 +1,18 @@
 import { ResetPasswordForm } from "@/src/components/auth/ResetPasswordForm";
+import { redirect } from "next/navigation";
 
-export default function ResetPasswordPage() {
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <ResetPasswordForm />
-    </div>
-  );
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const code = searchParams.code as string | undefined;
+
+  if (!code) {
+    // Redirect to an error page or home page if no code is provided
+    redirect("/");
+  }
+
+  // If the token is valid, render the ResetPasswordForm with the verified email
+  return <ResetPasswordForm />;
 }
