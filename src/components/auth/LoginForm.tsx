@@ -12,12 +12,19 @@ import {
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
 import { useToast } from "@/src/hooks/use-toast";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Lock } from "lucide-react";
+import { AlertTriangle, HelpCircle, Loader2, Lock, Mail } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -32,7 +39,11 @@ const formSchema = z.object({
   acceptTerms: z.boolean().optional(),
 });
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onResetPassword: () => void;
+}
+
+export default function LoginForm({ onResetPassword }: LoginFormProps) {
   const [formState, setFormState] = useState<"initial" | "password" | "create">(
     "initial",
   );
@@ -41,6 +52,21 @@ export default function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (cooldown > 0) {
+      timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const startCooldown = useCallback(() => {
+    setCooldown(30); // 30 seconds cooldown
+  }, []);
 
   const supabase = createClient();
 
@@ -69,24 +95,55 @@ export default function LoginForm() {
     }
   };
 
+  // Add this new function to reset the form state
+  const resetFormState = useCallback(() => {
+    setVerificationSent(false);
+    setLoginError(null);
+    setEmailExists(false);
+    setCooldown(0);
+  }, []);
+
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("onSubmit called with values:", values);
+    console.log("Current formState:", formState);
+    console.log("showPassword:", showPassword);
+
+    resetFormState(); // Reset the form state before submitting
+
     if (formState === "create") {
+      console.log("Calling handleSignUp");
       await handleSignUp(values);
     } else if (showPassword) {
+      console.log("Calling handlePasswordLogin");
       await handlePasswordLogin(values);
     } else {
+      console.log("Calling handleOtpLogin");
       await handleOtpLogin(values);
     }
   };
 
   // Handle sign up
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
+    if (cooldown > 0) {
+      toast({
+        title: "Vänta lite",
+        description: `Försök igen om ${cooldown} sekunder.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setLoginError(null);
+
     const exists = await checkEmailExists(values.email);
     if (exists) {
       setEmailExists(true);
+      setIsLoading(false);
       return;
     }
+
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password as string,
@@ -97,8 +154,9 @@ export default function LoginForm() {
         },
       },
     });
+
     if (error) {
-      console.error("Error creating account:", error);
+      console.log(error);
       toast({
         title: "Fel vid skapande av konto",
         description: "Det gick inte att skapa kontot. Försök igen senare.",
@@ -111,7 +169,10 @@ export default function LoginForm() {
           "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
         variant: "default",
       });
+      setVerificationSent(true);
+      startCooldown();
     }
+    setIsLoading(false);
   };
 
   // Handle password login
@@ -139,15 +200,23 @@ export default function LoginForm() {
 
   // Handle OTP login
   const handleOtpLogin = async (values: z.infer<typeof formSchema>) => {
+    console.log("handleOtpLogin called with email:", values.email);
+    setIsLoading(true);
+    setLoginError(null);
+
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithOtp({
         email: values.email,
         options: {
-          emailRedirectTo: "/",
+          emailRedirectTo: `${window.location.origin}/callback`,
         },
       });
+
+      console.log("OTP sign-in result:", error ? "Error" : "Success");
+
       if (error) throw error;
-      console.log("OTP sign-in successful", data);
+
+      setVerificationSent(true);
       toast({
         title: "Inloggningslänk skickad",
         description: "Kolla din e-post för en länk att logga in med.",
@@ -155,84 +224,156 @@ export default function LoginForm() {
       });
     } catch (error) {
       console.error("Error signing in with OTP:", error);
-      toast({
-        title: "Fel vid inloggning",
-        description:
-          "Det gick inte att skicka inloggningslänken. Försök igen senare.",
-        variant: "destructive",
-      });
+      setLoginError(
+        "Det gick inte att skicka inloggningslänken. Försök igen senare.",
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Toggle password login
   const togglePasswordLogin = () => {
+    resetFormState();
     setShowPassword(!showPassword);
     setFormState(showPassword ? "initial" : "password");
   };
 
+  // Update the "Glömt lösenordet?" button click handler
+  const handleForgotPassword = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onResetPassword();
+  };
+
   return (
-    <div className="w-full max-w-md p-6">
-      <h1 className="font-bold text-primary mb-4">Logga in</h1>
+    <div className="w-full max-w-md p-6 space-y-6">
       {formState === "create" ? (
-        <h3 className="font-semibold text-muted-foreground mb-4">
-          Skapa konto på Entren
-        </h3>
+        <>
+          <h1 className="font-bold text-2xl text-primary">
+            Skapa konto på Entren
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Har du redan ett konto?{" "}
+            <Button
+              variant="link"
+              className="p-0 h-auto font-semibold"
+              onClick={() => {
+                resetFormState();
+                setFormState("initial");
+              }}
+            >
+              Logga in här
+            </Button>
+          </p>
+        </>
       ) : (
-        <h3 className="font-semibold text-muted-foreground mb-4">
-          Fyll i dina uppgifter
-        </h3>
+        <>
+          <h1 className="font-bold text-2xl text-primary">Logga in</h1>
+          <h3 className="font-semibold text-muted-foreground">
+            Välkommen tillbaka! Logga in eller skapa ett nytt konto.
+          </h3>
+        </>
       )}
       {!showPassword && formState !== "create" && (
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-muted-foreground">
           Logga in eller skapa konto utan lösenord - fyll i din e-postadress så
           skickar vi en länk.
         </p>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>E-postadress</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="email"
-                    className={`bg-white ${emailExists ? "border-red-500" : ""}`}
-                  />
-                </FormControl>
-                {emailExists && (
-                  <div className="flex items-center mt-2 text-red-500">
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    <span className="text-sm">
-                      E-postadressen finns redan registrerad.
-                    </span>
-                  </div>
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {(showPassword || formState === "create") && (
+        <form className="space-y-4">
+          <div className="space-y-2">
             <FormField
               control={form.control}
-              name="password"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {formState === "create" ? "Välj lösenord" : "Lösenord"}
+                  <FormLabel className="flex items-center">
+                    E-postadress
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 ml-2 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Redan registrerad? Logga in istället.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" className="bg-white" />
+                    <Input
+                      {...field}
+                      type="email"
+                      className={`bg-white ${emailExists ? "border-red-500" : ""}`}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        if (emailExists) {
+                          setEmailExists(false);
+                        }
+                      }}
+                    />
                   </FormControl>
+                  {showPassword && (
+                    <div className="text-right mt-1">
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-sm text-primary underline hover:no-underline"
+                        onClick={handleForgotPassword}
+                      >
+                        Glömt lösenordet?
+                      </Button>
+                    </div>
+                  )}
+                  {emailExists && (
+                    <div className="flex items-start mt-3 p-3 bg-red-50 rounded-md border border-red-200">
+                      <div className="text-sm text-red-700">
+                        <p className="mb-2">
+                          Det verkar som om den här e-postadressen redan är
+                          registrerad.
+                        </p>
+                        <p>
+                          <Link
+                            href="/login"
+                            className="text-red-700 font-semibold hover:underline"
+                          >
+                            Logga in istället
+                          </Link>{" "}
+                          eller{" "}
+                          <Link
+                            href="/reset-password"
+                            className="text-red-700 font-semibold hover:underline"
+                          >
+                            återställ ditt lösenord
+                          </Link>{" "}
+                          om du har glömt det.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
-          )}
+
+            {(showPassword || formState === "create") && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {formState === "create" ? "Välj lösenord" : "Lösenord"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} type="password" className="bg-white" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
 
           {formState === "create" && (
             <>
@@ -284,21 +425,57 @@ export default function LoginForm() {
             </>
           )}
 
-          <Button
-            type="submit"
-            className="w-full bg-primary text-primary-foreground"
-          >
-            {formState === "create"
-              ? "Skapa konto"
-              : showPassword
-                ? "Logga in"
-                : "Skicka länk till min e-postadress"}
-          </Button>
+          {!verificationSent && (
+            <Button
+              type="button"
+              className="w-full bg-primary text-primary-foreground"
+              disabled={isLoading}
+              onClick={() => {
+                console.log("Button clicked");
+                const values = form.getValues();
+                onSubmit(values);
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {formState === "create"
+                    ? "Skapar konto..."
+                    : "Skickar inloggningslänk..."}
+                </>
+              ) : formState === "create" ? (
+                "Skapa konto"
+              ) : showPassword ? (
+                "Logga in"
+              ) : (
+                "Skicka inloggningslänk"
+              )}
+            </Button>
+          )}
 
           {loginError && (
-            <div className="flex items-center mt-2 text-red-500">
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              <span className="text-sm">{loginError}</span>
+            <div className="flex items-center mt-3 p-3 bg-red-50 rounded-md border border-red-200">
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-3" />
+              <span className="text-sm text-red-700">{loginError}</span>
+            </div>
+          )}
+
+          {verificationSent && (
+            <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
+              <div className="flex items-center mb-4">
+                <Mail className="h-6 w-6 text-blue-500 mr-3" />
+                <h4 className="font-semibold text-blue-700">
+                  Kolla din e-post
+                </h4>
+              </div>
+              <p className="text-sm mb-4 text-gray-700">
+                Vi har skickat en inloggningslänk till{" "}
+                <strong>{form.getValues().email}</strong>. Klicka på länken i
+                e-postmeddelandet för att logga in.
+              </p>
+              <p className="text-sm mb-4 text-gray-600">
+                Om du inte hittar mejlet, kolla din skräppost.
+              </p>
             </div>
           )}
         </form>
@@ -342,7 +519,10 @@ export default function LoginForm() {
         <Button
           variant="link"
           className="w-full mt-3"
-          onClick={() => setFormState("create")}
+          onClick={() => {
+            resetFormState();
+            setFormState("create");
+          }}
         >
           Skapa konto
         </Button>
@@ -352,6 +532,7 @@ export default function LoginForm() {
           variant="link"
           className="w-full mt-3"
           onClick={() => {
+            resetFormState();
             setFormState("initial");
             setShowPassword(false);
           }}
