@@ -19,21 +19,16 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 import { useToast } from "@/src/hooks/use-toast";
-import {
-  loginFormSchema,
-  LoginFormValues,
-  passwordSchema,
-} from "@/src/lib/schemas/auth";
+import { loginFormSchema, LoginFormValues } from "@/src/lib/schemas/auth";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, HelpCircle, Loader2, Lock, Mail } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface LoginFormProps {
-  onResetPassword: () => void;
+  onResetPassword: (email?: string) => void;
 }
 
 export default function LoginForm({ onResetPassword }: LoginFormProps) {
@@ -236,7 +231,18 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
   // Update the "Glömt lösenordet?" button click handler
   const handleForgotPassword = (e: React.MouseEvent) => {
     e.preventDefault();
-    onResetPassword();
+    const email = form.getValues("email");
+    onResetPassword(email); // Pass the email to the onResetPassword function
+  };
+
+  // Update the handleLoginInstead function
+  const handleLoginInstead = (e: React.MouseEvent) => {
+    e.preventDefault();
+    resetFormState();
+    setShowPassword(true);
+    setFormState("password");
+    // Reset the password field
+    form.setValue("password", "");
   };
 
   return (
@@ -323,24 +329,25 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
                     <div className="flex items-start mt-3 p-3 bg-red-50 rounded-md border border-red-200">
                       <div className="text-sm text-red-700">
                         <p className="mb-2">
-                          Det verkar som om den här e-postadressen redan är
-                          registrerad.
+                          Den här e-postadressen är redan registrerad.
                         </p>
                         <p>
-                          <Link
-                            href="/login"
-                            className="text-red-700 font-semibold hover:underline"
+                          <Button
+                            variant="link"
+                            className="p-0 h-auto text-red-700 font-semibold hover:underline"
+                            onClick={handleLoginInstead}
                           >
                             Logga in istället
-                          </Link>{" "}
+                          </Button>{" "}
                           eller{" "}
-                          <Link
-                            href="/reset-password"
-                            className="text-red-700 font-semibold hover:underline"
+                          <Button
+                            variant="link"
+                            className="p-0 h-auto text-red-700 font-semibold hover:underline"
+                            onClick={handleForgotPassword}
                           >
-                            återställ ditt lösenord
-                          </Link>{" "}
-                          om du har glömt det.
+                            återställ lösenordet
+                          </Button>{" "}
+                          om du behöver hjälp.
                         </p>
                       </div>
                     </div>

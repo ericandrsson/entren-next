@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const resetPasswordFormSchema = z
   .object({
@@ -36,6 +38,8 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email') || '';
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordFormSchema),
@@ -69,7 +73,7 @@ export function ResetPasswordForm() {
       console.error("Error resetting password:", error);
       if (error instanceof Error) {
         if (error.message === "Auth session missing!") {
-          setError("Länken för lösenordsåterställning har gått ut. Vänligen begär en ny återställningslänk.");
+          setError("Lösenordsåterställning misslyckades. Återställningslänken har tyvärr gått ut. Klicka här för att få en ny länk.");
         } else if (error.message === "New password should be different from the old password.") {
           setError("Det nya lösenordet måste vara annorlunda än det gamla lösenordet.");
         } else {
@@ -133,10 +137,22 @@ export function ResetPasswordForm() {
           <div className="flex items-center mb-2">
             <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
             <h4 className="font-semibold text-red-700">
-              Fel vid uppdatering av lösenord
+              Lösenordsåterställning misslyckades
             </h4>
           </div>
-          <p className="text-sm text-red-700">{error}</p>
+          <p className="text-sm text-red-700">
+            {error.includes("Klicka här") ? (
+              <>
+                {error.split("Klicka här")[0]}
+                <Link href="/login?reset=true" className="underline hover:text-red-800">
+                  Klicka här
+                </Link>
+                {error.split("Klicka här")[1]}
+              </>
+            ) : (
+              error
+            )}
+          </p>
         </div>
       )}
     </div>
