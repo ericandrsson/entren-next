@@ -1,8 +1,10 @@
+import { useAuth } from "@/src/context/AuthProvider";
 import { logger } from "@/src/libs/logger";
 import { useStore } from "@/src/libs/store";
 import { Entrance, EntrancePhoto, Place } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import { useCallback, useEffect, useState } from "react";
+import AddEntranceDialog from "../entrance/AddEntranceDialog";
 import PlaceInfoCard from "./PlaceInfoCard";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
 
@@ -12,74 +14,61 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
   const {
     isMobile,
     setSelectedPlace,
-    isUserAuthenticated,
+    isAddEntranceDialogOpen,
     setIsAddEntranceDialogOpen,
     setIsLoginPromptOpen,
   } = useStore();
   const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const { user } = useAuth();
 
   const supabase = createClient();
 
-  useEffect(() => {
-    const checkUserAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      log.info("user authentication checked", { isAuthenticated: !!user });
-    };
+  const fetchEntrances = useCallback(async () => {
+    if (!place) return;
 
-    checkUserAuth();
-  }, []);
+    setIsLoading(true);
+    log.info("fetching entrances", { placeId: place.place_id });
+    const { data, error } = await supabase
+      .from("entrances_view")
+      .select("*")
+      .eq("place_id", place.place_id);
 
-  useEffect(() => {
-    const fetchEntrances = async () => {
-      if (!place) return;
-
-      setIsLoading(true);
-      log.info("fetching entrances", { placeId: place.place_id });
-      const { data, error } = await supabase
-        .from("entrances_view")
-        .select("*")
-        .eq("place_id", place.place_id);
-
-      if (error) {
-        log.error("error fetching entrances", {
-          error: error.message,
-          placeId: place.place_id,
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const entrancesData = data as Entrance[];
-      const filteredEntrances = entrancesData.filter(
-        (entrance) =>
-          entrance.status !== "pending" || entrance.created_by === user?.id,
-      );
-
-      setEntrances(filteredEntrances);
-      setAllPlacePhotos(
-        filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
-      );
-      log.info("entrances fetched and filtered successfully", {
+    if (error) {
+      log.error("error fetching entrances", {
+        error: error.message,
         placeId: place.place_id,
-        entranceCount: filteredEntrances.length,
-        photoCount: filteredEntrances.flatMap(
-          (e) => e.photos as EntrancePhoto[],
-        ).length,
       });
       setIsLoading(false);
-    };
+      return;
+    }
 
-    fetchEntrances();
+    const entrancesData = data as Entrance[];
+    const filteredEntrances = entrancesData.filter(
+      (entrance) =>
+        entrance.status !== "pending" || entrance.created_by === user?.id,
+    );
+
+    setEntrances(filteredEntrances);
+    setAllPlacePhotos(
+      filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
+    );
+    log.info("entrances fetched and filtered successfully", {
+      placeId: place.place_id,
+      entranceCount: filteredEntrances.length,
+      photoCount: filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
+        .length,
+    });
+    setIsLoading(false);
   }, [place, supabase, user]);
 
+  useEffect(() => {
+    fetchEntrances();
+  }, [fetchEntrances]);
+
   const handleAddEntrance = useCallback(() => {
-    if (isUserAuthenticated) {
+    if (user) {
       setIsAddEntranceDialogOpen(true);
       log.info("add entrance dialog opened", { isAuthenticated: true });
     } else {
@@ -88,7 +77,17 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
         isAuthenticated: false,
       });
     }
-  }, [isUserAuthenticated, setIsAddEntranceDialogOpen, setIsLoginPromptOpen]);
+  }, [user, setIsAddEntranceDialogOpen, setIsLoginPromptOpen]);
+
+  const handleEntranceAdded = useCallback(() => {
+    log.info("Entrance added, refreshing entrances");
+    fetchEntrances();
+  }, [fetchEntrances]);
+
+  const handleCloseAddEntranceDialog = useCallback(() => {
+    setIsAddEntranceDialogOpen(false);
+    log.debug("add entrance dialog closed");
+  }, [setIsAddEntranceDialogOpen]);
 
   if (!place) return null;
 
@@ -98,21 +97,28 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
     allPlacePhotos,
     isLoading,
     onAddEntrance: handleAddEntrance,
+    onEntranceAdded: handleEntranceAdded,
   };
 
-  if (isMobile) {
-    return (
-      <PlaceInfoDrawer
-        {...sharedProps}
-        isOpen={!!place}
-        onClose={() => setSelectedPlace(null)}
-      />
-    );
-  }
-
   return (
-    <div className="absolute bottom-8 left-8 z-10 w-full max-w-sm">
-      <PlaceInfoCard {...sharedProps} />
-    </div>
+    <>
+      {isMobile ? (
+        <PlaceInfoDrawer
+          {...sharedProps}
+          isOpen={!!place}
+          onClose={() => setSelectedPlace(null)}
+        />
+      ) : (
+        <div className="absolute bottom-8 left-8 z-10 w-full max-w-sm">
+          <PlaceInfoCard {...sharedProps} />
+        </div>
+      )}
+      <AddEntranceDialog
+        place={place}
+        isOpen={isAddEntranceDialogOpen}
+        onClose={handleCloseAddEntranceDialog}
+        onEntranceAdded={handleEntranceAdded}
+      />
+    </>
   );
 }

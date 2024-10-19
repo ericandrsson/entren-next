@@ -1,10 +1,11 @@
 "use client";
 
-import UserAuthButton from "@/src/components/auth/UserAuthButton";
+import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
+import HeaderUserMenu from "./HeaderUserMenu";
 
-export default function Header() {
+export default function Header({ user }: { user: User | null }) {
   return (
     <header className={"w-full bg-background shadow-sm z-50"}>
       <div className="mx-auto px-4 py-4 flex justify-between items-center">
@@ -31,7 +32,7 @@ export default function Header() {
             </span>
           </div>
         </div>
-        <UserAuthButton />
+        <HeaderUserMenu initialUser={user} />
       </div>
     </header>
   );

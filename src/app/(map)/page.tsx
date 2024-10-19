@@ -2,7 +2,6 @@
 
 import ListView from "@/src/components/list/ListView";
 import MapView from "@/src/components/map/MapView";
-import PlaceInfoDrawer from "@/src/components/place/PlaceInfoDrawer";
 import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";
@@ -82,11 +81,11 @@ export default function Page() {
   }, [setIsMobile, setView]);
 
   useEffect(() => {
-    const storedToast = localStorage.getItem("accountCreatedToast");
+    const storedToast = localStorage.getItem("authToast");
     if (storedToast) {
       const toastData = JSON.parse(storedToast);
       toast(toastData);
-      localStorage.removeItem("accountCreatedToast");
+      localStorage.removeItem("authToast");
     }
   }, [toast]);
 

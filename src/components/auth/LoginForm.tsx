@@ -16,7 +16,6 @@ import { useToast } from "@/src/hooks/use-toast";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Lock } from "lucide-react";
-import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -91,6 +90,12 @@ export default function LoginForm() {
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password as string,
+      options: {
+        emailRedirectTo: `${window.location.origin}/callback`,
+        data: {
+          subscribeNewsletter: values.subscribeNewsletter,
+        },
+      },
     });
     if (error) {
       console.error("Error creating account:", error);
@@ -100,17 +105,12 @@ export default function LoginForm() {
         variant: "destructive",
       });
     } else {
-      localStorage.setItem(
-        "accountCreatedToast",
-        JSON.stringify({
-          title: "Konto skapat",
-          description:
-            "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
-          variant: "default",
-        }),
-      );
-      revalidatePath("/");
-      router.push("/");
+      toast({
+        title: "Konto skapat",
+        description:
+          "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
+        variant: "default",
+      });
     }
   };
 
@@ -125,6 +125,14 @@ export default function LoginForm() {
       console.error("Error logging in:", error);
       setLoginError("Felaktigt användarnamn eller lösenord");
     } else {
+      localStorage.setItem(
+        "authToast",
+        JSON.stringify({
+          title: "Välkommen tillbaka!",
+          description: "Du har loggats in.",
+          variant: "default",
+        }),
+      );
       router.push("/");
     }
   };

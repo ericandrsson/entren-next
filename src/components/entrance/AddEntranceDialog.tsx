@@ -267,7 +267,6 @@ export default function AddEntranceDialog({
 
     try {
       let photoFileName = null;
-      console.log(user.data.user);
       if (data.photo) {
         log.debug("uploading photo");
         const fileName = `place_${place.place_id}_entrance_${Date.now()}.jpg`;

@@ -1,32 +1,27 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button"; // Assuming a Button component from shadcn
-import { Input } from "@/src/components/ui/input"; // Assuming an Input component from shadcn
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { useAuth } from "@/src/context/AuthProvider";
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 export default function AccountSettings() {
   const supabase = createClient();
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    async function fetchUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        setName(user.user_metadata.name || "");
-        setAvatarUrl(user.user_metadata.avatar_url || "");
-      }
+    if (user) {
+      setName(user.user_metadata.name || "");
+      setAvatarUrl(user.user_metadata.avatar_url || "");
     }
-    fetchUser();
-  }, []);
+  }, [user]);
 
   const handleSave = async () => {
+    if (!user) return;
+
     try {
       const { error } = await supabase.auth.updateUser({
         data: { name, avatar_url: avatarUrl },
@@ -39,14 +34,18 @@ export default function AccountSettings() {
     }
   };
 
+  if (!user) {
+    return <div>Loading...</div>; // Or redirect to login page
+  }
+
   return (
     <div className="max-w-md mx-auto p-4">
-      <h1 className=" mb-4">Konto</h1>
+      <h1 className="mb-4">Konto</h1>
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Email</label>
         <Input
           type="email"
-          value={user?.email || ""}
+          value={user.email || ""}
           disabled
           className="w-full bg-gray-100 cursor-not-allowed"
         />

@@ -1,6 +1,8 @@
-import Header from "@/src/components/Header";
+import Header from "@/src/components/header/Header";
 import { Toaster } from "@/src/components/ui/toaster";
+import { AuthProvider } from "@/src/context/AuthProvider";
 import "@/src/styles/global.css";
+import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import CookieBanner from "../../components/CookieBanner";
@@ -22,11 +24,15 @@ export const metadata: Metadata = {
     "Entren is a platform for finding and sharing local events and places.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <html lang="en" className="h-full">
       <head>
@@ -39,10 +45,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col h-full overflow-hidden`}
       >
-        <Header />
-        <main className="flex-grow overflow-hidden">{children}</main>
-        <Toaster />
-        <CookieBanner />
+        <AuthProvider>
+          <Header user={user} />
+          <main className="flex-grow overflow-hidden">{children}</main>
+          <Toaster />
+          <CookieBanner />
+        </AuthProvider>
       </body>
     </html>
   );

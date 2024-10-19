@@ -43,6 +43,8 @@ export default function PlaceInfoContent({
   allPlacePhotos,
   isLoading,
   onEntranceCountChange,
+  onAddEntrance,
+  onEntranceAdded, // Add this new prop
 }: {
   place: Place;
   entrances: Entrance[];
@@ -50,6 +52,7 @@ export default function PlaceInfoContent({
   isLoading: boolean;
   onEntranceCountChange: (count: number) => void;
   onAddEntrance: () => void;
+  onEntranceAdded: () => void; // Add this new prop
 }) {
   const {
     isAddEntranceDialogOpen,
@@ -78,7 +81,6 @@ export default function PlaceInfoContent({
             resize: "cover",
           },
         });
-      log.debug("image url", { publicUrl: data?.publicUrl });
       return data?.publicUrl;
     },
     [supabase],
@@ -373,6 +375,7 @@ export default function PlaceInfoContent({
         isOpen={isAddEntranceDialogOpen}
         onClose={handleCloseAddEntranceDialog}
         onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
+        onEntranceAdded={onEntranceAdded} // Pass the new prop
       />
       <PlacePhotoModal
         photos={allPlacePhotos.map((photo) => ({
