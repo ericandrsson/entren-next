@@ -11,19 +11,12 @@ import {
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { passwordSchema } from "@/src/lib/schemas/auth";
-import { logger } from "@/src/libs/logger";
-import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
-const log = logger.child({
-  component: "ResetPasswordForm",
-});
 
 const resetPasswordFormSchema = z
   .object({
@@ -37,10 +30,13 @@ const resetPasswordFormSchema = z
 
 type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;
 
-export function ResetPasswordForm() {
+type ResetPasswordFormProps = {
+  resetPassword: (password: string) => Promise<{ error?: string }>;
+};
+
+export function ResetPasswordForm({ resetPassword }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
+  const [resetError, setResetError] = useState<string | null>(null);
   const router = useRouter();
 
   const form = useForm<ResetPasswordFormValues>({
@@ -52,36 +48,22 @@ export function ResetPasswordForm() {
     mode: "onChange",
   });
 
-  const onSubmit = async (values: ResetPasswordFormValues) => {
+  const handleSubmit = async (values: ResetPasswordFormValues) => {
     setIsLoading(true);
-    setError(null);
-
     try {
-      log.debug("Starting password update process");
-
-      const { data, error } = await supabase.auth.updateUser({
-        password: values.password,
-      });
-      log.debug("Supabase response:", { data, error });
-
-      if (error) throw error;
-
-      if (data.user) {
-        log.debug("Password updated successfully");
-        router.push("/auth/sign-in?reset_successful=true");
-      } else {
-        throw new Error("No user data returned");
+      const result = await resetPassword(values.password);
+      if (result.error) {
+        throw new Error(result.error);
       }
+      // The server action will handle the redirect if successful
     } catch (error) {
-      log.error("Error resetting password:", error);
       if (error instanceof Error) {
-        setError(`Det gick inte att uppdatera lösenordet: ${error.message}`);
+        setResetError(error.message);
       } else {
-        setError("Ett oväntat fel inträffade. Försök igen.");
+        setResetError("Ett oväntat fel inträffade. Försök igen.");
       }
     } finally {
       setIsLoading(false);
-      log.debug("Password update process completed");
     }
   };
 
@@ -89,7 +71,7 @@ export function ResetPasswordForm() {
     <div className="w-full max-w-md p-6 space-y-6">
       <h2 className="text-2xl font-bold text-primary">Välj nytt lösenord</h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="password"
@@ -99,11 +81,7 @@ export function ResetPasswordForm() {
                 <FormControl>
                   <Input {...field} type="password" className="bg-white" />
                 </FormControl>
-                {form.formState.errors.password && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {form.formState.errors.password.message}
-                  </p>
-                )}
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -130,7 +108,7 @@ export function ResetPasswordForm() {
         </form>
       </Form>
 
-      {error && (
+      {resetError && (
         <div className="mt-6 p-4 bg-red-50 rounded-md border border-red-200">
           <div className="flex items-center mb-2">
             <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
@@ -138,22 +116,7 @@ export function ResetPasswordForm() {
               Lösenordsåterställning misslyckades
             </h4>
           </div>
-          <p className="text-sm text-red-700">
-            {error.includes("Klicka här") ? (
-              <>
-                {error.split("Klicka här")[0]}
-                <Link
-                  href="/auth/sign-in?reset=true"
-                  className="underline hover:text-red-800"
-                >
-                  Klicka här
-                </Link>
-                {error.split("Klicka här")[1]}
-              </>
-            ) : (
-              error
-            )}
-          </p>
+          <p className="text-sm text-red-700">{resetError}</p>
         </div>
       )}
     </div>
