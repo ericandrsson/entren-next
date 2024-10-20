@@ -12,10 +12,11 @@ import {
   FormMessage,
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
-import { loginFormSchema, LoginFormValues } from "@/src/lib/schemas/auth";
+import { LoginFormValues } from "@/src/lib/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface EmailOtpFormProps {
   onSubmit: (values: LoginFormValues) => Promise<void>;
@@ -24,24 +25,45 @@ interface EmailOtpFormProps {
   verificationSent: boolean;
 }
 
+const createAccountSchema = z.object({
+  email: z.string().email("Ogiltig e-postadress"),
+  password: z.string().min(8, "Lösenordet måste vara minst 8 tecken långt"),
+  subscribeNewsletter: z.boolean(),
+  acceptTerms: z.boolean(),
+});
+
+const otpSchema = z.object({
+  email: z.string().email("Ogiltig e-postadress"),
+});
+
 export default function EmailOtpForm({
   onSubmit,
   formState,
   loginError,
   verificationSent,
 }: EmailOtpFormProps) {
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      email: "",
-      subscribeNewsletter: false,
-      acceptTerms: false,
-    },
+  const isCreateAccount = formState === SignInFormState.CreateAccount;
+
+  const form = useForm<z.infer<typeof createAccountSchema> | z.infer<typeof otpSchema>>({
+    resolver: zodResolver(isCreateAccount ? createAccountSchema : otpSchema),
+    defaultValues: isCreateAccount
+      ? {
+          email: "",
+          password: "",
+          subscribeNewsletter: false,
+          acceptTerms: false,
+        }
+      : { email: "" },
+    mode: "onChange",
   });
+
+  const handleSubmit = (values: z.infer<typeof createAccountSchema> | z.infer<typeof otpSchema>) => {
+    onSubmit(values as LoginFormValues);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -55,7 +77,22 @@ export default function EmailOtpForm({
             </FormItem>
           )}
         />
-        {formState === SignInFormState.CreateAccount && (
+        {isCreateAccount && (
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lösenord</FormLabel>
+                <FormControl>
+                  <Input {...field} type="password" className="bg-white" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        {isCreateAccount && (
           <>
             <FormField
               control={form.control}
@@ -101,10 +138,9 @@ export default function EmailOtpForm({
         <Button
           type="submit"
           className="w-full bg-primary text-primary-foreground"
+          disabled={!form.formState.isValid}
         >
-          {formState === SignInFormState.CreateAccount
-            ? "Skapa konto"
-            : "Skicka inloggningslänk"}
+          {isCreateAccount ? "Skapa konto" : "Skicka inloggningslänk"}
         </Button>
 
         {loginError && (
@@ -118,9 +154,7 @@ export default function EmailOtpForm({
           <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
             <div className="flex items-center mb-4">
               <Mail className="h-6 w-6 text-blue-500 mr-3" />
-              <h4 className="font-semibold text-blue-700">
-                Kolla din e-post
-              </h4>
+              <h4 className="font-semibold text-blue-700">Kolla din e-post</h4>
             </div>
             <p className="text-sm mb-4 text-gray-700">
               Vi har skickat en inloggningslänk till{" "}

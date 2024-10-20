@@ -1,8 +1,5 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginFormSchema, LoginFormValues } from "@/src/lib/schemas/auth";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import {
@@ -14,25 +11,39 @@ import {
   FormMessage,
 } from "@/src/components/ui/form";
 import { AlertTriangle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const emailSchema = z.object({
+  email: z.string().email("Ogiltig e-postadress"),
+  password: z.string().min(1, "Lösenord krävs"),
+});
 
 interface EmailPasswordFormProps {
-  onSubmit: (values: LoginFormValues) => Promise<void>;
+  onSubmit: (email: string, password: string) => Promise<void>;
   onResetPassword: () => void;
   loginError: string | null;
+  isCreatingAccount: boolean;
 }
 
-export default function EmailPasswordForm({ onSubmit, onResetPassword, loginError }: EmailPasswordFormProps) {
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+export default function EmailPasswordForm({ onSubmit, onResetPassword, loginError, isCreatingAccount }: EmailPasswordFormProps) {
+  const form = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
     defaultValues: {
       email: "",
       password: "",
     },
+    mode: "onChange", // This enables live validation
   });
+
+  const handleSubmit = (values: z.infer<typeof emailSchema>) => {
+    onSubmit(values.email, values.password);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -40,7 +51,12 @@ export default function EmailPasswordForm({ onSubmit, onResetPassword, loginErro
             <FormItem>
               <FormLabel>E-postadress</FormLabel>
               <FormControl>
-                <Input {...field} type="email" className="bg-white" />
+                <Input 
+                  {...field}
+                  type="email" 
+                  className="bg-white" 
+                  required
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -53,9 +69,14 @@ export default function EmailPasswordForm({ onSubmit, onResetPassword, loginErro
             <FormItem>
               <FormLabel>Lösenord</FormLabel>
               <FormControl>
-                <Input {...field} type="password" className="bg-white" />
+                <Input 
+                  {...field}
+                  type="password" 
+                  className="bg-white" 
+                  required={isCreatingAccount}
+                />
               </FormControl>
-              <FormMessage />
+              {isCreatingAccount && <FormMessage />}
             </FormItem>
           )}
         />
@@ -67,8 +88,12 @@ export default function EmailPasswordForm({ onSubmit, onResetPassword, loginErro
         >
           Glömt lösenordet?
         </Button>
-        <Button type="submit" className="w-full bg-primary text-primary-foreground">
-          Logga in
+        <Button 
+          type="submit" 
+          className="w-full bg-primary text-primary-foreground"
+          disabled={!form.formState.isValid}
+        >
+          {isCreatingAccount ? "Skapa konto" : "Logga in"}
         </Button>
 
         {loginError && (

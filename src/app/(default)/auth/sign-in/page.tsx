@@ -35,7 +35,7 @@ export default function SignInPage() {
   }, [searchParams]);
 
   const handleSubmit = async (
-    values: LoginFormValues,
+    values: LoginFormValues | { email: string; password: string },
     currentFormState: SignInFormState,
   ) => {
     setLoginError(null);
@@ -43,13 +43,13 @@ export default function SignInPage() {
 
     switch (currentFormState) {
       case SignInFormState.CreateAccount:
-        await handleSignUp(values);
+        await handleSignUp(values as LoginFormValues);
         break;
       case SignInFormState.EmailPassword:
-        await handlePasswordLogin(values);
+        await handlePasswordLogin(values as { email: string; password: string });
         break;
       case SignInFormState.EmailOtp:
-        await handleOtpLogin(values);
+        await handleOtpLogin(values as LoginFormValues);
         break;
     }
   };
@@ -74,10 +74,10 @@ export default function SignInPage() {
     }
   };
 
-  const handlePasswordLogin = async (values: LoginFormValues) => {
+  const handlePasswordLogin = async ({ email, password }: { email: string; password: string }) => {
     const { error } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password as string,
+      email,
+      password,
     });
     if (error) {
       console.error("Error logging in:", error);
@@ -139,13 +139,14 @@ export default function SignInPage() {
               </h3>
             )}
 
-            {formState === SignInFormState.EmailPassword ? (
+            {formState === SignInFormState.EmailPassword || formState === SignInFormState.CreateAccount ? (
               <EmailPasswordForm
-                onSubmit={(values) => handleSubmit(values, formState)}
+                onSubmit={(email, password) => handleSubmit({ email, password }, formState)}
                 onResetPassword={() =>
                   setFormState(SignInFormState.ResetPassword)
                 }
                 loginError={loginError}
+                isCreatingAccount={formState === SignInFormState.CreateAccount}
               />
             ) : (
               <EmailOtpForm
