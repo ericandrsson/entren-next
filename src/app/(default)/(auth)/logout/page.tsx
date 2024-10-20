@@ -1,8 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default async function LogoutPage() {
   const supabase = createClient();
+  const router = useRouter();
   await supabase.auth.signOut();
-  redirect("/");
+  router.refresh();
 }

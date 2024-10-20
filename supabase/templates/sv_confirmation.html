@@ -9,7 +9,7 @@
     <p>Hej!</p>
     <p>Tack för att du registrerar dig på Entren - plattformen som gör det enklare att hitta tillgänglig information om entréer.</p>
     <p>För att slutföra din registrering och börja använda Entren, vänligen bekräfta din e-postadress genom att klicka på länken nedan:</p>
-    <a href="{{ .ConfirmationURL }}">Bekräfta min e-postadress</a>
+    <a href="{{ .SiteURL }}/confirm?token_hash={{ .TokenHash }}&type=signup">Bekräfta min e-postadress</a>
     <p>Om du inte har registrerat dig på Entren kan du ignorera detta meddelande.</p>
     <p>Vi ser fram emot att välkomna dig till vår gemenskap där vi tillsammans arbetar för ökad tillgänglighet!</p>
 </body>

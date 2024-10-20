@@ -198,6 +198,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
         email: values.email,
         options: {
           emailRedirectTo: `${window.location.origin}/callback`,
+          shouldCreateUser: true,
         },
       });
 
