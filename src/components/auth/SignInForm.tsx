@@ -42,7 +42,7 @@ export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInForm
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -51,19 +51,6 @@ export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInForm
               <FormLabel>E-postadress</FormLabel>
               <FormControl>
                 <Input {...field} type="email" className="bg-white" required />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lösenord</FormLabel>
-              <FormControl>
-                <Input {...field} type="password" className="bg-white" required />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,6 +66,19 @@ export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInForm
             Glömt lösenordet?
           </Button>
         </div>
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Lösenord</FormLabel>
+              <FormControl>
+                <Input {...field} type="password" className="bg-white" required />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button
           type="submit"
           className="w-full bg-primary text-primary-foreground"

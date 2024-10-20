@@ -11,6 +11,7 @@ import { LoginFormValues } from "@/src/lib/schemas/auth";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Lock, Mail } from "lucide-react";
 
 export enum SignInFormState {
   EmailOtp = "EMAIL_OTP",
@@ -174,7 +175,7 @@ export default function SignInPage() {
 
             <Button
               variant="outline"
-              className="w-full mt-3"
+              className="w-full mt-3 flex items-center justify-center"
               onClick={() =>
                 setFormState(
                   formState === SignInFormState.EmailPassword
@@ -183,9 +184,17 @@ export default function SignInPage() {
                 )
               }
             >
-              {formState === SignInFormState.EmailPassword
-                ? "Logga in utan lösenord"
-                : "Logga in med lösenord"}
+              {formState === SignInFormState.EmailPassword ? (
+                <>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Logga in utan lösenord
+                </>
+              ) : (
+                <>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Logga in med lösenord
+                </>
+              )}
             </Button>
 
             {formState !== SignInFormState.CreateAccount && (
