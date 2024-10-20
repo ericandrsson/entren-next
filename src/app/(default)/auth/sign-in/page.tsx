@@ -102,7 +102,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex min-h-screen overflow-hidden">
+    <div className="flex justify-center items-center h-full">
       <div className="w-full max-w-md p-6 space-y-6">
         <h1 className="font-bold text-2xl text-primary">
           {formState === SignInFormState.CreateAccount
