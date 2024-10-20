@@ -30,6 +30,8 @@ export default function PlaceInfoCard({
           allPlacePhotos={allPlacePhotos}
           isLoading={isLoading}
           onEntranceCountChange={(count) => setEntranceCount(count)}
+          onAddEntrance={onAddEntrance}
+          onEntranceAdded={() => {}}
         />
       </CardContent>
       <CardFooter>

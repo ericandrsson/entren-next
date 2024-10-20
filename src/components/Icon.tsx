@@ -29,7 +29,7 @@ export const Icon = <T extends IconCategory>({
 
   if (typeof IconComponent !== "function") {
     console.warn(
-      `Icon "${category}.${name}" not found or is not a valid component`,
+      `Icon "${category}.${String(name)}" not found or is not a valid component`,
     );
     return null;
   }

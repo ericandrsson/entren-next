@@ -43,7 +43,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
       >
-        <Header  />
+        <Header user={null} />
         <main className="flex-grow overflow-y-auto">
           <div className="flex justify-center bg-white">{children}</div>
         </main>

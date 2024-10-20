@@ -42,6 +42,8 @@ export default function PlaceInfoDrawer({
             allPlacePhotos={allPlacePhotos}
             isLoading={isLoading}
             onEntranceCountChange={(count) => setEntranceCount(count)}
+            onAddEntrance={onAddEntrance}
+            onEntranceAdded={() => {}}
           />
         </div>
         <DrawerFooter className="px-4 py-2">

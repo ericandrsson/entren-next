@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default function AllAccessibilitiesIcon(props) {
+export default function AllAccessibilitiesIcon(props: React.SVGAttributes<{}>) {
   return (
     <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" {...props}>
       <defs>

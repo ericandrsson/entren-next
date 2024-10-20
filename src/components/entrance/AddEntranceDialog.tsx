@@ -64,7 +64,7 @@ interface AddEntranceDialogProps {
   place: Place;
   isOpen: boolean;
   onClose: () => void;
-  onSaveAndAddAnother: () => void;
+  onEntranceAdded: () => void; // Add this line
 }
 
 const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
@@ -107,7 +107,7 @@ export default function AddEntranceDialog({
   place,
   isOpen,
   onClose,
-  onSaveAndAddAnother,
+  onEntranceAdded,
 }: AddEntranceDialogProps) {
   log.debug({ place, isOpen }, "AddEntranceDialog rendered");
 
@@ -332,7 +332,7 @@ export default function AddEntranceDialog({
 
       if (addAnother) {
         log.info("saving and adding another entrance");
-        onSaveAndAddAnother();
+        onEntranceAdded();
         form.reset();
         setStep(1);
         toast({

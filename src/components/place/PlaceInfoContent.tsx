@@ -374,13 +374,19 @@ export default function PlaceInfoContent({
         place={place}
         isOpen={isAddEntranceDialogOpen}
         onClose={handleCloseAddEntranceDialog}
-        onSaveAndAddAnother={handleSaveAndAddAnotherEntrance}
         onEntranceAdded={onEntranceAdded} // Pass the new prop
       />
       <PlacePhotoModal
         photos={allPlacePhotos.map((photo) => ({
           ...photo,
-          photo_filename: getImageUrl(photo.photo_filename),
+          photo_filename: getImageUrl(photo.photo_filename || ''),
+          photo_id: Number(photo.photo_id),
+          // Ensure all required properties are included
+          created_at: "",
+          entrance_id: null,
+          place_id: null,
+          updated_at: null,
+          uploaded_by: null,
         }))}
         initialPhotoIndex={selectedPhotoIndex}
         onClose={handleClosePhotoDialog}
