@@ -141,9 +141,9 @@ export default function SignInPage() {
         )}
 
         {formState === SignInFormState.CreateAccount && (
-          <SignUpForm 
-            onSubmit={handleSignUp} 
-            loginError={loginError} 
+          <SignUpForm
+            onSubmit={handleSignUp}
+            loginError={loginError}
             verificationSent={verificationSent}
           />
         )}
