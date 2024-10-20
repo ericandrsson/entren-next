@@ -15,14 +15,13 @@ export default async function Confirm({
     console.log("token_hash", token_hash);
     const supabase = createClient();
 
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     });
     if (!error) {
+      console.log("data", data);
       // redirect user to specified redirect URL or root of app
-      const { data: user } = await supabase.auth.getUser();
-      console.log("user", user);
       redirect(next);
     }
   }

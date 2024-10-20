@@ -6,28 +6,33 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  console.log("Creating Supabase server client");
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
+          console.log("Getting all cookies");
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          console.log("Setting cookies", cookiesToSet);
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
           supabaseResponse = NextResponse.next({
             request,
           });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            console.log(`Setting cookie: ${name}`);
+            supabaseResponse.cookies.set(name, value, options);
+          });
         },
       },
     },
   );
+  console.log("Supabase server client created");
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug

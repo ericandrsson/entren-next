@@ -24,17 +24,13 @@ export const metadata: Metadata = {
     "Entren is a platform for finding and sharing local events and places.",
 };
 
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  console.log("user layout", user);
   return (
     <html lang="en">
       <head>
@@ -47,7 +43,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
       >
-        <Header user={user} />
+        <Header  />
         <main className="flex-grow overflow-y-auto">
           <div className="flex justify-center bg-white">{children}</div>
         </main>
