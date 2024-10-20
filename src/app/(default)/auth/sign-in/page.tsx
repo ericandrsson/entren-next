@@ -76,7 +76,7 @@ export default function SignInPage() {
       }
     } else {
       setVerificationSent(true);
-      setLoginError(null); // Clear any previous login errors
+      setLoginError(null);
     }
   };
 
@@ -102,12 +102,14 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen overflow-hidden">
       <div className="w-full max-w-md p-6 space-y-6">
         <h1 className="font-bold text-2xl text-primary">
           {formState === SignInFormState.CreateAccount
             ? "Skapa konto på Entren"
-            : "Logga in"}
+            : formState === SignInFormState.ResetPassword
+              ? "Glömt ditt lösenord?"
+              : "Logga in"}
         </h1>
         {formState === SignInFormState.CreateAccount ? (
           <p className="text-sm text-muted-foreground">
@@ -121,9 +123,11 @@ export default function SignInPage() {
             </Button>
           </p>
         ) : (
-          <h3 className="font-semibold text-muted-foreground">
-            Välkommen tillbaka! Logga in eller skapa ett nytt konto.
-          </h3>
+          formState !== SignInFormState.ResetPassword && (
+            <h3 className="font-semibold text-muted-foreground">
+              Välkommen tillbaka! Logga in eller skapa ett nytt konto.
+            </h3>
+          )
         )}
 
         {formState === SignInFormState.ResetPassword && (
@@ -157,47 +161,51 @@ export default function SignInPage() {
           />
         )}
 
-        <div className="relative my-6">
-          <Separator className="w-full" />
-          <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-3 text-xs text-muted-foreground bg-white">
-            eller
-          </span>
-        </div>
+        {formState !== SignInFormState.ResetPassword && (
+          <>
+            <div className="relative my-6">
+              <Separator className="w-full" />
+              <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-3 text-xs text-muted-foreground bg-white">
+                eller
+              </span>
+            </div>
 
-        <GoogleSignInButton />
+            <GoogleSignInButton />
 
-        <Button
-          variant="outline"
-          className="w-full mt-3"
-          onClick={() =>
-            setFormState(
-              formState === SignInFormState.EmailPassword
-                ? SignInFormState.EmailOtp
-                : SignInFormState.EmailPassword,
-            )
-          }
-        >
-          {formState === SignInFormState.EmailPassword
-            ? "Logga in utan lösenord"
-            : "Logga in med lösenord"}
-        </Button>
+            <Button
+              variant="outline"
+              className="w-full mt-3"
+              onClick={() =>
+                setFormState(
+                  formState === SignInFormState.EmailPassword
+                    ? SignInFormState.EmailOtp
+                    : SignInFormState.EmailPassword,
+                )
+              }
+            >
+              {formState === SignInFormState.EmailPassword
+                ? "Logga in utan lösenord"
+                : "Logga in med lösenord"}
+            </Button>
 
-        {formState !== SignInFormState.CreateAccount && (
-          <Button
-            variant="link"
-            className="w-full mt-3"
-            onClick={() => setFormState(SignInFormState.CreateAccount)}
-          >
-            Skapa konto
-          </Button>
+            {formState !== SignInFormState.CreateAccount && (
+              <Button
+                variant="link"
+                className="w-full mt-3"
+                onClick={() => setFormState(SignInFormState.CreateAccount)}
+              >
+                Skapa konto
+              </Button>
+            )}
+
+            <p className="text-xs text-center text-muted-foreground mt-6">
+              Så hanterar vi dina{" "}
+              <a href="#" className="text-primary hover:underline">
+                personuppgifter
+              </a>
+            </p>
+          </>
         )}
-
-        <p className="text-xs text-center text-muted-foreground mt-6">
-          Så hanterar vi dina{" "}
-          <a href="#" className="text-primary hover:underline">
-            personuppgifter
-          </a>
-        </p>
       </div>
     </div>
   );

@@ -59,8 +59,7 @@ export function RequestResetPasswordForm({
   };
 
   return (
-    <div className="w-full max-w-md p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-primary">Glömt ditt lösenord?</h2>
+    <>
       <p className="text-sm text-muted-foreground">
         Det händer de flesta någon gång. Skicka oss din e-postadress som du
         använder för att logga in på Entren. Då skickar vi instruktioner till
@@ -118,6 +117,6 @@ export function RequestResetPasswordForm({
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 }

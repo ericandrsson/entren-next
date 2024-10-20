@@ -11,21 +11,20 @@ import {
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { passwordSchema } from "@/src/lib/schemas/auth";
+import { logger } from "@/src/libs/logger";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { logger } from "@/src/libs/logger";
 
 const log = logger.child({
   component: "ResetPasswordForm",
 });
-  
+
 const resetPasswordFormSchema = z
   .object({
     password: passwordSchema,
@@ -44,7 +43,7 @@ export function ResetPasswordForm() {
   const supabase = createClient();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || '';
+  const email = searchParams.get("email") || "";
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordFormSchema),
@@ -77,9 +76,16 @@ export function ResetPasswordForm() {
       console.error("Error resetting password:", error);
       if (error instanceof Error) {
         if (error.message === "Auth session missing!") {
-          setError("Lösenordsåterställning misslyckades. Återställningslänken har tyvärr gått ut. Klicka här för att få en ny länk.");
-        } else if (error.message === "New password should be different from the old password.") {
-          setError("Det nya lösenordet måste vara annorlunda än det gamla lösenordet.");
+          setError(
+            "Lösenordsåterställning misslyckades. Återställningslänken har tyvärr gått ut. Klicka här för att få en ny länk.",
+          );
+        } else if (
+          error.message ===
+          "New password should be different from the old password."
+        ) {
+          setError(
+            "Det nya lösenordet måste vara annorlunda än det gamla lösenordet.",
+          );
         } else {
           setError(`Det gick inte att uppdatera lösenordet: ${error.message}`);
         }

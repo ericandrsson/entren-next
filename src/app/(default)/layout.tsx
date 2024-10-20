@@ -3,7 +3,6 @@ import Footer from "@/src/components/Footer";
 import Header from "@/src/components/header/Header";
 import { Toaster } from "@/src/components/ui/toaster";
 import "@/src/styles/global.css";
-import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
@@ -24,13 +23,11 @@ export const metadata: Metadata = {
     "Entren is a platform for finding and sharing local events and places.",
 };
 
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
       <head>
@@ -44,7 +41,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
       >
         <Header user={null} />
-        <main className="flex-grow overflow-y-auto">
+        <main className="flex-grow overflow-y-hidden">
           <div className="flex justify-center bg-white">{children}</div>
         </main>
         <Toaster />
