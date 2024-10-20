@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
       return { error: error.message };
     }
 
-    redirect("/auth/sign-in?reset_successful=true");
+    redirect("/auth/sign-in?mode=email-password");
   }
 
   return <ResetPasswordForm resetPassword={resetPassword} />;

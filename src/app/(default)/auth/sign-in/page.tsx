@@ -102,7 +102,7 @@ export default function SignInPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/callback`,
+        emailRedirectTo: `${window.location.origin}/`,
         data: {
           subscribeNewsletter,
         },
