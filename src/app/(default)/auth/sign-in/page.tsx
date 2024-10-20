@@ -9,9 +9,9 @@ import { Button } from "@/src/components/ui/button";
 import { Separator } from "@/src/components/ui/separator";
 import { LoginFormValues } from "@/src/lib/schemas/auth";
 import { createClient } from "@/utils/supabase/client";
+import { Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Lock, Mail } from "lucide-react";
 
 export enum SignInFormState {
   EmailOtp = "EMAIL_OTP",
@@ -25,7 +25,9 @@ export default function SignInPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [formState, setFormState] = useState<SignInFormState>(SignInFormState.EmailOtp);
+  const [formState, setFormState] = useState<SignInFormState>(
+    SignInFormState.EmailOtp,
+  );
   const [loginError, setLoginError] = useState<string | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
@@ -71,6 +73,8 @@ export default function SignInPage() {
   };
 
   const handleSetFormState = (newState: SignInFormState) => {
+    setLoginError(null);
+    setVerificationSent(false);
     setFormState(newState);
     updateURL(newState);
   };
@@ -143,16 +147,16 @@ export default function SignInPage() {
 
   return (
     <div className="flex justify-center items-center h-full">
-      <div className="w-full max-w-md p-6 space-y-6">
-        <h1 className="font-bold text-2xl text-primary">
+      <div className="w-full max-w-lg p-6 space-y-8">
+        <h1 className="font-bold text-2xl text-primary mb-2">
           {formState === SignInFormState.CreateAccount
             ? "Skapa konto på Entren"
             : formState === SignInFormState.ResetPassword
-            ? "Glömt ditt lösenord?"
-            : "Logga in"}
+              ? "Glömt ditt lösenord?"
+              : "Logga in"}
         </h1>
         {formState === SignInFormState.CreateAccount ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-4">
             Har du redan ett konto?{" "}
             <Button
               variant="link"
@@ -164,7 +168,7 @@ export default function SignInPage() {
           </p>
         ) : (
           formState !== SignInFormState.ResetPassword && (
-            <h3 className="font-semibold text-muted-foreground">
+            <h3 className="font-semibold text-muted-foreground mb-4">
               Välkommen tillbaka! Logga in eller skapa ett nytt konto.
             </h3>
           )
@@ -177,20 +181,22 @@ export default function SignInPage() {
         )}
 
         {formState === SignInFormState.EmailPassword && (
-          <>
+          <div className="space-y-2">
             <SignInForm
               onSubmit={handleSignIn}
-              onResetPassword={() => handleSetFormState(SignInFormState.ResetPassword)}
+              onResetPassword={() =>
+                handleSetFormState(SignInFormState.ResetPassword)
+              }
               loginError={loginError}
             />
             <Button
               variant="outline"
-              className="w-full mt-3"
+              className="w-full"
               onClick={() => handleSetFormState(SignInFormState.CreateAccount)}
             >
               Skapa konto
             </Button>
-          </>
+          </div>
         )}
 
         {formState === SignInFormState.CreateAccount && (
@@ -212,38 +218,40 @@ export default function SignInPage() {
 
         {formState !== SignInFormState.ResetPassword && (
           <>
-            <div className="relative my-6">
+            <div className="relative my-12">
               <Separator className="w-full" />
               <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-3 text-xs text-muted-foreground bg-white">
                 eller
               </span>
             </div>
 
-            <GoogleSignInButton />
+            <div className="space-y-3">
+              <GoogleSignInButton />
 
-            <Button
-              variant="outline"
-              className="w-full mt-3 flex items-center justify-center"
-              onClick={() =>
-                handleSetFormState(
-                  formState === SignInFormState.EmailPassword
-                    ? SignInFormState.EmailOtp
-                    : SignInFormState.EmailPassword
-                )
-              }
-            >
-              {formState === SignInFormState.EmailPassword ? (
-                <>
-                  <Mail className="mr-2 h-4 w-4" />
-                  Logga in utan lösenord
-                </>
-              ) : (
-                <>
-                  <Lock className="mr-2 h-4 w-4" />
-                  Logga in med lösenord
-                </>
-              )}
-            </Button>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center"
+                onClick={() =>
+                  handleSetFormState(
+                    formState === SignInFormState.EmailPassword
+                      ? SignInFormState.EmailOtp
+                      : SignInFormState.EmailPassword,
+                  )
+                }
+              >
+                {formState === SignInFormState.EmailPassword ? (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Logga in utan lösenord
+                  </>
+                ) : (
+                  <>
+                    <Lock className="mr-2 h-4 w-4" />
+                    Logga in med lösenord
+                  </>
+                )}
+              </Button>
+            </div>
 
             <p className="text-xs text-center text-muted-foreground mt-6">
               Så hanterar vi dina{" "}

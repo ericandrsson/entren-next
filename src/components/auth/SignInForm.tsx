@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
 import {
   Form,
   FormControl,
@@ -10,9 +9,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
+import { Input } from "@/src/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const signInSchema = z.object({
@@ -26,7 +26,11 @@ interface SignInFormProps {
   loginError: string | null;
 }
 
-export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInFormProps) {
+export function SignInForm({
+  onSubmit,
+  onResetPassword,
+  loginError,
+}: SignInFormProps) {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -42,7 +46,7 @@ export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInForm
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="email"
@@ -56,36 +60,43 @@ export function SignInForm({ onSubmit, onResetPassword, loginError }: SignInForm
             </FormItem>
           )}
         />
-        <div className="text-right">
-          <Button
-            type="button"
-            variant="link"
-            className="p-0 h-auto text-sm text-primary underline hover:no-underline"
-            onClick={onResetPassword}
-          >
-            Glömt lösenordet?
-          </Button>
-        </div>
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Lösenord</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>Lösenord</FormLabel>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="p-0 h-auto text-xs text-primary underline"
+                  onClick={onResetPassword}
+                >
+                  Glömt lösenordet?
+                </Button>
+              </div>
               <FormControl>
-                <Input {...field} type="password" className="bg-white" required />
+                <Input
+                  {...field}
+                  type="password"
+                  className="bg-white"
+                  required
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="w-full bg-primary text-primary-foreground"
-          disabled={!form.formState.isValid}
-        >
-          Logga in
-        </Button>
+        <div className="mt-6">
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground"
+            disabled={!form.formState.isValid}
+          >
+            Logga in
+          </Button>
+        </div>
 
         {loginError && (
           <div className="flex items-center mt-3 p-3 bg-red-50 rounded-md border border-red-200">

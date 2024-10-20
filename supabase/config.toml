@@ -114,6 +114,7 @@ secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
 max_frequency = "1s"
 
+
 # Use a production-ready SMTP server
 # [auth.email.smtp]
 # host = "smtp.sendgrid.net"
@@ -132,7 +133,7 @@ content_path = "./supabase/templates/sv_invite.html"
 subject = "Bekräfta din e-postadress för Entren"
 content_path = "./supabase/templates/sv_confirmation.html"
 
-[auth.email.template.reset_password]
+[auth.email.template.recovery]
 subject = "Återställ ditt lösenord för Entren"
 content_path = "./supabase/templates/sv_reset_password.html"
 

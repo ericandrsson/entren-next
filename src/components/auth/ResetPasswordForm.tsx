@@ -16,7 +16,7 @@ import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -42,8 +42,6 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordFormSchema),
@@ -57,8 +55,10 @@ export function ResetPasswordForm() {
   const onSubmit = async (values: ResetPasswordFormValues) => {
     setIsLoading(true);
     setError(null);
+
     try {
       log.debug("Starting password update process");
+
       const { data, error } = await supabase.auth.updateUser({
         password: values.password,
       });
@@ -68,27 +68,14 @@ export function ResetPasswordForm() {
 
       if (data.user) {
         log.debug("Password updated successfully");
-        router.push("/");
+        router.push("/auth/sign-in?reset_successful=true");
       } else {
         throw new Error("No user data returned");
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
+      log.error("Error resetting password:", error);
       if (error instanceof Error) {
-        if (error.message === "Auth session missing!") {
-          setError(
-            "Lösenordsåterställning misslyckades. Återställningslänken har tyvärr gått ut. Klicka här för att få en ny länk.",
-          );
-        } else if (
-          error.message ===
-          "New password should be different from the old password."
-        ) {
-          setError(
-            "Det nya lösenordet måste vara annorlunda än det gamla lösenordet.",
-          );
-        } else {
-          setError(`Det gick inte att uppdatera lösenordet: ${error.message}`);
-        }
+        setError(`Det gick inte att uppdatera lösenordet: ${error.message}`);
       } else {
         setError("Ett oväntat fel inträffade. Försök igen.");
       }
