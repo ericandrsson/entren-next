@@ -13,13 +13,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
+import { AlertTriangle } from "lucide-react";
 
 interface EmailPasswordFormProps {
   onSubmit: (values: LoginFormValues) => Promise<void>;
   onResetPassword: () => void;
+  loginError: string | null;
 }
 
-export default function EmailPasswordForm({ onSubmit, onResetPassword }: EmailPasswordFormProps) {
+export default function EmailPasswordForm({ onSubmit, onResetPassword, loginError }: EmailPasswordFormProps) {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -68,6 +70,13 @@ export default function EmailPasswordForm({ onSubmit, onResetPassword }: EmailPa
         <Button type="submit" className="w-full bg-primary text-primary-foreground">
           Logga in
         </Button>
+
+        {loginError && (
+          <div className="flex items-center mt-3 p-3 bg-red-50 rounded-md border border-red-200">
+            <AlertTriangle className="h-5 w-5 text-red-500 mr-3" />
+            <span className="text-sm text-red-700">{loginError}</span>
+          </div>
+        )}
       </form>
     </Form>
   );

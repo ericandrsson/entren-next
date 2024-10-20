@@ -6,7 +6,6 @@ import GoogleSignInButton from "@/src/components/auth/GoogleSignInButton";
 import { RequestResetPasswordForm } from "@/src/components/auth/RequestResetPasswordForm";
 import { Button } from "@/src/components/ui/button";
 import { Separator } from "@/src/components/ui/separator";
-import { useToast } from "@/src/hooks/use-toast";
 import { LoginFormValues } from "@/src/lib/schemas/auth";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,31 +19,28 @@ export enum SignInFormState {
 }
 
 export default function SignInPage() {
-  const { toast } = useToast();
   const searchParams = useSearchParams();
   const [formState, setFormState] = useState<SignInFormState>(
     SignInFormState.EmailOtp,
   );
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
-    const storedToast = localStorage.getItem("authToast");
-    if (storedToast) {
-      const toastData = JSON.parse(storedToast);
-      toast(toastData);
-      localStorage.removeItem("authToast");
-    }
-
     if (searchParams.get("reset") === "true") {
       setFormState(SignInFormState.ResetPassword);
     }
-  }, [toast, searchParams]);
+  }, [searchParams]);
 
   const handleSubmit = async (
     values: LoginFormValues,
     currentFormState: SignInFormState,
   ) => {
+    setLoginError(null);
+    setVerificationSent(false);
+
     switch (currentFormState) {
       case SignInFormState.CreateAccount:
         await handleSignUp(values);
@@ -72,18 +68,9 @@ export default function SignInPage() {
 
     if (error) {
       console.error("Error signing up:", error);
-      toast({
-        title: "Fel vid skapande av konto",
-        description: "Det gick inte att skapa kontot. Försök igen senare.",
-        variant: "destructive",
-      });
+      setLoginError("Det gick inte att skapa kontot. Försök igen senare.");
     } else {
-      toast({
-        title: "Konto skapat",
-        description:
-          "Ditt konto har skapats framgångsrikt. Kolla din e-post för verifieringslänk.",
-        variant: "default",
-      });
+      setVerificationSent(true);
     }
   };
 
@@ -94,20 +81,8 @@ export default function SignInPage() {
     });
     if (error) {
       console.error("Error logging in:", error);
-      toast({
-        title: "Inloggningsfel",
-        description: "Felaktigt användarnamn eller lösenord",
-        variant: "destructive",
-      });
+      setLoginError("Felaktigt användarnamn eller lösenord");
     } else {
-      localStorage.setItem(
-        "authToast",
-        JSON.stringify({
-          title: "Välkommen tillbaka!",
-          description: "Du har loggats in.",
-          variant: "default",
-        }),
-      );
       router.push("/");
     }
   };
@@ -124,19 +99,12 @@ export default function SignInPage() {
 
       if (error) throw error;
 
-      toast({
-        title: "Inloggningslänk skickad",
-        description: "Kolla din e-post för en länk att logga in med.",
-        variant: "default",
-      });
+      setVerificationSent(true);
     } catch (error) {
       console.error("Error signing in with OTP:", error);
-      toast({
-        title: "Fel vid inloggning",
-        description:
-          "Det gick inte att skicka inloggningslänken. Försök igen senare.",
-        variant: "destructive",
-      });
+      setLoginError(
+        "Det gick inte att skicka inloggningslänken. Försök igen senare.",
+      );
     }
   };
 
@@ -177,11 +145,14 @@ export default function SignInPage() {
                 onResetPassword={() =>
                   setFormState(SignInFormState.ResetPassword)
                 }
+                loginError={loginError}
               />
             ) : (
               <EmailOtpForm
                 onSubmit={(values) => handleSubmit(values, formState)}
                 formState={formState}
+                loginError={loginError}
+                verificationSent={verificationSent}
               />
             )}
 
