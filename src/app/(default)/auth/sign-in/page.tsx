@@ -22,19 +22,58 @@ export enum SignInFormState {
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
-  const [formState, setFormState] = useState<SignInFormState>(
-    SignInFormState.EmailOtp,
-  );
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
+  const [formState, setFormState] = useState<SignInFormState>(SignInFormState.EmailOtp);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [verificationSent, setVerificationSent] = useState(false);
+
   useEffect(() => {
-    if (searchParams.get("reset") === "true") {
-      setFormState(SignInFormState.ResetPassword);
+    const mode = searchParams.get("mode");
+    switch (mode) {
+      case "email-otp":
+        setFormState(SignInFormState.EmailOtp);
+        break;
+      case "email-password":
+        setFormState(SignInFormState.EmailPassword);
+        break;
+      case "create-account":
+        setFormState(SignInFormState.CreateAccount);
+        break;
+      case "reset-password":
+        setFormState(SignInFormState.ResetPassword);
+        break;
+      default:
+        setFormState(SignInFormState.EmailOtp);
     }
   }, [searchParams]);
+
+  const updateURL = (newState: SignInFormState) => {
+    let mode: string;
+    switch (newState) {
+      case SignInFormState.EmailOtp:
+        mode = "email-otp";
+        break;
+      case SignInFormState.EmailPassword:
+        mode = "email-password";
+        break;
+      case SignInFormState.CreateAccount:
+        mode = "create-account";
+        break;
+      case SignInFormState.ResetPassword:
+        mode = "reset-password";
+        break;
+      default:
+        mode = "email-otp";
+    }
+    router.push(`/auth/sign-in?mode=${mode}`, { scroll: false });
+  };
+
+  const handleSetFormState = (newState: SignInFormState) => {
+    setFormState(newState);
+    updateURL(newState);
+  };
 
   const handleSignIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -109,8 +148,8 @@ export default function SignInPage() {
           {formState === SignInFormState.CreateAccount
             ? "Skapa konto på Entren"
             : formState === SignInFormState.ResetPassword
-              ? "Glömt ditt lösenord?"
-              : "Logga in"}
+            ? "Glömt ditt lösenord?"
+            : "Logga in"}
         </h1>
         {formState === SignInFormState.CreateAccount ? (
           <p className="text-sm text-muted-foreground">
@@ -118,7 +157,7 @@ export default function SignInPage() {
             <Button
               variant="link"
               className="p-0 h-auto font-semibold"
-              onClick={() => setFormState(SignInFormState.EmailOtp)}
+              onClick={() => handleSetFormState(SignInFormState.EmailOtp)}
             >
               Logga in här
             </Button>
@@ -133,16 +172,25 @@ export default function SignInPage() {
 
         {formState === SignInFormState.ResetPassword && (
           <RequestResetPasswordForm
-            onCancel={() => setFormState(SignInFormState.EmailOtp)}
+            onCancel={() => handleSetFormState(SignInFormState.EmailOtp)}
           />
         )}
 
         {formState === SignInFormState.EmailPassword && (
-          <SignInForm
-            onSubmit={handleSignIn}
-            onResetPassword={() => setFormState(SignInFormState.ResetPassword)}
-            loginError={loginError}
-          />
+          <>
+            <SignInForm
+              onSubmit={handleSignIn}
+              onResetPassword={() => handleSetFormState(SignInFormState.ResetPassword)}
+              loginError={loginError}
+            />
+            <Button
+              variant="outline"
+              className="w-full mt-3"
+              onClick={() => handleSetFormState(SignInFormState.CreateAccount)}
+            >
+              Skapa konto
+            </Button>
+          </>
         )}
 
         {formState === SignInFormState.CreateAccount && (
@@ -177,10 +225,10 @@ export default function SignInPage() {
               variant="outline"
               className="w-full mt-3 flex items-center justify-center"
               onClick={() =>
-                setFormState(
+                handleSetFormState(
                   formState === SignInFormState.EmailPassword
                     ? SignInFormState.EmailOtp
-                    : SignInFormState.EmailPassword,
+                    : SignInFormState.EmailPassword
                 )
               }
             >
@@ -196,16 +244,6 @@ export default function SignInPage() {
                 </>
               )}
             </Button>
-
-            {formState !== SignInFormState.CreateAccount && (
-              <Button
-                variant="link"
-                className="w-full mt-3"
-                onClick={() => setFormState(SignInFormState.CreateAccount)}
-              >
-                Skapa konto
-              </Button>
-            )}
 
             <p className="text-xs text-center text-muted-foreground mt-6">
               Så hanterar vi dina{" "}
