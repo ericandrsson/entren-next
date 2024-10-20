@@ -197,7 +197,7 @@ export default function LoginForm({ onResetPassword }: LoginFormProps) {
       const { error } = await supabase.auth.signInWithOtp({
         email: values.email,
         options: {
-          emailRedirectTo: `${window.location.origin}/callback`,
+          emailRedirectTo: `${window.location.origin}/`,
           shouldCreateUser: true,
         },
       });

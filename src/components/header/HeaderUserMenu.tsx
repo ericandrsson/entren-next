@@ -27,7 +27,7 @@ export default function HeaderUserMenu({
 
   if (!currentUser) {
     return (
-      <Link href="/login">
+      <Link href="/auth/login">
         <Button variant="default" className="text-white">
           Logga in
         </Button>

@@ -6,7 +6,7 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
-  createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -33,9 +33,10 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  console.log("middleware_user", user);
 
   // if (
   //   !user &&
@@ -44,7 +45,7 @@ export async function updateSession(request: NextRequest) {
   // ) {
   //   // no user, potentially respond by redirecting the user to the login page
   //   const url = request.nextUrl.clone();
-  //   url.pathname = "/login";
+  //   url.pathname = "/auth/login";
   //   return NextResponse.redirect(url);
   // }
 

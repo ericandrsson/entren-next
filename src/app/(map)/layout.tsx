@@ -33,6 +33,7 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  console.log("user map", user);
   return (
     <html lang="en" className="h-full">
       <head>

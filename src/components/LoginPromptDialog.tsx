@@ -24,7 +24,7 @@ export default function LoginPromptDialog({
   const router = useRouter();
 
   function handleGoToLoginPage() {
-    router.push("/login");
+    router.push("/auth/login");
     onClose();
   }
 
