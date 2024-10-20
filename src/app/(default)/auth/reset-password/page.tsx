@@ -1,5 +1,5 @@
 import { ResetPasswordForm } from "@/src/components/auth/ResetPasswordForm";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function ResetPasswordPage({
   searchParams,
@@ -10,7 +10,7 @@ export default async function ResetPasswordPage({
 
   if (!code) {
     // Redirect to an error page or home page if no code is provided
-    redirect("/");
+    redirect(notFound());
   }
 
   // If the token is valid, render the ResetPasswordForm with the verified email

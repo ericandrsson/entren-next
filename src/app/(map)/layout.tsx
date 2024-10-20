@@ -29,7 +29,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <html lang="en" className="h-full">
       <head>
@@ -43,7 +46,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col h-full overflow-hidden`}
       >
         <AuthProvider>
-          <Header user={null} />
+          <Header user={user} />
           <main className="flex-grow overflow-hidden">{children}</main>
           <Toaster />
           <CookieBanner />

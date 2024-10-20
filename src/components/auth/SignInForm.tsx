@@ -31,7 +31,7 @@ interface LoginFormProps {
   onResetPassword: (email?: string) => void;
 }
 
-export default function LoginForm({ onResetPassword }: LoginFormProps) {
+export default function SignInForm({ onResetPassword }: LoginFormProps) {
   const [formState, setFormState] = useState<"initial" | "password" | "create">(
     "initial",
   );

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useToast } from "@/src/hooks/use-toast";
-import LoginForm from "@/src/components/auth/LoginForm";
+import SignInForm from "@/src/components/auth/SignInForm";
 import { RequestResetPasswordForm } from "@/src/components/auth/RequestResetPasswordForm";
 
-export default function LoginPageContent() {
+export default function SignInPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -31,7 +31,7 @@ export default function LoginPageContent() {
           onCancel={() => setShowResetPassword(false)}
         />
       ) : (
-        <LoginForm onResetPassword={() => setShowResetPassword(true)} />
+        <SignInForm onResetPassword={() => setShowResetPassword(true)} />
       )}
     </>
   );

@@ -27,7 +27,7 @@ export default function HeaderUserMenu({
 
   if (!currentUser) {
     return (
-      <Link href="/auth/login">
+      <Link href="/auth/sign-in">
         <Button variant="default" className="text-white">
           Logga in
         </Button>
@@ -55,11 +55,11 @@ export default function HeaderUserMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href="/account-settings">Mitt konto</Link>
+          <Link href="/auth/account-settings">Mitt konto</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/logout">Logga ut</Link>
+          <Link href="/auth/sign-out">Logga ut</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

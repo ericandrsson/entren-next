@@ -20,7 +20,12 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { logger } from "@/src/libs/logger";
 
+const log = logger.child({
+  component: "ResetPasswordForm",
+});
+  
 const resetPasswordFormSchema = z
   .object({
     password: passwordSchema,
@@ -47,28 +52,27 @@ export function ResetPasswordForm() {
       password: "",
       confirmPassword: "",
     },
-    mode: "onChange", // Enable real-time validation
+    mode: "onChange",
   });
 
   const onSubmit = async (values: ResetPasswordFormValues) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.updateUser({
+      log.debug("Starting password update process");
+      const { data, error } = await supabase.auth.updateUser({
         password: values.password,
       });
+      log.debug("Supabase response:", { data, error });
+
       if (error) throw error;
 
-      // Add toast message to local storage
-      const toastMessage = {
-        title: "Lösenord uppdaterat",
-        description: "Ditt lösenord har uppdaterats framgångsrikt.",
-        type: "success",
-      };
-      localStorage.setItem("toastMessage", JSON.stringify(toastMessage));
-
-      // Redirect to home page
-      router.push("/");
+      if (data.user) {
+        log.debug("Password updated successfully");
+        router.push("/");
+      } else {
+        throw new Error("No user data returned");
+      }
     } catch (error) {
       console.error("Error resetting password:", error);
       if (error instanceof Error) {
@@ -77,13 +81,14 @@ export function ResetPasswordForm() {
         } else if (error.message === "New password should be different from the old password.") {
           setError("Det nya lösenordet måste vara annorlunda än det gamla lösenordet.");
         } else {
-          setError("Det gick inte att uppdatera lösenordet. Försök igen.");
+          setError(`Det gick inte att uppdatera lösenordet: ${error.message}`);
         }
       } else {
         setError("Ett oväntat fel inträffade. Försök igen.");
       }
     } finally {
       setIsLoading(false);
+      log.debug("Password update process completed");
     }
   };
 
@@ -144,7 +149,10 @@ export function ResetPasswordForm() {
             {error.includes("Klicka här") ? (
               <>
                 {error.split("Klicka här")[0]}
-                <Link href="/login?reset=true" className="underline hover:text-red-800">
+                <Link
+                  href="/auth/sign-in?reset=true"
+                  className="underline hover:text-red-800"
+                >
                   Klicka här
                 </Link>
                 {error.split("Klicka här")[1]}
