@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
 import { AlertTriangle, ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -19,6 +20,32 @@ enum AuthFormState {
 interface AuthFlowComponentProps {
   onSubmit: (formData: FormData) => Promise<void>;
 }
+
+const Logo = () => (
+  <Image
+    src="/images/faster-forward-logo.png"
+    alt="Faster Forward Logo"
+    width={60}
+    height={60}
+  />
+);
+
+// Add this new component at the top of the file, after the imports
+const AuthHeader = ({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) => (
+  <CardHeader className="space-y-1.5 p-6 relative border-b flex flex-col border-secondary text-center items-center">
+    <div className="inline-flex items-center justify-center p-0 m-0">
+      <Logo />
+    </div>
+    <h2 className="text-2xl font-semibold">{title}</h2>
+    <p className="text-muted-foreground text-sm">{subtitle}</p>
+  </CardHeader>
+);
 
 export default function AuthFlowComponent({
   onSubmit,
@@ -340,56 +367,42 @@ export default function AuthFlowComponent({
     </div>
   );
 
-  const Logo = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      focusable="false"
-      style={{ height: "60px", width: "60px" }}
-    >
-      <path d="m3.005 8.858 8.783 12.544h3.904L6.908 8.858zM6.905 15.825 3 21.402h3.907l1.951-2.788zM16.585 2l-6.75 9.64 1.953 2.79L20.492 2zM17.292 7.965v13.437h3.2V3.395z"></path>
-    </svg>
-  );
+  const getHeaderContent = () => {
+    switch (formState) {
+      case AuthFormState.SignIn:
+        return { title: "Sign In", subtitle: "Continue with your xAI account" };
+      case AuthFormState.SignUp:
+        return { title: "Sign Up", subtitle: "Create an xAI account" };
+      case AuthFormState.CreateAccount:
+      case AuthFormState.FullCreateAccount:
+        return {
+          title: "Create Account",
+          subtitle: "Complete your account information",
+        };
+      case AuthFormState.ResetPassword:
+        return {
+          title: "Reset Password",
+          subtitle: "Enter your email to reset your password",
+        };
+      default:
+        return { title: "", subtitle: "" };
+    }
+  };
 
   return (
     <Card className="m-auto sm:h-auto bg-card w-screen sm:rounded-lg sm:shadow-lg sm:shadow-zinc-500/10 sm:max-h-[calc(100vh-112px)] overflow-y-auto sm:max-w-md">
       <div>
-        <CardHeader className="space-y-1.5 p-6 relative border-b flex flex-col border-secondary text-center items-center">
-          <div className="inline-flex items-center justify-center p-0 m-0">
-            {formState !== AuthFormState.SignIn && (
-              <button
-                type="button"
-                onClick={() => updateURL(AuthFormState.SignIn)}
-                className="text-primary"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-            )}
-            <Logo />
-            {formState !== AuthFormState.SignIn && <div className="w-4" />}
-          </div>
-          <h2 className="text-2xl font-semibold">
-            {formState === AuthFormState.SignIn && "Sign In"}
-            {formState === AuthFormState.SignUp && "Sign Up"}
-            {formState === AuthFormState.CreateAccount && "Create Account"}
-            {formState === AuthFormState.ResetPassword && "Reset Password"}
-            {formState === AuthFormState.FullCreateAccount && "Create Account"}
-          </h2>
-          <p className="text-muted-foreground text-sm">
-            {formState === AuthFormState.SignIn &&
-              "Continue with your xAI account"}
-            {formState === AuthFormState.SignUp && "Create an xAI account"}
-            {formState === AuthFormState.CreateAccount &&
-              "Complete your account information"}
-            {formState === AuthFormState.ResetPassword &&
-              "Enter your email to reset your password"}
-            {formState === AuthFormState.FullCreateAccount &&
-              "Complete your account information"}
-          </p>
-        </CardHeader>
+        <AuthHeader {...getHeaderContent()} />
         <CardContent className="p-6">
+          {formState !== AuthFormState.SignIn && (
+            <button
+              type="button"
+              onClick={() => updateURL(AuthFormState.SignIn)}
+              className="text-primary absolute top-6 left-6"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+          )}
           {renderForm()}
           {loginError && <ErrorMessage message={loginError} />}
           {verificationSent && <VerificationMessage email="user@example.com" />}
