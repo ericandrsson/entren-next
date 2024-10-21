@@ -7,7 +7,8 @@ import { Separator } from "@/src/components/ui/separator";
 import { AlertTriangle, ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { z } from "zod";
 
 enum AuthFormState {
   SignIn = "SIGN_IN",
@@ -47,6 +48,28 @@ const AuthHeader = ({
   </CardHeader>
 );
 
+// Update the signUpSchema with Swedish error messages
+const signUpSchema = z
+  .object({
+    email: z.string().email("Ogiltig e-postadress"),
+    firstName: z.string().min(2, "Förnamnet måste vara minst 2 tecken"),
+    lastName: z.string().min(2, "Efternamnet måste vara minst 2 tecken"),
+    password: z
+      .string()
+      .min(8, "Lösenordet måste vara minst 8 tecken")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav och en siffra"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Lösenorden matchar inte",
+    path: ["confirmPassword"],
+  });
+
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
 export default function AuthFlowComponent({
   onSubmit,
 }: AuthFlowComponentProps) {
@@ -58,6 +81,14 @@ export default function AuthFlowComponent({
   const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<SignUpFormData>
+  >({});
+  const [formData, setFormData] = useState<Partial<SignUpFormData>>({});
+  const [initialEmail, setInitialEmail] = useState("");
+  const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
+  const [isResetPasswordConfirmation, setIsResetPasswordConfirmation] = useState(false);
+  const [resetPasswordEmail, setResetPasswordEmail] = useState("");
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -94,15 +125,105 @@ export default function AuthFlowComponent({
     router.push(`/auth/sign-in?mode=${mode}`, { scroll: false });
   };
 
+  const validateField = useCallback(
+    (name: keyof SignUpFormData, value: string) => {
+      try {
+        let fieldSchema;
+        switch (name) {
+          case 'email':
+            fieldSchema = z.string().email("Ogiltig e-postadress");
+            break;
+          case 'firstName':
+            fieldSchema = z.string().min(2, "Förnamnet måste vara minst 2 tecken");
+            break;
+          case 'lastName':
+            fieldSchema = z.string().min(2, "Efternamnet måste vara minst 2 tecken");
+            break;
+          case 'password':
+            fieldSchema = z.string()
+              .min(8, "Lösenordet måste vara minst 8 tecken")
+              .regex(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav och en siffra"
+              );
+            break;
+          case 'confirmPassword':
+            fieldSchema = z.string();
+            break;
+          default:
+            return;
+        }
+        fieldSchema.parse(value);
+        setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          setValidationErrors((prev) => ({
+            ...prev,
+            [name]: error.errors[0].message,
+          }));
+        }
+      }
+    },
+    []
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name as keyof SignUpFormData, value);
+  };
+
+  const validateEmail = (email: string) => {
+    try {
+      z.string().email("Ogiltig e-postadress").parse(email);
+      setValidationErrors((prev) => ({ ...prev, email: undefined }));
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setValidationErrors((prev) => ({
+          ...prev,
+          email: error.errors[0].message,
+        }));
+      }
+      return false;
+    }
+  };
+
+  const handleInitialSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+
+    if (validateEmail(email)) {
+      setInitialEmail(email);
+      setFormState(AuthFormState.FullCreateAccount);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    if (formState === AuthFormState.SignUp) {
-      // Instead of submitting, transition to the full account creation form
-      setFormState(AuthFormState.FullCreateAccount);
-      return;
+    if (formState === AuthFormState.FullCreateAccount) {
+      const formObject = Object.fromEntries(formData.entries());
+      try {
+        signUpSchema.parse(formObject);
+        setValidationErrors({});
+        // If validation passes, show the email confirmation step
+        setIsEmailConfirmationStep(true);
+        return;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const errors = error.errors.reduce((acc, curr) => {
+            acc[curr.path[0] as keyof SignUpFormData] = curr.message;
+            return acc;
+          }, {} as Partial<SignUpFormData>);
+          setValidationErrors(errors);
+          return;
+        }
+      }
     }
 
     try {
@@ -116,7 +237,27 @@ export default function AuthFlowComponent({
     }
   };
 
+  const handleResetPasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+
+    if (validateEmail(email)) {
+      setResetPasswordEmail(email);
+      setIsResetPasswordConfirmation(true);
+    }
+  };
+
   const renderForm = () => {
+    if (isEmailConfirmationStep) {
+      return <VerificationMessage email={initialEmail} />;
+    }
+
+    if (isResetPasswordConfirmation) {
+      return <ResetPasswordConfirmation email={resetPasswordEmail} />;
+    }
+
     switch (formState) {
       case AuthFormState.SignIn:
         return (
@@ -160,12 +301,22 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.SignUp:
         return (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleInitialSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
               </label>
-              <Input id="email" name="email" type="email" required />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                onChange={(e) => validateEmail(e.target.value)}
+                onBlur={(e) => validateEmail(e.target.value)}
+              />
+              {validationErrors.email && (
+                <p className="text-sm text-red-500">{validationErrors.email}</p>
+              )}
             </div>
             <Button type="submit" className="w-full">
               Fortsätt
@@ -207,19 +358,50 @@ export default function AuthFlowComponent({
               <label htmlFor="firstName" className="block text-sm font-medium">
                 Förnamn
               </label>
-              <Input id="firstName" name="firstName" type="text" required />
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                required
+                value={formData.firstName || ""}
+                onChange={handleInputChange}
+              />
+              {validationErrors.firstName && (
+                <p className="text-sm text-red-500">
+                  {validationErrors.firstName}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="lastName" className="block text-sm font-medium">
                 Efternamn
               </label>
-              <Input id="lastName" name="lastName" type="text" required />
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                required
+                value={formData.lastName || ""}
+                onChange={handleInputChange}
+              />
+              {validationErrors.lastName && (
+                <p className="text-sm text-red-500">
+                  {validationErrors.lastName}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
               </label>
-              <Input id="email" name="email" type="email" required />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={initialEmail}
+                readOnly
+              />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
@@ -231,6 +413,8 @@ export default function AuthFlowComponent({
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
+                  value={formData.password || ""}
+                  onChange={handleInputChange}
                 />
                 <button
                   type="button"
@@ -244,6 +428,17 @@ export default function AuthFlowComponent({
                   )}
                 </button>
               </div>
+              <ul className="text-sm text-gray-600 space-y-1 mt-2">
+                <li className={formData.password && formData.password.length >= 8 ? "text-green-500" : ""}>
+                  Minst 8 tecken
+                </li>
+                <li className={formData.password && /[A-Z]/.test(formData.password) ? "text-green-500" : ""}>
+                  Minst en stor bokstav
+                </li>
+                <li className={formData.password && /\d/.test(formData.password) ? "text-green-500" : ""}>
+                  Minst en siffra
+                </li>
+              </ul>
             </div>
             <div className="space-y-2">
               <label
@@ -258,6 +453,8 @@ export default function AuthFlowComponent({
                   name="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   required
+                  value={formData.confirmPassword || ""}
+                  onChange={handleInputChange}
                 />
                 <button
                   type="button"
@@ -271,6 +468,11 @@ export default function AuthFlowComponent({
                   )}
                 </button>
               </div>
+              {formData.password && formData.confirmPassword && (
+                <p className={`text-sm ${formData.password === formData.confirmPassword ? "text-green-500" : "text-red-500"}`}>
+                  {formData.password === formData.confirmPassword ? "Lösenorden matchar" : "Lösenorden matchar inte"}
+                </p>
+              )}
             </div>
             <Button type="submit" className="w-full">
               Skapa konto
@@ -287,12 +489,22 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.ResetPassword:
         return (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
               </label>
-              <Input id="email" name="email" type="email" required />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                onChange={(e) => validateEmail(e.target.value)}
+                onBlur={(e) => validateEmail(e.target.value)}
+              />
+              {validationErrors.email && (
+                <p className="text-sm text-red-500">{validationErrors.email}</p>
+              )}
             </div>
             <Button type="submit" className="w-full">
               Återställ lösenord
@@ -317,7 +529,9 @@ export default function AuthFlowComponent({
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Eller</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            Eller
+          </span>
         </div>
       </div>
       <Button variant="outline" className="w-full mt-4">
@@ -396,8 +610,8 @@ export default function AuthFlowComponent({
         <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
       <p className="text-sm mb-4 text-gray-700">
-        Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka på
-        länken i e-postmeddelandet för att verifiera ditt konto.
+        Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka
+        på länken i e-postmeddelandet för att verifiera ditt konto.
       </p>
       <p className="text-sm mb-4 text-gray-600">
         Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.
@@ -405,7 +619,48 @@ export default function AuthFlowComponent({
     </div>
   );
 
+  const ResetPasswordConfirmation = ({ email }: { email: string }) => (
+    <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
+      <div className="flex items-center mb-4">
+        <Mail className="h-6 w-6 text-blue-500 mr-3" />
+        <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
+      </div>
+      <p className="text-sm mb-4 text-gray-700">
+        Vi har skickat instruktioner för att återställa ditt lösenord till <strong>{email}</strong>. 
+        Följ instruktionerna i e-postmeddelandet för att återställa ditt lösenord.
+      </p>
+      <p className="text-sm mb-4 text-gray-600">
+        Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.
+      </p>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() => {
+          setFormState(AuthFormState.SignIn);
+          setIsResetPasswordConfirmation(false);
+        }}
+      >
+        Tillbaka till inloggning
+      </Button>
+    </div>
+  );
+
   const getHeaderContent = () => {
+    if (isEmailConfirmationStep) {
+      return {
+        title: "Verifiera din e-post",
+        subtitle: "Kontrollera din inkorg för att slutföra registreringen",
+      };
+    }
+
+    if (isResetPasswordConfirmation) {
+      return {
+        title: "Återställ lösenord",
+        subtitle: "Kontrollera din inkorg för instruktioner",
+      };
+    }
+
     switch (formState) {
       case AuthFormState.SignIn:
         return { title: "Logga in", subtitle: "Logga in med ditt Entré-konto" };
@@ -432,7 +687,7 @@ export default function AuthFlowComponent({
       <div>
         <AuthHeader {...getHeaderContent()} />
         <CardContent className="p-6">
-          {formState !== AuthFormState.SignIn && (
+          {!isEmailConfirmationStep && !isResetPasswordConfirmation && formState !== AuthFormState.SignIn && (
             <button
               type="button"
               onClick={() => updateURL(AuthFormState.SignIn)}
@@ -443,7 +698,6 @@ export default function AuthFlowComponent({
           )}
           {renderForm()}
           {loginError && <ErrorMessage message={loginError} />}
-          {verificationSent && <VerificationMessage email="user@example.com" />}
         </CardContent>
       </div>
     </Card>
