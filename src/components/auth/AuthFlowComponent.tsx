@@ -98,6 +98,13 @@ export default function AuthFlowComponent({
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    if (formState === AuthFormState.SignUp) {
+      // Instead of submitting, transition to the full account creation form
+      setFormState(AuthFormState.FullCreateAccount);
+      return;
+    }
+
     try {
       await onSubmit(formData);
       setLoginError(null);
@@ -116,13 +123,13 @@ export default function AuthFlowComponent({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
-                Email
+                E-post
               </label>
               <Input id="email" name="email" type="email" required />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
-                Password
+                Lösenord
               </label>
               <div className="relative">
                 <Input
@@ -145,9 +152,9 @@ export default function AuthFlowComponent({
               </div>
             </div>
             <Button type="submit" className="w-full">
-              Login
+              Logga in
             </Button>
-            {renderGoogleButton("Sign in with Google")}
+            {renderGoogleButton("Logga in med Google")}
             {renderAdditionalOptions()}
           </form>
         );
@@ -156,15 +163,40 @@ export default function AuthFlowComponent({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
-                Email
+                E-post
               </label>
               <Input id="email" name="email" type="email" required />
             </div>
             <Button type="submit" className="w-full">
-              Submit
+              Fortsätt
             </Button>
-            {renderGoogleButton("Sign up with Google")}
+            {renderGoogleButton("Registrera dig med Google")}
             {renderAdditionalOptions()}
+            <div className="mt-4">
+              <Separator className="my-4" />
+              <p className="text-sm text-content-subtle text-center">
+                Genom att fortsätta godkänner du xAI&apos;s
+                <br />
+                <a
+                  className="text-content-accent font-medium hover:text-content-accent-hover"
+                  target="_blank"
+                  href="https://x.ai/legal/enterprise/terms-of-service"
+                  rel="noopener noreferrer"
+                >
+                  Användarvillkor
+                </a>{" "}
+                och{" "}
+                <a
+                  className="text-content-accent font-medium hover:text-content-accent-hover"
+                  target="_blank"
+                  href="https://x.ai/privacy-policy"
+                  rel="noopener noreferrer"
+                >
+                  Integritetspolicy
+                </a>
+                .
+              </p>
+            </div>
           </form>
         );
       case AuthFormState.CreateAccount:
@@ -173,25 +205,25 @@ export default function AuthFlowComponent({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="firstName" className="block text-sm font-medium">
-                First name
+                Förnamn
               </label>
               <Input id="firstName" name="firstName" type="text" required />
             </div>
             <div className="space-y-2">
               <label htmlFor="lastName" className="block text-sm font-medium">
-                Last name
+                Efternamn
               </label>
               <Input id="lastName" name="lastName" type="text" required />
             </div>
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
-                Email
+                E-post
               </label>
               <Input id="email" name="email" type="email" required />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
-                Password
+                Lösenord
               </label>
               <div className="relative">
                 <Input
@@ -218,7 +250,7 @@ export default function AuthFlowComponent({
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium"
               >
-                Confirm password
+                Bekräfta lösenord
               </label>
               <div className="relative">
                 <Input
@@ -241,7 +273,15 @@ export default function AuthFlowComponent({
               </div>
             </div>
             <Button type="submit" className="w-full">
-              Create Account
+              Skapa konto
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setFormState(AuthFormState.SignUp)}
+            >
+              Gå tillbaka
             </Button>
           </form>
         );
@@ -250,12 +290,12 @@ export default function AuthFlowComponent({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
-                Email
+                E-post
               </label>
               <Input id="email" name="email" type="email" required />
             </div>
             <Button type="submit" className="w-full">
-              Reset Password
+              Återställ lösenord
             </Button>
             <Button
               type="button"
@@ -263,7 +303,7 @@ export default function AuthFlowComponent({
               className="w-full"
               onClick={() => updateURL(AuthFormState.SignIn)}
             >
-              Return to sign-in
+              Tillbaka till inloggning
             </Button>
           </form>
         );
@@ -277,9 +317,7 @@ export default function AuthFlowComponent({
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Eller</span>
         </div>
       </div>
       <Button variant="outline" className="w-full mt-4">
@@ -311,13 +349,13 @@ export default function AuthFlowComponent({
     <div className="mt-4 text-center text-sm">
       {formState === AuthFormState.SignIn ? (
         <>
-          Don&apos;t have an account?{" "}
+          Har du inget konto?{" "}
           <button
             type="button"
             onClick={() => updateURL(AuthFormState.SignUp)}
             className="text-primary hover:underline"
           >
-            Sign up
+            Registrera dig
           </button>
           <div className="mt-2">
             <button
@@ -325,19 +363,19 @@ export default function AuthFlowComponent({
               onClick={() => updateURL(AuthFormState.ResetPassword)}
               className="text-primary hover:underline"
             >
-              Forgot your password?
+              Glömt ditt lösenord?
             </button>
           </div>
         </>
       ) : (
         <>
-          Already have an account?{" "}
+          Har du redan ett konto?{" "}
           <button
             type="button"
             onClick={() => updateURL(AuthFormState.SignIn)}
             className="text-primary hover:underline"
           >
-            Sign in
+            Logga in
           </button>
         </>
       )}
@@ -355,14 +393,14 @@ export default function AuthFlowComponent({
     <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
       <div className="flex items-center mb-4">
         <Mail className="h-6 w-6 text-blue-500 mr-3" />
-        <h4 className="font-semibold text-blue-700">Check your email</h4>
+        <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
       <p className="text-sm mb-4 text-gray-700">
-        We've sent a verification link to <strong>{email}</strong>. Click the
-        link in the email to verify your account.
+        Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka på
+        länken i e-postmeddelandet för att verifiera ditt konto.
       </p>
       <p className="text-sm mb-4 text-gray-600">
-        If you can't find the email, please check your spam folder.
+        Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.
       </p>
     </div>
   );
@@ -370,19 +408,19 @@ export default function AuthFlowComponent({
   const getHeaderContent = () => {
     switch (formState) {
       case AuthFormState.SignIn:
-        return { title: "Sign In", subtitle: "Continue with your xAI account" };
+        return { title: "Logga in", subtitle: "Logga in med ditt Entré-konto" };
       case AuthFormState.SignUp:
-        return { title: "Sign Up", subtitle: "Create an xAI account" };
+        return { title: "Skapa konto", subtitle: "Skapa ditt Entré-konto" };
       case AuthFormState.CreateAccount:
       case AuthFormState.FullCreateAccount:
         return {
-          title: "Create Account",
-          subtitle: "Complete your account information",
+          title: "Skapa konto",
+          subtitle: "Fyll i din kontoinformation",
         };
       case AuthFormState.ResetPassword:
         return {
-          title: "Reset Password",
-          subtitle: "Enter your email to reset your password",
+          title: "Återställ lösenord",
+          subtitle: "Ange din e-postadress för att återställa ditt lösenord",
         };
       default:
         return { title: "", subtitle: "" };
