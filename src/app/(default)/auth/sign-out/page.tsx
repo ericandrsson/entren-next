@@ -1,15 +1,14 @@
-"use server";
+"use client";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export default async function SignOutPage() {
+export default function SignOutPage() {
   const supabase = createClient();
 
-  await supabase.auth.signOut();
+  supabase.auth.signOut();
 
   revalidatePath("/", "layout");
   return redirect("/?signedOut=true");
 }
-
