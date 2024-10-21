@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgTravelAgency = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 15 15" {...props}>
@@ -11,4 +11,3 @@ const SvgTravelAgency = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgTravelAgency;
-

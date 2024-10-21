@@ -7,4 +7,3 @@ const SvgPier = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPier;
-

@@ -11,4 +11,3 @@ const SvgParkingLayby = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParkingLayby;
-

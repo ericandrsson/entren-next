@@ -7,4 +7,3 @@ const SvgPostBox = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPostBox;
-

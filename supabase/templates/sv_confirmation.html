@@ -1,16 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Bekräfta din e-postadress för Entren</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Bekräfta din e-postadress</h1>
     <p>Hej!</p>
-    <p>Tack för att du registrerar dig på Entren - plattformen som gör det enklare att hitta tillgänglig information om entréer.</p>
-    <p>För att slutföra din registrering och börja använda Entren, vänligen bekräfta din e-postadress genom att klicka på länken nedan:</p>
-    <a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next={{ .RedirectTo }}">Bekräfta min e-postadress</a>
-    <p>Om du inte har registrerat dig på Entren kan du ignorera detta meddelande.</p>
-    <p>Vi ser fram emot att välkomna dig till vår gemenskap där vi tillsammans arbetar för ökad tillgänglighet!</p>
-</body>
+    <p>
+      Tack för att du registrerar dig på Entren - plattformen som gör det
+      enklare att hitta tillgänglig information om entréer.
+    </p>
+    <p>
+      För att slutföra din registrering och börja använda Entren, vänligen
+      bekräfta din e-postadress genom att klicka på länken nedan:
+    </p>
+    <a
+      href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next={{ .RedirectTo }}"
+      >Bekräfta min e-postadress</a
+    >
+    <p>
+      Om du inte har registrerat dig på Entren kan du ignorera detta meddelande.
+    </p>
+    <p>
+      Vi ser fram emot att välkomna dig till vår gemenskap där vi tillsammans
+      arbetar för ökad tillgänglighet!
+    </p>
+  </body>
 </html>

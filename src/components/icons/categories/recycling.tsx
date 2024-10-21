@@ -7,4 +7,3 @@ const SvgRecycling = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgRecycling;
-

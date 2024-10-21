@@ -22,5 +22,9 @@ async function handleAuth(formData: FormData) {
 }
 
 export default function AuthFlow() {
-  return <AuthFlowComponent onSubmit={handleAuth} />;
+  return (
+    <div className="sm:grow sm:flex sm:justify-center sm:items-start sm:px-4 lg:px-0 bg-background">
+      <AuthFlowComponent onSubmit={handleAuth} />
+    </div>
+  );
 }

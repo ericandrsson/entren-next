@@ -7,4 +7,3 @@ const SvgAnimal = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgAnimal;
-

@@ -7,4 +7,3 @@ const SvgWaterRamp = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgWaterRamp;
-

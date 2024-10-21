@@ -7,4 +7,3 @@ const SvgPicnicTable = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPicnicTable;
-

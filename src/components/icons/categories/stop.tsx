@@ -7,4 +7,3 @@ const SvgStop = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgStop;
-

@@ -11,4 +11,3 @@ const SvgParkingUnderground = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParkingUnderground;
-

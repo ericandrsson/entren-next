@@ -7,4 +7,3 @@ const SvgBbq = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgBbq;
-

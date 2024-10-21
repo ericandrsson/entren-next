@@ -14,4 +14,3 @@ const SvgTelephone = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgTelephone;
-

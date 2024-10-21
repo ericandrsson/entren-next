@@ -11,4 +11,3 @@ const SvgTailor = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgTailor;
-

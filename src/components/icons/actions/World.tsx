@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgWorld = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="-4 -3 29 29" {...props}>
@@ -10,4 +10,3 @@ const SvgWorld = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgWorld;
-

@@ -8,4 +8,3 @@ const SvgVendingMachine = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgVendingMachine;
-

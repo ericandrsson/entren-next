@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgShareIos = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="-3 0 18 27" {...props}>
@@ -7,4 +7,3 @@ const SvgShareIos = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgShareIos;
-

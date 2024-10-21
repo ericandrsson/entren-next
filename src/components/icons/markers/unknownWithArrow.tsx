@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgUnknownWithArrow = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 25 25" {...props}>
@@ -13,4 +13,3 @@ const SvgUnknownWithArrow = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgUnknownWithArrow;
-

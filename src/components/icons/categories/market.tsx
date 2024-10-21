@@ -11,4 +11,3 @@ const SvgMarket = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgMarket;
-

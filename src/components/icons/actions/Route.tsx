@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgRoute = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" {...props}>
@@ -10,4 +10,3 @@ const SvgRoute = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgRoute;
-

@@ -121,7 +121,8 @@ export const useStore = create<StoreState>((set, get) => ({
 
   // New entrance dialog state
   isAddEntranceDialogOpen: false,
-  setIsAddEntranceDialogOpen: (isOpen) => set({ isAddEntranceDialogOpen: isOpen }),
+  setIsAddEntranceDialogOpen: (isOpen) =>
+    set({ isAddEntranceDialogOpen: isOpen }),
 
   // Login prompt state
   isLoginPromptOpen: false,
@@ -129,5 +130,6 @@ export const useStore = create<StoreState>((set, get) => ({
 
   // User authentication state
   isUserAuthenticated: false,
-  setIsUserAuthenticated: (isAuthenticated) => set({ isUserAuthenticated: isAuthenticated }),
+  setIsUserAuthenticated: (isAuthenticated) =>
+    set({ isUserAuthenticated: isAuthenticated }),
 }));

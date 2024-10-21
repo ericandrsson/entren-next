@@ -7,4 +7,3 @@ const SvgMusicSchool = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgMusicSchool;
-

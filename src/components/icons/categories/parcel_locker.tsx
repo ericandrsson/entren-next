@@ -7,4 +7,3 @@ const SvgParcelLocker = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParcelLocker;
-

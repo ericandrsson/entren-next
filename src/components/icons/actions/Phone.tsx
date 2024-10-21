@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgPhone = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="-3 -3 26 26" {...props}>
@@ -7,4 +7,3 @@ const SvgPhone = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPhone;
-

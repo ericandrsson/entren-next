@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SvgCalendarIcon = (props: any) => (
   <svg width="1em" height="1em" viewBox="0 0 33 33" {...props}>
     <g fill="none" fillRule="evenodd">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgCheckmarkIcon = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="8 8 17 17" {...props}>

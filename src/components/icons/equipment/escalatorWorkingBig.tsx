@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgEscalatorWorkingBig = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 27 27" {...props}>
@@ -10,4 +10,3 @@ const SvgEscalatorWorkingBig = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgEscalatorWorkingBig;
-

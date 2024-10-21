@@ -7,4 +7,3 @@ const SvgAllotments = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgAllotments;
-

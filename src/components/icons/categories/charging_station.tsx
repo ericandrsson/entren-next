@@ -7,4 +7,3 @@ const SvgChargingStation = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgChargingStation;
-

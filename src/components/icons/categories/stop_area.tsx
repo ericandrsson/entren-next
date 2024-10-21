@@ -14,4 +14,3 @@ const SvgStopArea = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgStopArea;
-

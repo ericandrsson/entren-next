@@ -7,4 +7,3 @@ const SvgRetirementHome = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgRetirementHome;
-

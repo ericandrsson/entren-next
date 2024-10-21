@@ -1,17 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Entren - Magisk inloggningslänk</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Din magiska inloggningslänk till Entren</h1>
     <p>Hej!</p>
-    <p>Du har begärt en magisk inloggningslänk för att komma åt ditt Entren-konto. Klicka på länken nedan för att logga in:</p>
-    <a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next={{ .RedirectTo }}">Logga in på Entren</a>
-    <p>Om du inte har begärt denna inloggningslänk kan du ignorera detta meddelande.</p>
+    <p>
+      Du har begärt en magisk inloggningslänk för att komma åt ditt
+      Entren-konto. Klicka på länken nedan för att logga in:
+    </p>
+    <a
+      href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next={{ .RedirectTo }}"
+      >Logga in på Entren</a
+    >
+    <p>
+      Om du inte har begärt denna inloggningslänk kan du ignorera detta
+      meddelande.
+    </p>
     <p>Länken är giltig i 24 timmar och kan endast användas en gång.</p>
-    <p>Om du har några frågor, vänligen kontakta vår support på support@entren.se.</p>
-    <p>Välkommen tillbaka till Entren - tillsammans gör vi världen mer tillgänglig!</p>
-</body>
+    <p>
+      Om du har några frågor, vänligen kontakta vår support på
+      support@entren.se.
+    </p>
+    <p>
+      Välkommen tillbaka till Entren - tillsammans gör vi världen mer
+      tillgänglig!
+    </p>
+  </body>
 </html>

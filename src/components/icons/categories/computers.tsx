@@ -10,4 +10,3 @@ const SvgComputers = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgComputers;
-

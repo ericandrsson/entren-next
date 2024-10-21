@@ -7,7 +7,7 @@ export default function ListViewCard({ place }: { place: Place }) {
   return (
     <>
       <div
-        className="flex bg-white shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300 w-full"
+        className="flex bg-background shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300 w-full"
         onClick={() => setSelectedPlace(place)}
       >
         <div className="w-1/3 h-32 flex-shrink-0 overflow-hidden">

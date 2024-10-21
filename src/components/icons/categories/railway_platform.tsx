@@ -20,4 +20,3 @@ const SvgRailwayPlatform = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgRailwayPlatform;
-

@@ -10,4 +10,3 @@ const SvgCanteen = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgCanteen;
-

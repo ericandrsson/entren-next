@@ -7,7 +7,7 @@ import HeaderUserMenu from "./HeaderUserMenu";
 
 export default function Header({ user }: { user: User | null }) {
   return (
-    <header className={"w-full bg-background shadow-sm z-50"}>
+    <header className="w-full bg-card shadow-sm z-50">
       <div className="mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <Image

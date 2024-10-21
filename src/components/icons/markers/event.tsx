@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgEvent = (props: React.SVGAttributes<{}>) => (
   <svg viewBox="0 0 54 72" width="1em" height="1em" {...props}>
@@ -19,4 +19,3 @@ const SvgEvent = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgEvent;
-

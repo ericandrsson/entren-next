@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgPenIcon = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 17 18" {...props}>
@@ -11,4 +11,3 @@ const SvgPenIcon = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPenIcon;
-

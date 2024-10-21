@@ -19,4 +19,3 @@ const SvgLeisure = (props: React.SVGAttributes<{}>) => (
   </svg>
 );
 export default SvgLeisure;
-

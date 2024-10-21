@@ -11,4 +11,3 @@ const SvgParkingOnKerb = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParkingOnKerb;
-

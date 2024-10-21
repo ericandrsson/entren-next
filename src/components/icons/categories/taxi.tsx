@@ -14,4 +14,3 @@ const SvgTaxi = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgTaxi;
-

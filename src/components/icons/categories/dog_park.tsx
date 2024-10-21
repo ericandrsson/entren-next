@@ -7,4 +7,3 @@ const SvgDogPark = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgDogPark;
-

@@ -20,4 +20,3 @@ const SvgPlatform = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgPlatform;
-

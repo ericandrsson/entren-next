@@ -10,4 +10,3 @@ const SvgAirportTerminal = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgAirportTerminal;
-

@@ -9,4 +9,3 @@ const SvgCulture = (props: React.SVGAttributes<{}>) => (
   </svg>
 );
 export default SvgCulture;
-

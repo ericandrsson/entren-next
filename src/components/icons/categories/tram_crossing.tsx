@@ -17,4 +17,3 @@ const SvgTramCrossing = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgTramCrossing;
-

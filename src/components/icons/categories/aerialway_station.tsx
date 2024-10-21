@@ -11,4 +11,3 @@ const SvgAerialwayStation = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgAerialwayStation;
-

@@ -11,4 +11,3 @@ const SvgParking = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParking;
-

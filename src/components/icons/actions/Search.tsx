@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgSearch = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 15 15" {...props}>
@@ -12,4 +12,3 @@ const SvgSearch = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgSearch;
-

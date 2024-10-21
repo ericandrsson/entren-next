@@ -59,8 +59,6 @@ export type EntranceEntitySchema = {
   submitted_by: string; // UUID
 };
 
-
-
 export type PhotoEntitySchema = {
   photo_filename: string;
   description?: string;

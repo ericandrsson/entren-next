@@ -7,4 +7,3 @@ const SvgStation = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgStation;
-

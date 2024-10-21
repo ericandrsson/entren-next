@@ -7,4 +7,3 @@ const SvgBicycleRepair = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgBicycleRepair;
-

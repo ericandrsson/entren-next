@@ -1,11 +1,11 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const requestUrl = new URL(request.url);
   const formData = await request.formData();
-  const password = String(formData.get('password'));
+  const password = String(formData.get("password"));
   const supabase = createRouteHandlerClient({ cookies });
 
   const { error } = await supabase.auth.updateUser({ password });
@@ -14,7 +14,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.redirect(`${requestUrl.origin}/auth/sign-in?reset_successful=true`, {
-    status: 301,
-  });
+  return NextResponse.redirect(
+    `${requestUrl.origin}/auth/sign-in?reset_successful=true`,
+    {
+      status: 301,
+    },
+  );
 }

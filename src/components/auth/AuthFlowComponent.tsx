@@ -3,6 +3,7 @@
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
+import { Separator } from "@/src/components/ui/separator";
 import { AlertTriangle, ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -119,15 +120,8 @@ export default function AuthFlowComponent({
             <Button type="submit" className="w-full">
               Login
             </Button>
-            <div className="text-center text-sm">
-              <button
-                type="button"
-                onClick={() => updateURL(AuthFormState.ResetPassword)}
-                className="text-primary hover:underline"
-              >
-                Forgot your password?
-              </button>
-            </div>
+            {renderGoogleButton("Sign in with Google")}
+            {renderAdditionalOptions()}
           </form>
         );
       case AuthFormState.SignUp:
@@ -142,6 +136,8 @@ export default function AuthFlowComponent({
             <Button type="submit" className="w-full">
               Submit
             </Button>
+            {renderGoogleButton("Sign up with Google")}
+            {renderAdditionalOptions()}
           </form>
         );
       case AuthFormState.CreateAccount:
@@ -234,10 +230,92 @@ export default function AuthFlowComponent({
             <Button type="submit" className="w-full">
               Reset Password
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => updateURL(AuthFormState.SignIn)}
+            >
+              Return to sign-in
+            </Button>
           </form>
         );
     }
   };
+
+  const renderGoogleButton = (text: string) => (
+    <div className="mt-4">
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <Separator className="w-full" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
+        </div>
+      </div>
+      <Button variant="outline" className="w-full mt-4">
+        <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
+          <path
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            fill="#4285F4"
+          />
+          <path
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            fill="#34A853"
+          />
+          <path
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            fill="#FBBC05"
+          />
+          <path
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            fill="#EA4335"
+          />
+          <path d="M1 1h22v22H1z" fill="none" />
+        </svg>
+        {text}
+      </Button>
+    </div>
+  );
+
+  const renderAdditionalOptions = () => (
+    <div className="mt-4 text-center text-sm">
+      {formState === AuthFormState.SignIn ? (
+        <>
+          Don&apos;t have an account?{" "}
+          <button
+            type="button"
+            onClick={() => updateURL(AuthFormState.SignUp)}
+            className="text-primary hover:underline"
+          >
+            Sign up
+          </button>
+          <div className="mt-2">
+            <button
+              type="button"
+              onClick={() => updateURL(AuthFormState.ResetPassword)}
+              className="text-primary hover:underline"
+            >
+              Forgot your password?
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          Already have an account?{" "}
+          <button
+            type="button"
+            onClick={() => updateURL(AuthFormState.SignIn)}
+            className="text-primary hover:underline"
+          >
+            Sign in
+          </button>
+        </>
+      )}
+    </div>
+  );
 
   const ErrorMessage = ({ message }: { message: string }) => (
     <div className="flex items-center mt-3 p-3 bg-red-50 rounded-md border border-red-200">
@@ -276,10 +354,10 @@ export default function AuthFlowComponent({
   );
 
   return (
-    <div className="w-full max-w-md mx-auto md:mt-8">
-      <Card className="md:shadow-md shadow-none rounded-none md:rounded-lg">
-        <CardHeader className="space-y-1 flex flex-col items-center">
-          <div className="w-full flex items-center justify-between mb-4">
+    <Card className="m-auto sm:h-auto bg-card w-screen sm:rounded-lg sm:shadow-lg sm:shadow-zinc-500/10 sm:max-h-[calc(100vh-112px)] overflow-y-auto sm:max-w-md">
+      <div>
+        <CardHeader className="space-y-1.5 p-6 relative border-b flex flex-col border-secondary text-center items-center">
+          <div className="inline-flex items-center justify-center p-0 m-0">
             {formState !== AuthFormState.SignIn && (
               <button
                 type="button"
@@ -311,103 +389,12 @@ export default function AuthFlowComponent({
               "Complete your account information"}
           </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {renderForm()}
           {loginError && <ErrorMessage message={loginError} />}
           {verificationSent && <VerificationMessage email="user@example.com" />}
-          {formState === AuthFormState.SignIn && (
-            <>
-              <div className="mt-4 space-y-2">
-                <Button variant="outline" className="w-full">
-                  <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                    <path d="M1 1h22v22H1z" fill="none" />
-                  </svg>
-                  Sign in with Google
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => updateURL(AuthFormState.SignUp)}
-                  className="text-primary hover:underline"
-                >
-                  Sign up
-                </button>
-              </div>
-            </>
-          )}
-          {formState === AuthFormState.SignUp && (
-            <>
-              <div className="mt-4 space-y-2">
-                <Button variant="outline" className="w-full">
-                  <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                  Sign up with X
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                    <path d="M1 1h22v22H1z" fill="none" />
-                  </svg>
-                  Sign up with Google
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <svg className="h-5 w-5 mr-2" viewBox="0 0 23 23">
-                    <path
-                      d="M21.05 17.53a11.28 11.28 0 0 1-1.63 2.72 10.82 10.82 0 0 1-2.32 2.12c-.92.64-1.89 1.05-2.9 1.23-.99.19-2.06.18-3.21-.01-1.15-.2-2.24-.59-3.27-1.18-1.03-.59-1.96-1.32-2.79-2.18A11.07 11.07 0 0 1 2.5 16.5a11.17 11.17 0 0 1-.97-3.43c-.14-1.17-.11-2.32.09-3.46.2-1.14.58-2.24 1.13-3.28.55-1.04 1.27-1.96 2.15-2.76.88-.8 1.9-1.43 3.05-1.89 1.15-.45 2.39-.68 3.71-.68 1.32 0 2.56.23 3.71.68 1.15.46 2.17 1.09 3.05 1.89.88.8 1.6 1.72 2.15 2.76.55 1.04.93 2.14 1.13 3.28.2 1.14.23 2.29.09 3.46-.14 1.17-.45 2.32-.93 3.46zm-4.23-2.19c.05-.17.09-.38.12-.62.03-.24.05-.49.05-.74 0-.25-.02-.5-.05-.74-.03-.24-.07-.45-.12-.62l-3.79-1.59c-.05.2-.09.42-.11.66-.02.24-.04.5-.04.78v3.13c0 .27.01.53.04.77.02.24.06.46.11.66l3.79-1.69zm-9.64 0 3.79 1.69c.05-.2.09-.42.11-.66.02-.24.03-.5.03-.77v-3.13c0-.28-.01-.54-.03-.78-.02-.24-.06-.46-.11-.66l-3.79 1.59c-.05.17-.09.38-.12.62-.03.24-.05.49-.05.74 0 .25.02.5.05.74.03.24.07.45.12.62zm9.64-7.67c-.05-.17-.09-.38-.12-.62-.03-.24-.05-.49-.05-.74 0-.25.02-.5.05-.74.03-.24.07-.45.12-.62l-3.79-1.59c-.05.2-.09.42-.11.66-.02.24-.04.5-.04.78v3.13c0 .27.01.53.04.77.02.24.06.46.11.66l3.79-1.69zm-9.64 0 3.79 1.69c.05-.2.09-.42.11-.66.02-.24.03-.5.03-.77V4.8c0-.28-.01-.54-.03-.78-.02-.24-.06-.46-.11-.66l-3.79 1.59c-.05.17-.09.38-.12.62-.03.24-.05.49-.05.74 0 .25.02.5.05.74.03.24.07.45.12.62z"
-                      fill="#00A4EF"
-                    />
-                  </svg>
-                  Sign up with Microsoft
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => updateURL(AuthFormState.SignIn)}
-                  className="text-primary hover:underline"
-                >
-                  Sign in
-                </button>
-              </div>
-            </>
-          )}
         </CardContent>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }

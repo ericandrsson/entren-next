@@ -7,4 +7,3 @@ const SvgRailwayStation = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgRailwayStation;
-

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SvgBreadcrumbChevron = (props: any) => (
   <svg width="1em" height="1em" viewBox="0 0 22 50" {...props}>
     <defs>
@@ -22,7 +20,11 @@ const SvgBreadcrumbChevron = (props: any) => (
         d="M17.143 50H0V0h17.143l12.571 25z"
         transform="translate(-9)"
       />
-      <path fillOpacity={0.3} fill="#000" d="M8.139 0h1.285l12.572 25L9.424 50H8.14L20.71 25z" />
+      <path
+        fillOpacity={0.3}
+        fill="#000"
+        d="M8.139 0h1.285l12.572 25L9.424 50H8.14L20.71 25z"
+      />
     </g>
   </svg>
 );

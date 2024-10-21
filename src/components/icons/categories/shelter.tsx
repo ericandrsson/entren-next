@@ -7,4 +7,3 @@ const SvgShelter = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgShelter;
-

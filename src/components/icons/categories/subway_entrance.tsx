@@ -7,4 +7,3 @@ const SvgSubwayEntrance = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgSubwayEntrance;
-

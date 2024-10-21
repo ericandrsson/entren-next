@@ -10,4 +10,3 @@ const SvgStopPosition = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgStopPosition;
-

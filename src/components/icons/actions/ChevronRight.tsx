@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgChevronRight = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 5 12" {...props}>
@@ -7,4 +7,3 @@ const SvgChevronRight = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgChevronRight;
-

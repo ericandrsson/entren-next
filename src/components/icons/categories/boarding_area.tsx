@@ -7,4 +7,3 @@ const SvgBoardingArea = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgBoardingArea;
-

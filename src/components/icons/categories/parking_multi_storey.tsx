@@ -11,4 +11,3 @@ const SvgParkingMultiStorey = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParkingMultiStorey;
-

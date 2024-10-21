@@ -10,4 +10,3 @@ const SvgHalt = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgHalt;
-

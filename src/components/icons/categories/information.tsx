@@ -10,4 +10,3 @@ const SvgInformation = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgInformation;
-

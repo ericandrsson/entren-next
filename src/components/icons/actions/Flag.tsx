@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgFlag = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="-6 -2 19 25" {...props}>
@@ -11,4 +11,3 @@ const SvgFlag = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgFlag;
-

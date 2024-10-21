@@ -11,4 +11,3 @@ const SvgParkingRooftop = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgParkingRooftop;
-

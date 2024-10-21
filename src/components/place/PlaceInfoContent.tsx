@@ -379,7 +379,7 @@ export default function PlaceInfoContent({
       <PlacePhotoModal
         photos={allPlacePhotos.map((photo) => ({
           ...photo,
-          photo_filename: getImageUrl(photo.photo_filename || ''),
+          photo_filename: getImageUrl(photo.photo_filename || ""),
           photo_id: Number(photo.photo_id),
           // Ensure all required properties are included
           created_at: "",

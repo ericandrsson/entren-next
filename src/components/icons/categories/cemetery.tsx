@@ -7,4 +7,3 @@ const SvgCemetery = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgCemetery;
-

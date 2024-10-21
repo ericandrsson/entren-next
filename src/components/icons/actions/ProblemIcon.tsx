@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgProblemIcon = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 33 33" {...props}>
@@ -21,4 +21,3 @@ const SvgProblemIcon = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgProblemIcon;
-

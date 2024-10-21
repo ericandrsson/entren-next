@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgNoWithoutArrow = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 25 25" {...props}>
@@ -7,4 +7,3 @@ const SvgNoWithoutArrow = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgNoWithoutArrow;
-

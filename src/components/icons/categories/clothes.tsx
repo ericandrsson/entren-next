@@ -11,4 +11,3 @@ const SvgClothes = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgClothes;
-

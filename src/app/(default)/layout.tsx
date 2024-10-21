@@ -1,7 +1,4 @@
-import CookieBanner from "@/src/components/CookieBanner";
-import Footer from "@/src/components/Footer";
 import Header from "@/src/components/header/Header";
-import { Toaster } from "@/src/components/ui/toaster";
 import "@/src/styles/global.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -37,16 +34,13 @@ export default async function RootLayout({
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
-      >
-        <Header user={null} />
-        <main className="flex-grow overflow-y-hidden">
-          <div className="flex justify-center bg-white">{children}</div>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+        <main className="w-screen h-screen">
+          <div className="w-screen h-screen overflow-x-hidden sm:overflow-hidden flex flex-col relative">
+            <Header user={null} />
+            {children}
+          </div>
         </main>
-        <Toaster />
-        <CookieBanner />
-        <Footer />
       </body>
     </html>
   );

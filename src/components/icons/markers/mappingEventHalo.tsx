@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const SvgMappingEventHalo = (props: React.SVGAttributes<{}>) => (
   <svg width="1em" height="1em" viewBox="0 0 444 444" {...props}>
@@ -26,4 +26,3 @@ const SvgMappingEventHalo = (props: React.SVGAttributes<{}>) => (
 );
 
 export default SvgMappingEventHalo;
-
