@@ -53,9 +53,9 @@ async function handleRequestResetPassword(prevState: any, formData: FormData) {
     };
   }
 
-  // Redirect to login page with URL-encoded success message
+  // Redirect to login page with URL-encoded confirmation message
   const message = encodeURIComponent("Instruktioner för återställning av lösenord har skickats till din e-post");
-  redirect(`/sign-in?message=${message}`);
+  redirect(`/sign-in?confirmationMessage=${message}`);
 }
 
 async function handleResetPassword(prevState: any, formData: FormData) {
@@ -113,7 +113,9 @@ async function handleSignUp(prevState: any, formData: FormData) {
     return { message: "Ett fel uppstod vid registrering", success: false };
   }
 
-  return { message: "Registrering lyckades. Kontrollera din e-post för verifiering.", success: true };
+  // Redirect to login page with URL-encoded confirmation message
+  const message = encodeURIComponent("Registrering lyckades. Kontrollera din e-post för verifiering.");
+  redirect(`/sign-in?confirmationMessage=${message}`);
 }
 
 export default async function AuthFlow({

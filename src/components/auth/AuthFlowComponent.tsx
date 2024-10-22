@@ -87,7 +87,9 @@ export default function AuthFlowComponent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const encodedMessage = searchParams.get("message");
+  const encodedConfirmationMessage = searchParams.get("confirmationMessage");
   const message = encodedMessage ? decodeURIComponent(encodedMessage) : null;
+  const confirmationMessage = encodedConfirmationMessage ? decodeURIComponent(encodedConfirmationMessage) : null;
 
   const [formState, setFormState] = useState<AuthFormState>(initialFormState as AuthFormState);
   const [validationErrors, setValidationErrors] = useState<Partial<SignUpFormData>>({});
@@ -243,6 +245,21 @@ export default function AuthFlowComponent({
       return (
         <div className="space-y-4">
           <StatusMessage message={message} success={true} />
+          <Button onClick={() => router.push("/sign-in")} className="w-full">
+            Fortsätt till inloggning
+          </Button>
+        </div>
+      );
+    }
+
+    if (confirmationMessage) {
+      return (
+        <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
+          <div className="flex items-center mb-4">
+            <Mail className="h-6 w-6 text-blue-500 mr-3" />
+            <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
+          </div>
+          <p className="text-sm mb-4 text-gray-700">{confirmationMessage}</p>
           <Button onClick={() => router.push("/sign-in")} className="w-full">
             Fortsätt till inloggning
           </Button>
