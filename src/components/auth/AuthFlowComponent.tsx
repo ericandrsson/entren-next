@@ -209,6 +209,31 @@ export default function AuthFlowComponent({
     router.push("/sign-in");
   };
 
+  const handleEmailCheck = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      // Call the emailCheckAction and wait for the result
+      const result = await emailCheckAction(formData);
+
+      // Use the result directly instead of emailCheckState
+      if (result.exists) {
+        setValidationErrors((prev) => ({ ...prev, email: "Detta konto finns redan" }));
+      } else {
+        setInitialEmail(formData.get("email") as string);
+        setFormState(AuthFormState.FullCreateAccount);
+      }
+    } catch (error) {
+      console.error("Error during email check:", error);
+      setValidationErrors((prev) => ({ ...prev, email: "Ett fel uppstod vid kontroll av e-postadressen" }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderForm = () => {
     if (isEmailConfirmationStep) {
       return <VerificationMessage email={initialEmail} />;
@@ -260,7 +285,7 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.SignUp:
         return (
-          <form action={emailCheckAction} className="space-y-4">
+          <form onSubmit={handleEmailCheck} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -275,19 +300,6 @@ export default function AuthFlowComponent({
               />
               {validationErrors.email && <p className="text-sm text-red-500">{validationErrors.email}</p>}
             </div>
-            {emailCheckState.exists && (
-              <div className="text-sm text-red-500">
-                Detta konto finns redan. Vill du{" "}
-                <button
-                  type="button"
-                  onClick={() => updateURL(AuthFormState.SignIn)}
-                  className="text-primary font-semibold underline hover:text-primary-dark"
-                >
-                  logga in
-                </button>{" "}
-                istället?
-              </div>
-            )}
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Fortsätt
             </LoadingButton>
@@ -625,7 +637,7 @@ export default function AuthFlowComponent({
     if (isEmailConfirmationStep) {
       return {
         title: "Verifiera din e-post",
-        subtitle: "Kontrollera din inkorg för att slutföra registreringen",
+        subtitle: "Kontrollera din inkorg fr att slutföra registreringen",
       };
     }
 

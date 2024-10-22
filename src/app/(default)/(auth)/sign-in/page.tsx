@@ -31,11 +31,14 @@ async function checkEmailExists(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const { data, error } = await supabase.rpc("check_email_exists", { email });
 
+  console.log("Server-side email check result:", { email, data, error });
+
   if (error) {
+    console.error("Error checking email:", error);
     return { exists: false, message: "Ett fel uppstod vid kontroll av e-postadressen" };
   }
 
-  return { exists: data, message: "" };
+  return { exists: !!data, message: "" };
 }
 
 async function handleRequestResetPassword(prevState: any, formData: FormData) {
@@ -56,8 +59,7 @@ async function handleRequestResetPassword(prevState: any, formData: FormData) {
   }
 
   return {
-    message:
-      "Instruktioner för återställning av lösenord har skickats till din e-post",
+    message: "Instruktioner för återställning av lösenord har skickats till din e-post",
     success: true,
   };
 }
