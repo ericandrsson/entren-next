@@ -12,13 +12,18 @@ async function handleAuth(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  console.log("email", email);
+  console.log("password", password);
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
+  console.log("error", error);
+
   if (error) {
-    return { message: "Felaktigt användarnamn eller lösenord" };
+    return { success: false, message: "Felaktigt användarnamn eller lösenord" };
   }
 
   redirect("/");

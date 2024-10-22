@@ -93,7 +93,13 @@ export default function AuthFlowComponent({
 
   const [formState, setFormState] = useState<AuthFormState>(initialFormState as AuthFormState);
   const [validationErrors, setValidationErrors] = useState<Partial<SignUpFormData>>({});
-  const [formData, setFormData] = useState<Partial<SignUpFormData>>({});
+  const [formData, setFormData] = useState<Partial<SignUpFormData>>({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+  });
   const [initialEmail, setInitialEmail] = useState("");
   const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
   const [isRequestResetPasswordConfirmation, setIsRequestResetPasswordConfirmation] = useState(false);
@@ -118,6 +124,11 @@ export default function AuthFlowComponent({
         break;
       case "reset-password":
         setFormState(AuthFormState.ResetPassword);
+        // Initialize validation for reset password
+        setValidationErrors({
+          password: validatePassword(""),
+          confirmPassword: ["mismatch"],
+        });
         break;
       case "request-reset-password":
         setFormState(AuthFormState.RequestResetPassword);
@@ -259,11 +270,15 @@ export default function AuthFlowComponent({
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === "password") {
       const passwordErrors = validatePassword(value);
-      setValidationErrors((prev) => ({ ...prev, password: passwordErrors }));
+      setValidationErrors((prev) => ({ 
+        ...prev, 
+        password: passwordErrors,
+        confirmPassword: value !== formData.confirmPassword ? ["mismatch"] : []
+      }));
     } else if (name === "confirmPassword") {
       setValidationErrors((prev) => ({
         ...prev,
-        confirmPassword: value !== formData.password ? ["mismatch"] : [],
+        confirmPassword: value !== formData.password ? ["mismatch"] : []
       }));
     }
   };
@@ -405,7 +420,7 @@ export default function AuthFlowComponent({
                 name="firstName"
                 type="text"
                 required
-                value={formData.firstName || ""}
+                value={formData.firstName}
                 onChange={handleInputChange}
               />
               {validationErrors.firstName && <p className="text-sm text-red-500">{validationErrors.firstName}</p>}
@@ -419,7 +434,7 @@ export default function AuthFlowComponent({
                 name="lastName"
                 type="text"
                 required
-                value={formData.lastName || ""}
+                value={formData.lastName}
                 onChange={handleInputChange}
               />
               {validationErrors.lastName && <p className="text-sm text-red-500">{validationErrors.lastName}</p>}
@@ -440,8 +455,8 @@ export default function AuthFlowComponent({
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  value={formData.password || ""}
-                  onChange={handleInputChange}
+                  value={formData.password}
+                  onChange={handlePasswordChange}
                 />
                 <button
                   type="button"
@@ -473,8 +488,8 @@ export default function AuthFlowComponent({
                   name="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   required
-                  value={formData.confirmPassword || ""}
-                  onChange={handleInputChange}
+                  value={formData.confirmPassword}
+                  onChange={handlePasswordChange}
                 />
                 <button
                   type="button"
@@ -566,13 +581,13 @@ export default function AuthFlowComponent({
                     </button>
                   </div>
                   <ul className="text-sm text-gray-600 space-y-1 mt-2">
-                    <li className={!validationErrors.password?.includes("length") ? "text-green-500" : ""}>
+                    <li className={!validationErrors.password?.includes("length") ? "text-green-500" : "text-red-500"}>
                       Minst 8 tecken
                     </li>
-                    <li className={!validationErrors.password?.includes("uppercase") ? "text-green-500" : ""}>
+                    <li className={!validationErrors.password?.includes("uppercase") ? "text-green-500" : "text-red-500"}>
                       Minst en stor bokstav
                     </li>
-                    <li className={!validationErrors.password?.includes("number") ? "text-green-500" : ""}>
+                    <li className={!validationErrors.password?.includes("number") ? "text-green-500" : "text-red-500"}>
                       Minst en siffra
                     </li>
                   </ul>
