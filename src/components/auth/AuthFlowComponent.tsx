@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
-import { AlertTriangle, ArrowLeft, CheckCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useActionState, useCallback, useEffect, useState } from "react";
@@ -99,7 +99,6 @@ export default function AuthFlowComponent({
     lastName: "",
   });
   const [initialEmail, setInitialEmail] = useState("");
-  const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
   const [isRequestResetPasswordConfirmation, setIsRequestResetPasswordConfirmation] = useState(false);
   const [requestResetPasswordEmail] = useState("");
   const [loginState, setLoginState] = useState({ message: "", success: false });
@@ -124,8 +123,8 @@ export default function AuthFlowComponent({
         setFormState(AuthFormState.ResetPassword);
         // Initialize validation for reset password
         setValidationErrors({
-          password: validatePassword(""),
-          confirmPassword: ["mismatch"],
+          password: validatePassword("").join(", "),
+          confirmPassword: "mismatch",
         });
         break;
       case "request-reset-password":
@@ -267,13 +266,13 @@ export default function AuthFlowComponent({
       const passwordErrors = validatePassword(value);
       setValidationErrors((prev) => ({
         ...prev,
-        password: passwordErrors,
-        confirmPassword: value !== formData.confirmPassword ? ["mismatch"] : [],
+        password: passwordErrors.join(", "),
+        confirmPassword: value !== formData.confirmPassword ? "mismatch" : undefined,
       }));
     } else if (name === "confirmPassword") {
       setValidationErrors((prev) => ({
         ...prev,
-        confirmPassword: value !== formData.password ? ["mismatch"] : [],
+        confirmPassword: value !== formData.password ? "mismatch" : undefined,
       }));
     }
   };
@@ -314,10 +313,6 @@ export default function AuthFlowComponent({
           </Button>
         </div>
       );
-    }
-
-    if (isEmailConfirmationStep) {
-      return <VerificationMessage email={initialEmail} />;
     }
 
     if (isRequestResetPasswordConfirmation) {
@@ -739,13 +734,6 @@ export default function AuthFlowComponent({
   );
 
   const getHeaderContent = () => {
-    if (isEmailConfirmationStep) {
-      return {
-        title: "Verifiera din e-post",
-        subtitle: "Kontrollera din inkorg fr att slutföra registreringen",
-      };
-    }
-
     if (isRequestResetPasswordConfirmation) {
       return {
         title: "Begäran om återställning av lösenord",
@@ -783,18 +771,7 @@ export default function AuthFlowComponent({
     <Card className="m-auto bg-card w-screen rounded-none shadow-none sm:rounded-lg sm:shadow-lg sm:shadow-zinc-500/10 sm:max-h-[calc(100vh-112px)] overflow-y-auto sm:max-w-md">
       <div>
         <AuthHeader {...getHeaderContent()} />
-        <CardContent className="p-6">
-          {!isEmailConfirmationStep && !isRequestResetPasswordConfirmation && formState !== AuthFormState.SignIn && (
-            <button
-              type="button"
-              onClick={() => updateURL(AuthFormState.SignIn)}
-              className="text-primary absolute top-6 left-6"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-          )}
-          {renderForm()}
-        </CardContent>
+        <CardContent className="p-6">{renderForm()}</CardContent>
       </div>
     </Card>
   );

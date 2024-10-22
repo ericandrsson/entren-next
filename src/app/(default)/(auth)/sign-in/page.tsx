@@ -15,8 +15,16 @@ export const handleLogin = async (email: string, password: string) => {
     password,
   });
 
+  console.log("error", error);
+
   if (error) {
-    return { success: false, message: "Felaktigt användarnamn eller lösenord" };
+    if (error.status === 400 && error.message === "Email not confirmed") {
+      return { success: false, message: "Din e-post har inte verifierats. Kontrollera din inkorg och försök igen." };
+    } else if (error.status === 400 && error.message === "Invalid login credentials") {
+      return { success: false, message: "Felaktigt användarnamn eller lösenord" };
+    } else {
+      return { success: false, message: "Ett fel uppstod vid inloggningen. Vänligen försök igen." };
+    }
   }
 
   return { success: true, message: "Inloggning lyckades" };
@@ -120,6 +128,15 @@ export default async function AuthFlow({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/");
+  }
+
   const { mode } = await searchParams;
   const cookieStore = await cookies();
   const authCookie = await cookieStore.get("auth");
