@@ -86,6 +86,8 @@ export default function AuthFlowComponent({
 }: AuthFlowComponentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const encodedMessage = searchParams.get("message");
+  const message = encodedMessage ? decodeURIComponent(encodedMessage) : null;
 
   const [formState, setFormState] = useState<AuthFormState>(initialFormState as AuthFormState);
   const [validationErrors, setValidationErrors] = useState<Partial<SignUpFormData>>({});
@@ -237,6 +239,17 @@ export default function AuthFlowComponent({
   };
 
   const renderForm = () => {
+    if (message) {
+      return (
+        <div className="space-y-4">
+          <StatusMessage message={message} success={true} />
+          <Button onClick={() => router.push("/sign-in")} className="w-full">
+            Fortsätt till inloggning
+          </Button>
+        </div>
+      );
+    }
+
     if (isEmailConfirmationStep) {
       return <VerificationMessage email={initialEmail} />;
     }
@@ -462,13 +475,8 @@ export default function AuthFlowComponent({
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Begär återställning av lösenord
             </LoadingButton>
-            {requestResetState.message && (
-              <>
-                <StatusMessage message={requestResetState.message} success={requestResetState.success} />
-                <p aria-live="polite" className="sr-only" role="status">
-                  {requestResetState.message}
-                </p>
-              </>
+            {requestResetState.message && !requestResetState.success && (
+              <StatusMessage message={requestResetState.message} success={false} />
             )}
             <Button type="button" variant="outline" className="w-full" onClick={navigateToSignIn}>
               Tillbaka till inloggning
@@ -477,65 +485,77 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.ResetPassword:
         return (
-          <form action={resetAction} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
-                Nytt lösenord
-              </label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={formData.password || ""}
-                  onChange={handleInputChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
-                </button>
+          <>
+            {resetState.success ? (
+              <div className="space-y-4">
+                <StatusMessage message={resetState.message} success={true} />
+                <Button onClick={() => updateURL(AuthFormState.SignIn)} className="w-full">
+                  Gå tillbaka till inloggning
+                </Button>
               </div>
-              {/* Password criteria list */}
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium">
-                Bekräfta nytt lösenord
-              </label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={formData.confirmPassword || ""}
-                  onChange={handleInputChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
-                </button>
-              </div>
-              {/* Password match message */}
-            </div>
-            <LoadingButton type="submit" className="w-full" loading={loading}>
-              Återställ lösenord
-            </LoadingButton>
-            {resetState.message && (
-              <>
-                <StatusMessage message={resetState.message} success={resetState.success} />
-                <p aria-live="polite" className="sr-only" role="status">
-                  {resetState.message}
-                </p>
-              </>
+            ) : (
+              <form action={resetAction} className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="password" className="block text-sm font-medium">
+                    Nytt lösenord
+                  </label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={formData.password || ""}
+                      onChange={handleInputChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  {/* Password criteria list */}
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium">
+                    Bekräfta nytt lösenord
+                  </label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={formData.confirmPassword || ""}
+                      onChange={handleInputChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  {/* Password match message */}
+                </div>
+                <LoadingButton type="submit" className="w-full" loading={loading}>
+                  Återställ lösenord
+                </LoadingButton>
+                {resetState.message && !resetState.success && <StatusMessage message={resetState.message} success={false} />}
+              </form>
             )}
-          </form>
+          </>
         );
     }
   };

@@ -53,10 +53,9 @@ async function handleRequestResetPassword(prevState: any, formData: FormData) {
     };
   }
 
-  return {
-    message: "Instruktioner för återställning av lösenord har skickats till din e-post",
-    success: true,
-  };
+  // Redirect to login page with URL-encoded success message
+  const message = encodeURIComponent("Instruktioner för återställning av lösenord har skickats till din e-post");
+  redirect(`/sign-in?message=${message}`);
 }
 
 async function handleResetPassword(prevState: any, formData: FormData) {
@@ -78,15 +77,16 @@ async function handleResetPassword(prevState: any, formData: FormData) {
     console.log("error ", error);
     console.log(error.status);
     if (error.status === 422 && error.code === "same_password") {
-      return { message: "Det nya lösenordet måste vara annorlunda än ditt nuvarande lösenord." };
+      return { success: false, message: "Det nya lösenordet måste vara annorlunda än ditt nuvarande lösenord." };
     }
-    return { message: "Ett fel uppstod vid återställning av lösenordet. Vänligen försök igen." };
+    return { success: false, message: "Ett fel uppstod vid återställning av lösenordet. Vänligen försök igen." };
   }
 
   // Delete the auth cookie after successful password reset
   cookieStore.delete("auth");
 
-  return { message: "Lösenordet har återställts.", success: true };
+  // Redirect to login page with success message
+  redirect("/sign-in?message=Lösenordet har återställts framgångsrikt");
 }
 
 async function handleSignUp(prevState: any, formData: FormData) {
