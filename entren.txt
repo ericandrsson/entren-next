@@ -1,4 +1,4 @@
-Purpose and Vision: Entren is an accessibility-focused digital platform designed to provide users with verified information about entrances to public spaces, such as restaurants, shops, and buildings. The core purpose of Entren is to make it easier for individuals, especially those with mobility challenges, to plan their visits by ensuring they have accurate, reliable, and up-to-date information about the accessibility of entrances. By crowdsourcing entrance submissions from users and verifying them, Entren helps foster a more inclusive environment for everyone.
+Purpose and Vision: Entrén is an accessibility-focused digital platform designed to provide users with verified information about entrances to public spaces, such as restaurants, shops, and buildings. The core purpose of Entrén is to make it easier for individuals, especially those with mobility challenges, to plan their visits by ensuring they have accurate, reliable, and up-to-date information about the accessibility of entrances. By crowdsourcing entrance submissions from users and verifying them, Entrén helps foster a more inclusive environment for everyone.
 
 Key Features:
 
@@ -13,10 +13,10 @@ Secondary Audience: Family members, caregivers, and friends who assist in planni
 Tertiary Audience: Business owners who want to ensure their establishments are correctly listed as accessible, and local governments or organizations that promote inclusive environments.
 Tone of Voice:
 
-Friendly & Supportive: Entren communicates in a tone that is warm, welcoming, and understanding. The platform is designed to offer support and empower users by providing the information they need, with a positive, inclusive vibe.
+Friendly & Supportive: Entrén communicates in a tone that is warm, welcoming, and understanding. The platform is designed to offer support and empower users by providing the information they need, with a positive, inclusive vibe.
 Clear & Direct: Language is kept simple and direct, ensuring ease of understanding for all users, including those with cognitive disabilities. No jargon, no complex phrases – just clear, straightforward messaging.
-Empathetic & Encouraging: Entren recognizes the challenges users might face when accessing buildings and seeks to make their experiences easier. The tone reflects empathy, encouraging users to contribute by adding new entrances and verifying information to help the community.
-Reliable & Trustworthy: Since accessibility is a serious matter, Entren maintains a trustworthy and credible tone. Information is carefully curated and verified, ensuring users can rely on the data provided.
+Empathetic & Encouraging: Entrén recognizes the challenges users might face when accessing buildings and seeks to make their experiences easier. The tone reflects empathy, encouraging users to contribute by adding new entrances and verifying information to help the community.
+Reliable & Trustworthy: Since accessibility is a serious matter, Entrén maintains a trustworthy and credible tone. Information is carefully curated and verified, ensuring users can rely on the data provided.
 User Experience (UX) Design Principles:
 
 Accessibility First: The platform is designed with accessibility in mind, including features like keyboard navigation, screen reader support, and high-contrast design for better readability. Every element is structured to be usable by individuals with varying abilities.
@@ -29,6 +29,6 @@ Marketing Strategy:
 Community Building: Encourage users to share their experiences and submissions. Highlight stories from users who have benefited from the platform, showing real-world impact.
 Partnerships with Accessibility Advocates: Collaborate with local organizations, disability advocates, and businesses to expand reach and credibility. This helps in building trust and encouraging businesses to ensure their accessibility information is correct.
 Social Media Presence: Use platforms like Instagram, Twitter, and Facebook to share tips, guides, and stories about accessible spaces. The tone here should remain friendly, informative, and positive, with visual content that showcases easy-to-navigate entrances.
-SEO & Content Marketing: Develop content around accessibility, including blog posts, guides, and infographics. This positions Entren as an authority in accessibility information, while also driving traffic to the platform.
+SEO & Content Marketing: Develop content around accessibility, including blog posts, guides, and infographics. This positions Entrén as an authority in accessibility information, while also driving traffic to the platform.
 Incentives for Contribution: Gamify the process of submitting and verifying entrances. Offer badges, rewards, or recognition to users who contribute regularly, making it more engaging and fun.
-Conclusion: Entren is more than just an app or a platform – it's a community-driven effort to make the world more accessible. By combining a simple, clear, and empathetic tone with robust, accessible design, Entren aims to be the go-to resource for anyone looking for reliable information on accessible entrances. It empowers users by providing the information they need while also encouraging them to contribute, ensuring the platform remains comprehensive and up-to-date.
+Conclusion: Entrén is more than just an app or a platform – it's a community-driven effort to make the world more accessible. By combining a simple, clear, and empathetic tone with robust, accessible design, Entrén aims to be the go-to resource for anyone looking for reliable information on accessible entrances. It empowers users by providing the information they need while also encouraging them to contribute, ensuring the platform remains comprehensive and up-to-date.

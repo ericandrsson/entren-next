@@ -7,20 +7,24 @@ import { Separator } from "@/src/components/ui/separator";
 import { AlertTriangle, ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
+import { LoadingButton } from "../ui/loading-button";
 
 enum AuthFormState {
   SignIn = "SIGN_IN",
   SignUp = "SIGN_UP",
   CreateAccount = "CREATE_ACCOUNT",
-  ResetPassword = "RESET_PASSWORD",
+  RequestResetPassword = "REQUEST_RESET_PASSWORD",
   FullCreateAccount = "FULL_CREATE_ACCOUNT",
 }
 
 interface AuthFlowComponentProps {
   onSubmit: (formData: FormData) => Promise<{ success: boolean } | undefined>;
   checkEmailExists: (email: string) => Promise<boolean>;
+  onRequestResetPassword: (
+    formData: FormData,
+  ) => Promise<{ success: boolean } | undefined>;
 }
 
 const Logo = () => (
@@ -74,6 +78,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 export default function AuthFlowComponent({
   onSubmit,
   checkEmailExists,
+  onRequestResetPassword,
 }: AuthFlowComponentProps) {
   const [formState, setFormState] = useState<AuthFormState>(
     AuthFormState.SignIn,
@@ -89,10 +94,14 @@ export default function AuthFlowComponent({
   const [formData, setFormData] = useState<Partial<SignUpFormData>>({});
   const [initialEmail, setInitialEmail] = useState("");
   const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
-  const [isResetPasswordConfirmation, setIsResetPasswordConfirmation] =
-    useState(false);
-  const [resetPasswordEmail, setResetPasswordEmail] = useState("");
+  const [
+    isRequestResetPasswordConfirmation,
+    setIsRequestResetPasswordConfirmation,
+  ] = useState(false);
+  const [requestResetPasswordEmail, setRequestResetPasswordEmail] =
+    useState("");
   const [emailExists, setEmailExists] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -103,8 +112,8 @@ export default function AuthFlowComponent({
       case "create-account":
         setFormState(AuthFormState.CreateAccount);
         break;
-      case "reset-password":
-        setFormState(AuthFormState.ResetPassword);
+      case "request-reset-password":
+        setFormState(AuthFormState.RequestResetPassword);
         break;
       default:
         setFormState(AuthFormState.SignIn);
@@ -120,8 +129,8 @@ export default function AuthFlowComponent({
       case AuthFormState.CreateAccount:
         mode = "create-account";
         break;
-      case AuthFormState.ResetPassword:
-        mode = "reset-password";
+      case AuthFormState.RequestResetPassword:
+        mode = "request-reset-password";
         break;
       default:
         mode = "sign-in";
@@ -200,6 +209,7 @@ export default function AuthFlowComponent({
 
   const handleInitialSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
     const email = formData.get("email") as string;
@@ -217,10 +227,12 @@ export default function AuthFlowComponent({
         setLoginError("Ett fel uppstod vid kontroll av e-postadressen");
       }
     }
+    setLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
 
@@ -231,6 +243,7 @@ export default function AuthFlowComponent({
         setValidationErrors({});
         // If validation passes, show the email confirmation step
         setIsEmailConfirmationStep(true);
+        setLoading(false);
         return;
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -239,6 +252,7 @@ export default function AuthFlowComponent({
             return acc;
           }, {} as Partial<SignUpFormData>);
           setValidationErrors(errors);
+          setLoading(false);
           return;
         }
       }
@@ -262,18 +276,37 @@ export default function AuthFlowComponent({
         setLoginError("An error occurred. Please try again.");
       }
     }
+    setLoading(false);
   };
 
-  const handleResetPasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRequestResetPasswordSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
+    setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const email = formData.get("email") as string;
 
-    if (validateEmail(email)) {
-      setResetPasswordEmail(email);
-      setIsResetPasswordConfirmation(true);
+    try {
+      const result = await onRequestResetPassword(formData);
+      if (result && result.success) {
+        setIsRequestResetPasswordConfirmation(true);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setLoginError(error.message);
+      } else {
+        setLoginError("Ett fel uppstod. Försök igen.");
+      }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const navigateToSignIn = () => {
+    setFormState(AuthFormState.SignIn);
+    setIsRequestResetPasswordConfirmation(false);
+    router.push("/sign-in");
   };
 
   const renderForm = () => {
@@ -281,8 +314,10 @@ export default function AuthFlowComponent({
       return <VerificationMessage email={initialEmail} />;
     }
 
-    if (isResetPasswordConfirmation) {
-      return <ResetPasswordConfirmation email={resetPasswordEmail} />;
+    if (isRequestResetPasswordConfirmation) {
+      return (
+        <RequestResetPasswordConfirmation email={requestResetPasswordEmail} />
+      );
     }
 
     switch (formState) {
@@ -325,9 +360,9 @@ export default function AuthFlowComponent({
                 {loginError}
               </div>
             )}
-            <Button type="submit" className="w-full">
+            <LoadingButton type="submit" className="w-full" loading={loading}>
               Logga in
-            </Button>
+            </LoadingButton>
             {renderGoogleButton("Logga in med Google")}
             {renderAdditionalOptions()}
           </form>
@@ -364,15 +399,15 @@ export default function AuthFlowComponent({
                 istället?
               </div>
             )}
-            <Button type="submit" className="w-full">
+            <LoadingButton type="submit" className="w-full" loading={loading}>
               Fortsätt
-            </Button>
+            </LoadingButton>
             {renderGoogleButton("Registrera dig med Google")}
             {renderAdditionalOptions()}
             <div className="mt-4">
               <Separator className="my-4" />
               <p className="text-sm text-gray-500 text-center">
-                Genom att fortsätta godkänner du xAI&apos;s
+                Genom att fortsätta godkänner du Entréns
                 <br />
                 <a
                   className="font-bold underline text-primary hover:text-primary-dark"
@@ -384,7 +419,7 @@ export default function AuthFlowComponent({
                 </a>{" "}
                 och{" "}
                 <a
-                  className="font-bold underline text-primary hover:text-primary-dark"
+                  className="underline font-bold text-primary hover:text-primary-dark"
                   target="_blank"
                   href="https://x.ai/privacy-policy"
                   rel="noopener noreferrer"
@@ -542,9 +577,9 @@ export default function AuthFlowComponent({
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full">
+            <LoadingButton type="submit" className="w-full" loading={loading}>
               Skapa konto
-            </Button>
+            </LoadingButton>
             <Button
               type="button"
               variant="outline"
@@ -555,9 +590,12 @@ export default function AuthFlowComponent({
             </Button>
           </form>
         );
-      case AuthFormState.ResetPassword:
+      case AuthFormState.RequestResetPassword:
         return (
-          <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+          <form
+            onSubmit={handleRequestResetPasswordSubmit}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -574,14 +612,14 @@ export default function AuthFlowComponent({
                 <p className="text-sm text-red-500">{validationErrors.email}</p>
               )}
             </div>
-            <Button type="submit" className="w-full">
-              Återställ lösenord
-            </Button>
+            <LoadingButton type="submit" className="w-full" loading={loading}>
+              Begär återställning av lösenord
+            </LoadingButton>
             <Button
               type="button"
               variant="outline"
               className="w-full"
-              onClick={() => updateURL(AuthFormState.SignIn)}
+              onClick={navigateToSignIn}
             >
               Tillbaka till inloggning
             </Button>
@@ -642,7 +680,7 @@ export default function AuthFlowComponent({
           <div className="mt-2">
             <button
               type="button"
-              onClick={() => updateURL(AuthFormState.ResetPassword)}
+              onClick={() => updateURL(AuthFormState.RequestResetPassword)}
               className="text-primary hover:underline"
             >
               Glömt ditt lösenord?
@@ -680,7 +718,7 @@ export default function AuthFlowComponent({
     </div>
   );
 
-  const ResetPasswordConfirmation = ({ email }: { email: string }) => (
+  const RequestResetPasswordConfirmation = ({ email }: { email: string }) => (
     <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
       <div className="flex items-center mb-4">
         <Mail className="h-6 w-6 text-blue-500 mr-3" />
@@ -698,10 +736,7 @@ export default function AuthFlowComponent({
         type="button"
         variant="outline"
         className="w-full"
-        onClick={() => {
-          setFormState(AuthFormState.SignIn);
-          setIsResetPasswordConfirmation(false);
-        }}
+        onClick={navigateToSignIn}
       >
         Tillbaka till inloggning
       </Button>
@@ -716,9 +751,9 @@ export default function AuthFlowComponent({
       };
     }
 
-    if (isResetPasswordConfirmation) {
+    if (isRequestResetPasswordConfirmation) {
       return {
-        title: "Återställ lösenord",
+        title: "Begäran om återställning av lösenord",
         subtitle: "Kontrollera din inkorg för instruktioner",
       };
     }
@@ -734,10 +769,11 @@ export default function AuthFlowComponent({
           title: "Skapa konto",
           subtitle: "Fyll i din kontoinformation",
         };
-      case AuthFormState.ResetPassword:
+      case AuthFormState.RequestResetPassword:
         return {
-          title: "Återställ lösenord",
-          subtitle: "Ange din e-postadress för att återställa ditt lösenord",
+          title: "Begär återställning av lösenord",
+          subtitle:
+            "Ange din e-postadress för att begära återställning av lösenord",
         };
       default:
         return { title: "", subtitle: "" };
@@ -750,7 +786,7 @@ export default function AuthFlowComponent({
         <AuthHeader {...getHeaderContent()} />
         <CardContent className="p-6">
           {!isEmailConfirmationStep &&
-            !isResetPasswordConfirmation &&
+            !isRequestResetPasswordConfirmation &&
             formState !== AuthFormState.SignIn && (
               <button
                 type="button"

@@ -15,9 +15,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Entren",
+  title: "Entrén",
   description:
-    "Entren is a platform for finding and sharing local events and places.",
+    "Entrén is a platform for finding and sharing local events and places.",
 };
 
 export default async function RootLayout({
