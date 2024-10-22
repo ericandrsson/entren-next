@@ -16,8 +16,7 @@ export default function CookieConsent({
 
   const accept = () => {
     setIsOpen(false);
-    document.cookie =
-      "cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+    document.cookie = "cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
     setTimeout(() => {
       setHide(true);
     }, 700);
@@ -43,9 +42,7 @@ export default function CookieConsent({
           }, 700);
         }
       }
-    } catch (e) {
-      // console.log("Error: ", e);
-    }
+    } catch (e) {}
   }, []);
 
   return variant != "small" ? (
@@ -66,15 +63,13 @@ export default function CookieConsent({
           </div>
           <div className="p-4">
             <p className="text-sm font-normal text-start">
-              We use cookies to ensure you get the best experience on our
-              website. For more information on how we use cookies, please see
-              our cookie policy.
+              We use cookies to ensure you get the best experience on our website. For more information on how we use
+              cookies, please see our cookie policy.
               <br />
               <br />
               <span className="text-xs">
                 By clicking &quot;
-                <span className="font-medium opacity-80">Accept</span>&quot;,
-                you agree to our use of cookies.
+                <span className="font-medium opacity-80">Accept</span>&quot;, you agree to our use of cookies.
               </span>
               <br />
               <a href="#" className="text-xs underline">
@@ -110,20 +105,15 @@ export default function CookieConsent({
         </div>
         <div className="p-3 -mt-2">
           <p className="text-sm text-left text-muted-foreground">
-            We use cookies to ensure you get the best experience on our website.
-            For more information on how we use cookies, please see our cookie
-            policy.
+            We use cookies to ensure you get the best experience on our website. For more information on how we use cookies,
+            please see our cookie policy.
           </p>
         </div>
         <div className="p-3 flex items-center gap-2 mt-2 border-t">
           <Button onClick={accept} className="w-full h-9 rounded-full">
             accept
           </Button>
-          <Button
-            onClick={decline}
-            className="w-full h-9 rounded-full"
-            variant="outline"
-          >
+          <Button onClick={decline} className="w-full h-9 rounded-full" variant="outline">
             decline
           </Button>
         </div>

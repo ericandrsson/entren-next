@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useActionState, useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
-import { checkEmailExists } from "@/src/app/(default)/(auth)/sign-in/page";
+import { checkEmailExists, handleLogin } from "@/src/app/(default)/(auth)/sign-in/page";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
@@ -24,7 +24,6 @@ enum AuthFormState {
 }
 
 interface AuthFlowComponentProps {
-  handleAuth: (prevState: any, formData: FormData) => Promise<any>;
   handleRequestResetPassword: (prevState: any, formData: FormData) => Promise<any>;
   handleResetPasswordAction: (prevState: any, formData: FormData) => Promise<any>;
   handleSignUp: (prevState: any, formData: FormData) => Promise<any>;
@@ -78,7 +77,6 @@ const StatusMessage = ({ message, success }: { message: string; success: boolean
 );
 
 export default function AuthFlowComponent({
-  handleAuth,
   handleRequestResetPassword,
   handleResetPasswordAction,
   handleSignUp,
@@ -104,8 +102,8 @@ export default function AuthFlowComponent({
   const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
   const [isRequestResetPasswordConfirmation, setIsRequestResetPasswordConfirmation] = useState(false);
   const [requestResetPasswordEmail] = useState("");
+  const [loginState, setLoginState] = useState({ message: "", success: false });
 
-  const [authState, authAction] = useActionState(handleAuth, { message: "", success: false });
   const [requestResetState, requestResetAction] = useActionState(handleRequestResetPassword, {
     message: "",
     success: false,
@@ -227,14 +225,11 @@ export default function AuthFlowComponent({
   const handleEmailCheck = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    console.log(formData);
+    const formData = new FormData(e.currentTarget);
 
     try {
       // Call the emailCheckAction and wait for the result
       const email_exists = await checkEmailExists(formData.get("email") as string);
-      console.log(email_exists);
 
       // After the action completes, check the updated email_exists
       if (email_exists.exists) {
@@ -270,16 +265,27 @@ export default function AuthFlowComponent({
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === "password") {
       const passwordErrors = validatePassword(value);
-      setValidationErrors((prev) => ({ 
-        ...prev, 
+      setValidationErrors((prev) => ({
+        ...prev,
         password: passwordErrors,
-        confirmPassword: value !== formData.confirmPassword ? ["mismatch"] : []
+        confirmPassword: value !== formData.confirmPassword ? ["mismatch"] : [],
       }));
     } else if (name === "confirmPassword") {
       setValidationErrors((prev) => ({
         ...prev,
-        confirmPassword: value !== formData.password ? ["mismatch"] : []
+        confirmPassword: value !== formData.password ? ["mismatch"] : [],
       }));
+    }
+  };
+
+  const handleLoginCheck = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const loggedIn = await handleLogin(formData.get("email") as string, formData.get("password") as string);
+    if (loggedIn.success) {
+      router.push("/");
+    } else {
+      setLoginState({ success: false, message: loggedIn.message });
     }
   };
 
@@ -321,7 +327,7 @@ export default function AuthFlowComponent({
     switch (formState) {
       case AuthFormState.SignIn:
         return (
-          <form action={authAction} className="space-y-4">
+          <form onSubmit={handleLoginCheck} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -343,11 +349,11 @@ export default function AuthFlowComponent({
                 </button>
               </div>
             </div>
-            {authState.message && (
+            {loginState.message && (
               <>
-                <StatusMessage message={authState.message} success={authState.success} />
+                <StatusMessage message={loginState.message} success={loginState.success} />
                 <p aria-live="polite" className="sr-only" role="status">
-                  {authState.message}
+                  {loginState.message}
                 </p>
               </>
             )}

@@ -5,29 +5,22 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-async function handleAuth(prevState: any, formData: FormData) {
+export const handleLogin = async (email: string, password: string) => {
   "use server";
 
   const supabase = await createClient();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  console.log("email", email);
-  console.log("password", password);
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
-  console.log("error", error);
-
   if (error) {
     return { success: false, message: "Felaktigt användarnamn eller lösenord" };
   }
 
-  redirect("/");
-}
+  return { success: true, message: "Inloggning lyckades" };
+};
 
 export async function checkEmailExists(email: string) {
   "use server";
@@ -79,8 +72,6 @@ async function handleResetPassword(prevState: any, formData: FormData) {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    console.log("error ", error);
-    console.log(error.status);
     if (error.status === 422 && error.code === "same_password") {
       return { success: false, message: "Det nya lösenordet måste vara annorlunda än ditt nuvarande lösenord." };
     }
@@ -155,7 +146,6 @@ export default async function AuthFlow({
   return (
     <div className="sm:grow sm:flex sm:justify-center sm:items-start sm:px-4 lg:px-0 bg-background">
       <AuthFlowComponent
-        handleAuth={handleAuth}
         handleRequestResetPassword={handleRequestResetPassword}
         handleResetPasswordAction={handleResetPassword}
         handleSignUp={handleSignUp}
