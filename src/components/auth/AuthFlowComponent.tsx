@@ -4,10 +4,18 @@ import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
-import { AlertTriangle, ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Mail,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
+import { useFormState } from "react-dom";
 import { z } from "zod";
 import { LoadingButton } from "../ui/loading-button";
 
@@ -21,12 +29,17 @@ enum AuthFormState {
 }
 
 interface AuthFlowComponentProps {
-  onSubmit: (formData: FormData) => Promise<{ success: boolean } | undefined>;
+  handleAuth: (prevState: any, formData: FormData) => Promise<any>;
   checkEmailExists: (email: string) => Promise<boolean>;
-  onRequestResetPassword: (
+  handleRequestResetPassword: (
+    prevState: any,
     formData: FormData,
-  ) => Promise<{ success: boolean } | undefined>;
-  onResetPassword: (formData: FormData) => Promise<{ success: boolean } | undefined>;
+  ) => Promise<any>;
+  handleResetPasswordAction: (
+    prevState: any,
+    formData: FormData,
+  ) => Promise<any>; // Renamed prop
+  initialFormState: string;
 }
 
 const Logo = () => (
@@ -77,14 +90,36 @@ const signUpSchema = z
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
+const StatusMessage = ({
+  message,
+  success,
+}: {
+  message: string;
+  success: boolean;
+}) => (
+  <div
+    className={`mt-4 p-4 ${success ? "bg-green-50" : "bg-red-50"} rounded-md border ${success ? "border-green-200" : "border-red-200"} flex items-start`}
+  >
+    {success ? (
+      <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+    ) : (
+      <AlertTriangle className="h-5 w-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+    )}
+    <p className={`text-sm ${success ? "text-green-700" : "text-red-700"}`}>
+      {message}
+    </p>
+  </div>
+);
+
 export default function AuthFlowComponent({
-  onSubmit,
+  handleAuth,
   checkEmailExists,
-  onRequestResetPassword,
-  onResetPassword,
+  handleRequestResetPassword,
+  handleResetPasswordAction, // Renamed prop
+  initialFormState,
 }: AuthFlowComponentProps) {
   const [formState, setFormState] = useState<AuthFormState>(
-    AuthFormState.SignIn,
+    initialFormState as AuthFormState,
   );
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -101,10 +136,22 @@ export default function AuthFlowComponent({
     isRequestResetPasswordConfirmation,
     setIsRequestResetPasswordConfirmation,
   ] = useState(false);
-  const [requestResetPasswordEmail, setRequestResetPasswordEmail] =
-    useState("");
+  const [requestResetPasswordEmail] = useState("");
   const [emailExists, setEmailExists] = useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const [authState, authAction] = useFormState(handleAuth, {
+    message: "",
+    success: false,
+  });
+  const [requestResetState, requestResetAction] = useFormState(
+    handleRequestResetPassword,
+    { message: "", success: false },
+  );
+  const [resetState, resetAction] = useFormState(handleResetPasswordAction, {
+    message: "",
+    success: false,
+  });
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -112,14 +159,11 @@ export default function AuthFlowComponent({
       case "sign-up":
         setFormState(AuthFormState.SignUp);
         break;
-      case "create-account":
-        setFormState(AuthFormState.CreateAccount);
+      case "reset-password":
+        setFormState(AuthFormState.ResetPassword);
         break;
       case "request-reset-password":
         setFormState(AuthFormState.RequestResetPassword);
-        break;
-      case "reset-password":
-        setFormState(AuthFormState.ResetPassword);
         break;
       default:
         setFormState(AuthFormState.SignIn);
@@ -132,19 +176,16 @@ export default function AuthFlowComponent({
       case AuthFormState.SignUp:
         mode = "sign-up";
         break;
-      case AuthFormState.CreateAccount:
-        mode = "create-account";
+      case AuthFormState.ResetPassword:
+        mode = "reset-password";
         break;
       case AuthFormState.RequestResetPassword:
         mode = "request-reset-password";
         break;
-      case AuthFormState.ResetPassword:
-        mode = "reset-password";
-        break;
       default:
         mode = "sign-in";
     }
-    router.push(`/sign-in?mode=${mode}`, { scroll: false });
+    router.push(`/sign-in?mode=${mode}`);
   };
 
   const validateField = useCallback(
@@ -250,7 +291,6 @@ export default function AuthFlowComponent({
       try {
         signUpSchema.parse(formObject);
         setValidationErrors({});
-        // If validation passes, show the email confirmation step
         setIsEmailConfirmationStep(true);
         setLoading(false);
         return;
@@ -268,16 +308,7 @@ export default function AuthFlowComponent({
     }
 
     try {
-      const result = await onSubmit(formData);
-      if (result && result.success) {
-        // Redirect on successful login
-        router.push("/");
-      } else {
-        setLoginError(null);
-        if (formState === AuthFormState.FullCreateAccount) {
-          setVerificationSent(true);
-        }
-      }
+      await authAction(formData);
     } catch (error) {
       if (error instanceof Error) {
         setLoginError(error.message);
@@ -297,10 +328,8 @@ export default function AuthFlowComponent({
     const formData = new FormData(form);
 
     try {
-      const result = await onRequestResetPassword(formData);
-      if (result && result.success) {
-        setIsRequestResetPasswordConfirmation(true);
-      }
+      await requestResetAction(formData);
+      setIsRequestResetPasswordConfirmation(true);
     } catch (error) {
       if (error instanceof Error) {
         setLoginError(error.message);
@@ -319,15 +348,15 @@ export default function AuthFlowComponent({
     const formData = new FormData(form);
 
     try {
-      const result = await onResetPassword(formData);
-      if (result && result.success) {
-        router.push("/sign-in?mode=reset-success");
-      }
+      await resetAction(formData);
+      router.push("/sign-in?mode=reset-success");
     } catch (error) {
       if (error instanceof Error) {
         setLoginError(error.message);
       } else {
-        setLoginError("Ett fel uppstod vid återställning av lösenord. Försök igen.");
+        setLoginError(
+          "Ett fel uppstod vid återställning av lösenord. Försök igen.",
+        );
       }
     } finally {
       setLoading(false);
@@ -354,7 +383,7 @@ export default function AuthFlowComponent({
     switch (formState) {
       case AuthFormState.SignIn:
         return (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={authAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -385,11 +414,16 @@ export default function AuthFlowComponent({
                 </button>
               </div>
             </div>
-            {loginError && (
-              <div className="text-sm text-red-500 mt-2">
-                <AlertTriangle className="h-4 w-4 inline mr-1" />
-                {loginError}
-              </div>
+            {authState.message && (
+              <>
+                <StatusMessage
+                  message={authState.message}
+                  success={authState.success}
+                />
+                <p aria-live="polite" className="sr-only" role="status">
+                  {authState.message}
+                </p>
+              </>
             )}
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Logga in
@@ -623,10 +657,7 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.RequestResetPassword:
         return (
-          <form
-            onSubmit={handleRequestResetPasswordSubmit}
-            className="space-y-4"
-          >
+          <form action={requestResetAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -646,6 +677,17 @@ export default function AuthFlowComponent({
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Begär återställning av lösenord
             </LoadingButton>
+            {requestResetState.message && (
+              <>
+                <StatusMessage
+                  message={requestResetState.message}
+                  success={requestResetState.success}
+                />
+                <p aria-live="polite" className="sr-only" role="status">
+                  {requestResetState.message}
+                </p>
+              </>
+            )}
             <Button
               type="button"
               variant="outline"
@@ -658,7 +700,7 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.ResetPassword:
         return (
-          <form onSubmit={handleResetPassword} className="space-y-4">
+          <form action={resetAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
                 Nytt lösenord
@@ -687,7 +729,10 @@ export default function AuthFlowComponent({
               {/* Password criteria list */}
             </div>
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium"
+              >
                 Bekräfta nytt lösenord
               </label>
               <div className="relative">
@@ -716,6 +761,17 @@ export default function AuthFlowComponent({
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Återställ lösenord
             </LoadingButton>
+            {resetState.message && (
+              <>
+                <StatusMessage
+                  message={resetState.message}
+                  success={resetState.success}
+                />
+                <p aria-live="polite" className="sr-only" role="status">
+                  {resetState.message}
+                </p>
+              </>
+            )}
           </form>
         );
     }

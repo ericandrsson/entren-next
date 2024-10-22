@@ -2,8 +2,6 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/utils/supabase/server";
-import { error } from "console";
-import { redirect } from "next/navigation";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -24,7 +22,9 @@ export async function GET(request: NextRequest) {
     });
     if (!error) {
       if (type === "recovery") {
-        const response = NextResponse.redirect(`${next}?mode=reset-password`);
+        const response = NextResponse.redirect(
+          `${next}/login?mode=reset-password`,
+        );
         response.cookies.set({
           name: "auth",
           value: "ALLOWED_TO_RESET_PASSWORD",
@@ -41,5 +41,5 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  return NextResponse.redirect('/auth/auth-code-error');
+  return NextResponse.redirect("/auth/auth-code-error");
 }

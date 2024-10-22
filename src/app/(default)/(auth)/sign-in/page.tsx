@@ -2,10 +2,10 @@
 
 import AuthFlowComponent from "@/src/components/auth/AuthFlowComponent";
 import { createClient } from "@/utils/supabase/server";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-async function handleAuth(formData: FormData) {
+async function handleAuth(prevState: any, formData: FormData) {
   "use server";
 
   const supabase = createClient();
@@ -18,11 +18,10 @@ async function handleAuth(formData: FormData) {
   });
 
   if (error) {
-    console.error("Error logging in:", error);
-    throw new Error("Felaktigt användarnamn eller lösenord");
-  } else {
-    return { success: true };
+    return { message: "Felaktigt användarnamn eller lösenord" };
   }
+
+  redirect("/");
 }
 
 async function checkEmailExists(email: string) {
@@ -32,42 +31,43 @@ async function checkEmailExists(email: string) {
   const { data, error } = await supabase.rpc("check_email_exists", { email });
 
   if (error) {
-    console.error("Error checking email:", error);
     throw new Error("Ett fel uppstod vid kontroll av e-postadressen");
   }
 
   return data;
 }
 
-async function handleRequestResetPassword(formData: FormData) {
+async function handleRequestResetPassword(prevState: any, formData: FormData) {
   "use server";
 
   const supabase = createClient();
   const email = formData.get("email") as string;
 
-  const headersList = headers();
-  const host = headersList.get("host");
-  const proto = headersList.get("x-forwarded-proto") ?? "http";
-  const origin = `${proto}://${host}`;
-
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password`,
   });
 
   if (error) {
-    console.error("Error requesting password reset:", error);
-    throw new Error("Ett fel uppstod vid begäran om återställning av lösenord");
-  } else {
-    return { success: true };
+    return {
+      message: "Ett fel uppstod vid begäran om återställning av lösenord",
+      success: false,
+    };
   }
+
+  return {
+    message:
+      "Instruktioner för återställning av lösenord har skickats till din e-post",
+    success: true,
+  };
 }
 
-async function handleResetPassword(formData: FormData) {
+async function handleResetPassword(prevState: any, formData: FormData) {
   "use server";
 
-  const cookie = cookies().get("auth")?.value;
+  const cookieStore = cookies();
+  const authCookie = cookieStore.get("auth");
 
-  if (!cookie || cookie !== "ALLOWED_TO_RESET_PASSWORD") {
+  if (authCookie?.value !== "ALLOWED_TO_RESET_PASSWORD") {
     redirect("/sign-in");
   }
 
@@ -77,23 +77,51 @@ async function handleResetPassword(formData: FormData) {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    throw new Error(error.message);
+    return { message: error.message };
   }
 
   // Delete the auth cookie after successful password reset
-  cookies().delete("auth");
+  cookieStore.delete("auth");
 
-  return { success: true };
+  redirect("/sign-in?mode=reset-success");
 }
 
-export default async function AuthFlow() {
+export default async function AuthFlow({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const mode = searchParams.mode as string | undefined;
+  const cookieStore = cookies();
+  const authCookie = cookieStore.get("auth");
+
+  let initialFormState;
+
+  switch (mode) {
+    case "reset-password":
+      if (authCookie?.value !== "ALLOWED_TO_RESET_PASSWORD") {
+        redirect("/sign-in");
+      }
+      initialFormState = "RESET_PASSWORD";
+      break;
+    case "sign-up":
+      initialFormState = "SIGN_UP";
+      break;
+    case "request-reset-password":
+      initialFormState = "REQUEST_RESET_PASSWORD";
+      break;
+    default:
+      initialFormState = "SIGN_IN";
+  }
+
   return (
     <div className="sm:grow sm:flex sm:justify-center sm:items-start sm:px-4 lg:px-0 bg-background">
       <AuthFlowComponent
-        onSubmit={handleAuth}
+        handleAuth={handleAuth}
         checkEmailExists={checkEmailExists}
-        onRequestResetPassword={handleRequestResetPassword}
-        onResetPassword={handleResetPassword}
+        handleRequestResetPassword={handleRequestResetPassword}
+        handleResetPasswordAction={handleResetPassword} // Updated prop name
+        initialFormState={initialFormState}
       />
     </div>
   );
