@@ -17,6 +17,7 @@ enum AuthFormState {
   CreateAccount = "CREATE_ACCOUNT",
   RequestResetPassword = "REQUEST_RESET_PASSWORD",
   FullCreateAccount = "FULL_CREATE_ACCOUNT",
+  ResetPassword = "RESET_PASSWORD",
 }
 
 interface AuthFlowComponentProps {
@@ -25,6 +26,7 @@ interface AuthFlowComponentProps {
   onRequestResetPassword: (
     formData: FormData,
   ) => Promise<{ success: boolean } | undefined>;
+  onResetPassword: (formData: FormData) => Promise<{ success: boolean } | undefined>;
 }
 
 const Logo = () => (
@@ -79,6 +81,7 @@ export default function AuthFlowComponent({
   onSubmit,
   checkEmailExists,
   onRequestResetPassword,
+  onResetPassword,
 }: AuthFlowComponentProps) {
   const [formState, setFormState] = useState<AuthFormState>(
     AuthFormState.SignIn,
@@ -115,6 +118,9 @@ export default function AuthFlowComponent({
       case "request-reset-password":
         setFormState(AuthFormState.RequestResetPassword);
         break;
+      case "reset-password":
+        setFormState(AuthFormState.ResetPassword);
+        break;
       default:
         setFormState(AuthFormState.SignIn);
     }
@@ -131,6 +137,9 @@ export default function AuthFlowComponent({
         break;
       case AuthFormState.RequestResetPassword:
         mode = "request-reset-password";
+        break;
+      case AuthFormState.ResetPassword:
+        mode = "reset-password";
         break;
       default:
         mode = "sign-in";
@@ -297,6 +306,28 @@ export default function AuthFlowComponent({
         setLoginError(error.message);
       } else {
         setLoginError("Ett fel uppstod. Försök igen.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const result = await onResetPassword(formData);
+      if (result && result.success) {
+        router.push("/sign-in?mode=reset-success");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setLoginError(error.message);
+      } else {
+        setLoginError("Ett fel uppstod vid återställning av lösenord. Försök igen.");
       }
     } finally {
       setLoading(false);
@@ -625,6 +656,68 @@ export default function AuthFlowComponent({
             </Button>
           </form>
         );
+      case AuthFormState.ResetPassword:
+        return (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium">
+                Nytt lösenord
+              </label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={formData.password || ""}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </button>
+              </div>
+              {/* Password criteria list */}
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium">
+                Bekräfta nytt lösenord
+              </label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={formData.confirmPassword || ""}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </button>
+              </div>
+              {/* Password match message */}
+            </div>
+            <LoadingButton type="submit" className="w-full" loading={loading}>
+              Återställ lösenord
+            </LoadingButton>
+          </form>
+        );
     }
   };
 
@@ -774,6 +867,11 @@ export default function AuthFlowComponent({
           title: "Begär återställning av lösenord",
           subtitle:
             "Ange din e-postadress för att begära återställning av lösenord",
+        };
+      case AuthFormState.ResetPassword:
+        return {
+          title: "Återställ lösenord",
+          subtitle: "Ange ditt nya lösenord",
         };
       default:
         return { title: "", subtitle: "" };

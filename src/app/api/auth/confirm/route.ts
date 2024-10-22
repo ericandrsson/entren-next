@@ -24,23 +24,22 @@ export async function GET(request: NextRequest) {
     });
     if (!error) {
       if (type === "recovery") {
-        const response = NextResponse.redirect(next);
+        const response = NextResponse.redirect(`${next}?mode=reset-password`);
         response.cookies.set({
           name: "auth",
           value: "ALLOWED_TO_RESET_PASSWORD",
           httpOnly: true,
           path: "/",
+          maxAge: 60 * 10, // 10 minutes
         });
         console.log("response ", response);
         return response;
       }
       // redirect user to specified redirect URL or root of app
-      redirect(next);
+      return NextResponse.redirect(next);
     }
   }
 
-  console.log("error ", error);
-
-  // redirect the user to an error page with some instructions
-  redirect("/error");
+  // return the user to an error page with some instructions
+  return NextResponse.redirect('/auth/auth-code-error');
 }
