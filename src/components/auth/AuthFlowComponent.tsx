@@ -240,6 +240,34 @@ export default function AuthFlowComponent({
     }
   };
 
+  const validatePassword = (password: string) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push("length");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("uppercase");
+    }
+    if (!/\d/.test(password)) {
+      errors.push("number");
+    }
+    return errors;
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "password") {
+      const passwordErrors = validatePassword(value);
+      setValidationErrors((prev) => ({ ...prev, password: passwordErrors }));
+    } else if (name === "confirmPassword") {
+      setValidationErrors((prev) => ({
+        ...prev,
+        confirmPassword: value !== formData.password ? ["mismatch"] : [],
+      }));
+    }
+  };
+
   const renderForm = () => {
     if (message) {
       return (
@@ -523,7 +551,7 @@ export default function AuthFlowComponent({
                       type={showPassword ? "text" : "password"}
                       required
                       value={formData.password || ""}
-                      onChange={handleInputChange}
+                      onChange={handlePasswordChange}
                     />
                     <button
                       type="button"
@@ -537,7 +565,17 @@ export default function AuthFlowComponent({
                       )}
                     </button>
                   </div>
-                  {/* Password criteria list */}
+                  <ul className="text-sm text-gray-600 space-y-1 mt-2">
+                    <li className={!validationErrors.password?.includes("length") ? "text-green-500" : ""}>
+                      Minst 8 tecken
+                    </li>
+                    <li className={!validationErrors.password?.includes("uppercase") ? "text-green-500" : ""}>
+                      Minst en stor bokstav
+                    </li>
+                    <li className={!validationErrors.password?.includes("number") ? "text-green-500" : ""}>
+                      Minst en siffra
+                    </li>
+                  </ul>
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="confirmPassword" className="block text-sm font-medium">
@@ -550,7 +588,7 @@ export default function AuthFlowComponent({
                       type={showPassword ? "text" : "password"}
                       required
                       value={formData.confirmPassword || ""}
-                      onChange={handleInputChange}
+                      onChange={handlePasswordChange}
                     />
                     <button
                       type="button"
@@ -564,9 +602,16 @@ export default function AuthFlowComponent({
                       )}
                     </button>
                   </div>
-                  {/* Password match message */}
+                  {validationErrors.confirmPassword?.includes("mismatch") && (
+                    <p className="text-sm text-red-500">Lösenorden matchar inte</p>
+                  )}
                 </div>
-                <LoadingButton type="submit" className="w-full" loading={loading}>
+                <LoadingButton
+                  type="submit"
+                  className="w-full"
+                  loading={loading}
+                  disabled={!!validationErrors.password?.length || !!validationErrors.confirmPassword?.length}
+                >
                   Återställ lösenord
                 </LoadingButton>
                 {resetState.message && !resetState.success && <StatusMessage message={resetState.message} success={false} />}

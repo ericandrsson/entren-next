@@ -86,7 +86,8 @@ async function handleResetPassword(prevState: any, formData: FormData) {
   cookieStore.delete("auth");
 
   // Redirect to login page with success message
-  redirect("/sign-in?message=Lösenordet har återställts framgångsrikt");
+  const message = encodeURIComponent("Lösenordet har återställts framgångsrikt");
+  redirect(`/sign-in?message=${message}`);
 }
 
 async function handleSignUp(prevState: any, formData: FormData) {
