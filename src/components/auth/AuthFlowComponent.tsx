@@ -1,22 +1,17 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import { Separator } from "@/src/components/ui/separator";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Mail,
-} from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { z } from "zod";
+
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Separator } from "@/src/components/ui/separator";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { LoadingButton } from "../ui/loading-button";
 
 enum AuthFormState {
@@ -30,35 +25,16 @@ enum AuthFormState {
 
 interface AuthFlowComponentProps {
   handleAuth: (prevState: any, formData: FormData) => Promise<any>;
-  checkEmailExists: (email: string) => Promise<boolean>;
-  handleRequestResetPassword: (
-    prevState: any,
-    formData: FormData,
-  ) => Promise<any>;
-  handleResetPasswordAction: (
-    prevState: any,
-    formData: FormData,
-  ) => Promise<any>; // Renamed prop
+  checkEmailExists: (prevState: any, formData: FormData) => Promise<any>;
+  handleRequestResetPassword: (prevState: any, formData: FormData) => Promise<any>;
+  handleResetPasswordAction: (prevState: any, formData: FormData) => Promise<any>;
+  handleSignUp: (prevState: any, formData: FormData) => Promise<any>;
   initialFormState: string;
 }
 
-const Logo = () => (
-  <Image
-    src="/images/faster-forward-logo.png"
-    alt="Faster Forward Logo"
-    width={60}
-    height={60}
-  />
-);
+const Logo = () => <Image src="/images/faster-forward-logo.png" alt="Faster Forward Logo" width={60} height={60} />;
 
-// Add this new component at the top of the file, after the imports
-const AuthHeader = ({
-  title,
-  subtitle,
-}: {
-  title: string;
-  subtitle: string;
-}) => (
+const AuthHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
   <CardHeader className="space-y-1.5 p-6 relative border-b flex flex-col border-secondary text-center items-center">
     <div className="inline-flex items-center justify-center p-0 m-0">
       <Logo />
@@ -68,7 +44,6 @@ const AuthHeader = ({
   </CardHeader>
 );
 
-// Update the signUpSchema with Swedish error messages
 const signUpSchema = z
   .object({
     email: z.string().email("Ogiltig e-postadress"),
@@ -90,13 +65,7 @@ const signUpSchema = z
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
-const StatusMessage = ({
-  message,
-  success,
-}: {
-  message: string;
-  success: boolean;
-}) => (
+const StatusMessage = ({ message, success }: { message: string; success: boolean }) => (
   <div
     className={`mt-4 p-4 ${success ? "bg-green-50" : "bg-red-50"} rounded-md border ${success ? "border-green-200" : "border-red-200"} flex items-start`}
   >
@@ -105,9 +74,7 @@ const StatusMessage = ({
     ) : (
       <AlertTriangle className="h-5 w-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
     )}
-    <p className={`text-sm ${success ? "text-green-700" : "text-red-700"}`}>
-      {message}
-    </p>
+    <p className={`text-sm ${success ? "text-green-700" : "text-red-700"}`}>{message}</p>
   </div>
 );
 
@@ -115,43 +82,29 @@ export default function AuthFlowComponent({
   handleAuth,
   checkEmailExists,
   handleRequestResetPassword,
-  handleResetPasswordAction, // Renamed prop
+  handleResetPasswordAction,
+  handleSignUp,
   initialFormState,
 }: AuthFlowComponentProps) {
-  const [formState, setFormState] = useState<AuthFormState>(
-    initialFormState as AuthFormState,
-  );
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [validationErrors, setValidationErrors] = useState<
-    Partial<SignUpFormData>
-  >({});
+
+  const [formState, setFormState] = useState<AuthFormState>(initialFormState as AuthFormState);
+  const [validationErrors, setValidationErrors] = useState<Partial<SignUpFormData>>({});
   const [formData, setFormData] = useState<Partial<SignUpFormData>>({});
   const [initialEmail, setInitialEmail] = useState("");
   const [isEmailConfirmationStep, setIsEmailConfirmationStep] = useState(false);
-  const [
-    isRequestResetPasswordConfirmation,
-    setIsRequestResetPasswordConfirmation,
-  ] = useState(false);
+  const [isRequestResetPasswordConfirmation, setIsRequestResetPasswordConfirmation] = useState(false);
   const [requestResetPasswordEmail] = useState("");
-  const [emailExists, setEmailExists] = useState(false);
-  const [loading, setLoading] = React.useState(false);
 
-  const [authState, authAction] = useFormState(handleAuth, {
-    message: "",
-    success: false,
-  });
-  const [requestResetState, requestResetAction] = useFormState(
-    handleRequestResetPassword,
-    { message: "", success: false },
-  );
-  const [resetState, resetAction] = useFormState(handleResetPasswordAction, {
-    message: "",
-    success: false,
-  });
+  const [authState, authAction] = useFormState(handleAuth, { message: "", success: false });
+  const [requestResetState, requestResetAction] = useFormState(handleRequestResetPassword, { message: "", success: false });
+  const [resetState, resetAction] = useFormState(handleResetPasswordAction, { message: "", success: false });
+  const [signUpState, signUpAction] = useFormState(handleSignUp, { message: "", success: false });
+  const [emailCheckState, emailCheckAction] = useFormState(checkEmailExists, { exists: false, message: "" });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -188,52 +141,45 @@ export default function AuthFlowComponent({
     router.push(`/sign-in?mode=${mode}`);
   };
 
-  const validateField = useCallback(
-    (name: keyof SignUpFormData, value: string) => {
-      try {
-        let fieldSchema;
-        switch (name) {
-          case "email":
-            fieldSchema = z.string().email("Ogiltig e-postadress");
-            break;
-          case "firstName":
-            fieldSchema = z
-              .string()
-              .min(2, "Förnamnet måste vara minst 2 tecken");
-            break;
-          case "lastName":
-            fieldSchema = z
-              .string()
-              .min(2, "Efternamnet måste vara minst 2 tecken");
-            break;
-          case "password":
-            fieldSchema = z
-              .string()
-              .min(8, "Lösenordet måste vara minst 8 tecken")
-              .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav och en siffra",
-              );
-            break;
-          case "confirmPassword":
-            fieldSchema = z.string();
-            break;
-          default:
-            return;
-        }
-        fieldSchema.parse(value);
-        setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          setValidationErrors((prev) => ({
-            ...prev,
-            [name]: error.errors[0].message,
-          }));
-        }
+  const validateField = useCallback((name: keyof SignUpFormData, value: string) => {
+    try {
+      let fieldSchema;
+      switch (name) {
+        case "email":
+          fieldSchema = z.string().email("Ogiltig e-postadress");
+          break;
+        case "firstName":
+          fieldSchema = z.string().min(2, "Förnamnet måste vara minst 2 tecken");
+          break;
+        case "lastName":
+          fieldSchema = z.string().min(2, "Efternamnet måste vara minst 2 tecken");
+          break;
+        case "password":
+          fieldSchema = z
+            .string()
+            .min(8, "Lösenordet måste vara minst 8 tecken")
+            .regex(
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+              "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav och en siffra",
+            );
+          break;
+        case "confirmPassword":
+          fieldSchema = z.string();
+          break;
+        default:
+          return;
       }
-    },
-    [],
-  );
+      fieldSchema.parse(value);
+      setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setValidationErrors((prev) => ({
+          ...prev,
+          [name]: error.errors[0].message,
+        }));
+      }
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -257,112 +203,6 @@ export default function AuthFlowComponent({
     }
   };
 
-  const handleInitialSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const email = formData.get("email") as string;
-
-    if (validateEmail(email)) {
-      try {
-        const exists = await checkEmailExists(email);
-        if (exists) {
-          setEmailExists(true);
-        } else {
-          setInitialEmail(email);
-          setFormState(AuthFormState.FullCreateAccount);
-        }
-      } catch (error) {
-        setLoginError("Ett fel uppstod vid kontroll av e-postadressen");
-      }
-    }
-    setLoading(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    if (formState === AuthFormState.FullCreateAccount) {
-      const formObject = Object.fromEntries(formData.entries());
-      try {
-        signUpSchema.parse(formObject);
-        setValidationErrors({});
-        setIsEmailConfirmationStep(true);
-        setLoading(false);
-        return;
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          const errors = error.errors.reduce((acc, curr) => {
-            acc[curr.path[0] as keyof SignUpFormData] = curr.message;
-            return acc;
-          }, {} as Partial<SignUpFormData>);
-          setValidationErrors(errors);
-          setLoading(false);
-          return;
-        }
-      }
-    }
-
-    try {
-      await authAction(formData);
-    } catch (error) {
-      if (error instanceof Error) {
-        setLoginError(error.message);
-      } else {
-        setLoginError("An error occurred. Please try again.");
-      }
-    }
-    setLoading(false);
-  };
-
-  const handleRequestResetPasswordSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-  ) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    try {
-      await requestResetAction(formData);
-      setIsRequestResetPasswordConfirmation(true);
-    } catch (error) {
-      if (error instanceof Error) {
-        setLoginError(error.message);
-      } else {
-        setLoginError("Ett fel uppstod. Försök igen.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    try {
-      await resetAction(formData);
-      router.push("/sign-in?mode=reset-success");
-    } catch (error) {
-      if (error instanceof Error) {
-        setLoginError(error.message);
-      } else {
-        setLoginError(
-          "Ett fel uppstod vid återställning av lösenord. Försök igen.",
-        );
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const navigateToSignIn = () => {
     setFormState(AuthFormState.SignIn);
     setIsRequestResetPasswordConfirmation(false);
@@ -375,9 +215,7 @@ export default function AuthFlowComponent({
     }
 
     if (isRequestResetPasswordConfirmation) {
-      return (
-        <RequestResetPasswordConfirmation email={requestResetPasswordEmail} />
-      );
+      return <RequestResetPasswordConfirmation email={requestResetPasswordEmail} />;
     }
 
     switch (formState) {
@@ -395,31 +233,19 @@ export default function AuthFlowComponent({
                 Lösenord
               </label>
               <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                />
+                <Input id="password" name="password" type={showPassword ? "text" : "password"} required />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
             </div>
             {authState.message && (
               <>
-                <StatusMessage
-                  message={authState.message}
-                  success={authState.success}
-                />
+                <StatusMessage message={authState.message} success={authState.success} />
                 <p aria-live="polite" className="sr-only" role="status">
                   {authState.message}
                 </p>
@@ -434,7 +260,7 @@ export default function AuthFlowComponent({
         );
       case AuthFormState.SignUp:
         return (
-          <form onSubmit={handleInitialSubmit} className="space-y-4">
+          <form action={emailCheckAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -447,11 +273,9 @@ export default function AuthFlowComponent({
                 onChange={(e) => validateEmail(e.target.value)}
                 onBlur={(e) => validateEmail(e.target.value)}
               />
-              {validationErrors.email && (
-                <p className="text-sm text-red-500">{validationErrors.email}</p>
-              )}
+              {validationErrors.email && <p className="text-sm text-red-500">{validationErrors.email}</p>}
             </div>
-            {emailExists && (
+            {emailCheckState.exists && (
               <div className="text-sm text-red-500">
                 Detta konto finns redan. Vill du{" "}
                 <button
@@ -499,7 +323,7 @@ export default function AuthFlowComponent({
       case AuthFormState.CreateAccount:
       case AuthFormState.FullCreateAccount:
         return (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={signUpAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="firstName" className="block text-sm font-medium">
                 Förnamn
@@ -512,11 +336,7 @@ export default function AuthFlowComponent({
                 value={formData.firstName || ""}
                 onChange={handleInputChange}
               />
-              {validationErrors.firstName && (
-                <p className="text-sm text-red-500">
-                  {validationErrors.firstName}
-                </p>
-              )}
+              {validationErrors.firstName && <p className="text-sm text-red-500">{validationErrors.firstName}</p>}
             </div>
             <div className="space-y-2">
               <label htmlFor="lastName" className="block text-sm font-medium">
@@ -530,24 +350,13 @@ export default function AuthFlowComponent({
                 value={formData.lastName || ""}
                 onChange={handleInputChange}
               />
-              {validationErrors.lastName && (
-                <p className="text-sm text-red-500">
-                  {validationErrors.lastName}
-                </p>
-              )}
+              {validationErrors.lastName && <p className="text-sm text-red-500">{validationErrors.lastName}</p>}
             </div>
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
               </label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={initialEmail}
-                readOnly
-              />
+              <Input id="email" name="email" type="email" required value={initialEmail} readOnly />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
@@ -567,48 +376,23 @@ export default function AuthFlowComponent({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
               <ul className="text-sm text-gray-600 space-y-1 mt-2">
-                <li
-                  className={
-                    formData.password && formData.password.length >= 8
-                      ? "text-green-500"
-                      : ""
-                  }
-                >
+                <li className={formData.password && formData.password.length >= 8 ? "text-green-500" : ""}>
                   Minst 8 tecken
                 </li>
-                <li
-                  className={
-                    formData.password && /[A-Z]/.test(formData.password)
-                      ? "text-green-500"
-                      : ""
-                  }
-                >
+                <li className={formData.password && /[A-Z]/.test(formData.password) ? "text-green-500" : ""}>
                   Minst en stor bokstav
                 </li>
-                <li
-                  className={
-                    formData.password && /\d/.test(formData.password)
-                      ? "text-green-500"
-                      : ""
-                  }
-                >
+                <li className={formData.password && /\d/.test(formData.password) ? "text-green-500" : ""}>
                   Minst en siffra
                 </li>
               </ul>
             </div>
             <div className="space-y-2">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium"
-              >
+              <label htmlFor="confirmPassword" className="block text-sm font-medium">
                 Bekräfta lösenord
               </label>
               <div className="relative">
@@ -625,32 +409,21 @@ export default function AuthFlowComponent({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
               {formData.password && formData.confirmPassword && (
                 <p
                   className={`text-sm ${formData.password === formData.confirmPassword ? "text-green-500" : "text-red-500"}`}
                 >
-                  {formData.password === formData.confirmPassword
-                    ? "Lösenorden matchar"
-                    : "Lösenorden matchar inte"}
+                  {formData.password === formData.confirmPassword ? "Lösenorden matchar" : "Lösenorden matchar inte"}
                 </p>
               )}
             </div>
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Skapa konto
             </LoadingButton>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setFormState(AuthFormState.SignUp)}
-            >
+            <Button type="button" variant="outline" className="w-full" onClick={() => setFormState(AuthFormState.SignUp)}>
               Gå tillbaka
             </Button>
           </form>
@@ -670,30 +443,20 @@ export default function AuthFlowComponent({
                 onChange={(e) => validateEmail(e.target.value)}
                 onBlur={(e) => validateEmail(e.target.value)}
               />
-              {validationErrors.email && (
-                <p className="text-sm text-red-500">{validationErrors.email}</p>
-              )}
+              {validationErrors.email && <p className="text-sm text-red-500">{validationErrors.email}</p>}
             </div>
             <LoadingButton type="submit" className="w-full" loading={loading}>
               Begär återställning av lösenord
             </LoadingButton>
             {requestResetState.message && (
               <>
-                <StatusMessage
-                  message={requestResetState.message}
-                  success={requestResetState.success}
-                />
+                <StatusMessage message={requestResetState.message} success={requestResetState.success} />
                 <p aria-live="polite" className="sr-only" role="status">
                   {requestResetState.message}
                 </p>
               </>
             )}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={navigateToSignIn}
-            >
+            <Button type="button" variant="outline" className="w-full" onClick={navigateToSignIn}>
               Tillbaka till inloggning
             </Button>
           </form>
@@ -719,20 +482,13 @@ export default function AuthFlowComponent({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
               {/* Password criteria list */}
             </div>
             <div className="space-y-2">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium"
-              >
+              <label htmlFor="confirmPassword" className="block text-sm font-medium">
                 Bekräfta nytt lösenord
               </label>
               <div className="relative">
@@ -749,11 +505,7 @@ export default function AuthFlowComponent({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
               {/* Password match message */}
@@ -763,10 +515,7 @@ export default function AuthFlowComponent({
             </LoadingButton>
             {resetState.message && (
               <>
-                <StatusMessage
-                  message={resetState.message}
-                  success={resetState.success}
-                />
+                <StatusMessage message={resetState.message} success={resetState.success} />
                 <p aria-live="polite" className="sr-only" role="status">
                   {resetState.message}
                 </p>
@@ -784,9 +533,7 @@ export default function AuthFlowComponent({
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Eller
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Eller</span>
         </div>
       </div>
       <Button variant="outline" className="w-full mt-4">
@@ -819,11 +566,7 @@ export default function AuthFlowComponent({
       {formState === AuthFormState.SignIn ? (
         <>
           Har du inget konto?{" "}
-          <button
-            type="button"
-            onClick={() => updateURL(AuthFormState.SignUp)}
-            className="text-primary hover:underline"
-          >
+          <button type="button" onClick={() => updateURL(AuthFormState.SignUp)} className="text-primary hover:underline">
             Registrera dig
           </button>
           <div className="mt-2">
@@ -839,11 +582,7 @@ export default function AuthFlowComponent({
       ) : (
         <>
           Har du redan ett konto?{" "}
-          <button
-            type="button"
-            onClick={() => updateURL(AuthFormState.SignIn)}
-            className="text-primary hover:underline"
-          >
+          <button type="button" onClick={() => updateURL(AuthFormState.SignIn)} className="text-primary hover:underline">
             Logga in
           </button>
         </>
@@ -858,12 +597,10 @@ export default function AuthFlowComponent({
         <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
       <p className="text-sm mb-4 text-gray-700">
-        Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka
-        på länken i e-postmeddelandet för att verifiera ditt konto.
+        Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka på länken i e-postmeddelandet för att
+        verifiera ditt konto.
       </p>
-      <p className="text-sm mb-4 text-gray-600">
-        Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.
-      </p>
+      <p className="text-sm mb-4 text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
     </div>
   );
 
@@ -874,19 +611,11 @@ export default function AuthFlowComponent({
         <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
       <p className="text-sm mb-4 text-gray-700">
-        Vi har skickat instruktioner för att återställa ditt lösenord till{" "}
-        <strong>{email}</strong>. Följ instruktionerna i e-postmeddelandet för
-        att återställa ditt lösenord.
+        Vi har skickat instruktioner för att återställa ditt lösenord till <strong>{email}</strong>. Följ instruktionerna i
+        e-postmeddelandet för att återställa ditt lösenord.
       </p>
-      <p className="text-sm mb-4 text-gray-600">
-        Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.
-      </p>
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={navigateToSignIn}
-      >
+      <p className="text-sm mb-4 text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
+      <Button type="button" variant="outline" className="w-full" onClick={navigateToSignIn}>
         Tillbaka till inloggning
       </Button>
     </div>
@@ -921,8 +650,7 @@ export default function AuthFlowComponent({
       case AuthFormState.RequestResetPassword:
         return {
           title: "Begär återställning av lösenord",
-          subtitle:
-            "Ange din e-postadress för att begära återställning av lösenord",
+          subtitle: "Ange din e-postadress för att begära återställning av lösenord",
         };
       case AuthFormState.ResetPassword:
         return {
@@ -939,17 +667,15 @@ export default function AuthFlowComponent({
       <div>
         <AuthHeader {...getHeaderContent()} />
         <CardContent className="p-6">
-          {!isEmailConfirmationStep &&
-            !isRequestResetPasswordConfirmation &&
-            formState !== AuthFormState.SignIn && (
-              <button
-                type="button"
-                onClick={() => updateURL(AuthFormState.SignIn)}
-                className="text-primary absolute top-6 left-6"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-            )}
+          {!isEmailConfirmationStep && !isRequestResetPasswordConfirmation && formState !== AuthFormState.SignIn && (
+            <button
+              type="button"
+              onClick={() => updateURL(AuthFormState.SignIn)}
+              className="text-primary absolute top-6 left-6"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+          )}
           {renderForm()}
         </CardContent>
       </div>

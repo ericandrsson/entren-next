@@ -24,17 +24,18 @@ async function handleAuth(prevState: any, formData: FormData) {
   redirect("/");
 }
 
-async function checkEmailExists(email: string) {
+async function checkEmailExists(prevState: any, formData: FormData) {
   "use server";
 
   const supabase = createClient();
+  const email = formData.get("email") as string;
   const { data, error } = await supabase.rpc("check_email_exists", { email });
 
   if (error) {
-    throw new Error("Ett fel uppstod vid kontroll av e-postadressen");
+    return { exists: false, message: "Ett fel uppstod vid kontroll av e-postadressen" };
   }
 
-  return data;
+  return { exists: data, message: "" };
 }
 
 async function handleRequestResetPassword(prevState: any, formData: FormData) {
@@ -86,6 +87,33 @@ async function handleResetPassword(prevState: any, formData: FormData) {
   redirect("/sign-in?mode=reset-success");
 }
 
+async function handleSignUp(prevState: any, formData: FormData) {
+  "use server";
+
+  const supabase = createClient();
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+      },
+    },
+  });
+
+  if (error) {
+    return { message: "Ett fel uppstod vid registrering", success: false };
+  }
+
+  return { message: "Registrering lyckades. Kontrollera din e-post för verifiering.", success: true };
+}
+
 export default async function AuthFlow({
   searchParams,
 }: {
@@ -120,7 +148,8 @@ export default async function AuthFlow({
         handleAuth={handleAuth}
         checkEmailExists={checkEmailExists}
         handleRequestResetPassword={handleRequestResetPassword}
-        handleResetPasswordAction={handleResetPassword} // Updated prop name
+        handleResetPasswordAction={handleResetPassword}
+        handleSignUp={handleSignUp}
         initialFormState={initialFormState}
       />
     </div>
