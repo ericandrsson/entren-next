@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { z } from "zod";
 
+import { checkEmailExists } from "@/src/app/(default)/(auth)/sign-in/page";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
@@ -80,7 +81,6 @@ const StatusMessage = ({ message, success }: { message: string; success: boolean
 
 export default function AuthFlowComponent({
   handleAuth,
-  checkEmailExists,
   handleRequestResetPassword,
   handleResetPasswordAction,
   handleSignUp,
@@ -101,7 +101,6 @@ export default function AuthFlowComponent({
   const [requestResetState, requestResetAction] = useFormState(handleRequestResetPassword, { message: "", success: false });
   const [resetState, resetAction] = useFormState(handleResetPasswordAction, { message: "", success: false });
   const [signUpState, signUpAction] = useFormState(handleSignUp, { message: "", success: false });
-  const [emailCheckState, emailCheckAction] = useFormState(checkEmailExists, { exists: false, message: "" });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -214,13 +213,15 @@ export default function AuthFlowComponent({
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
+    console.log(formData);
 
     try {
       // Call the emailCheckAction and wait for the result
-      const result = await emailCheckAction(formData);
+      const email_exists = await checkEmailExists(formData.get("email") as string);
+      console.log(email_exists);
 
-      // Use the result directly instead of emailCheckState
-      if (result.exists) {
+      // After the action completes, check the updated email_exists
+      if (email_exists.exists) {
         setValidationErrors((prev) => ({ ...prev, email: "Detta konto finns redan" }));
       } else {
         setInitialEmail(formData.get("email") as string);

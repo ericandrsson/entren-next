@@ -24,11 +24,10 @@ async function handleAuth(prevState: any, formData: FormData) {
   redirect("/");
 }
 
-async function checkEmailExists(prevState: any, formData: FormData) {
+export async function checkEmailExists(email: string) {
   "use server";
 
   const supabase = createClient();
-  const email = formData.get("email") as string;
   const { data, error } = await supabase.rpc("check_email_exists", { email });
 
   console.log("Server-side email check result:", { email, data, error });
@@ -148,7 +147,6 @@ export default async function AuthFlow({
     <div className="sm:grow sm:flex sm:justify-center sm:items-start sm:px-4 lg:px-0 bg-background">
       <AuthFlowComponent
         handleAuth={handleAuth}
-        checkEmailExists={checkEmailExists}
         handleRequestResetPassword={handleRequestResetPassword}
         handleResetPasswordAction={handleResetPassword}
         handleSignUp={handleSignUp}
