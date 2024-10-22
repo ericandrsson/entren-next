@@ -14,8 +14,10 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { useAuth } from "@/src/context/AuthProvider";
+import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function HeaderUserMenu({
   initialUser,
@@ -23,11 +25,19 @@ export default function HeaderUserMenu({
   initialUser: User | null;
 }) {
   const { user } = useAuth();
+  const router = useRouter();
   const currentUser = user ?? initialUser;
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.refresh();
+  };
 
   if (!currentUser) {
     return (
-      <Link href="/auth/sign-in">
+      <Link href="/sign-in">
         <Button variant="default" className="text-white">
           Logga in
         </Button>
@@ -58,9 +68,7 @@ export default function HeaderUserMenu({
           <Link href="/auth/account-settings">Mitt konto</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/auth/sign-out">Logga ut</Link>
-        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={handleLogout}>Logga ut</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

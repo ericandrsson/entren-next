@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.redirect(
-    `${requestUrl.origin}/auth/sign-in?reset_successful=true`,
+    `${requestUrl.origin}/sign-in?reset_successful=true`,
     {
       status: 301,
     },
