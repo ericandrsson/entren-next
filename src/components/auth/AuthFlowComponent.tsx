@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 import { AlertTriangle, ArrowLeft, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import { useFormState } from "react-dom";
+import React, { useActionState, useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
 import { checkEmailExists } from "@/src/app/(default)/(auth)/sign-in/page";
@@ -26,7 +25,6 @@ enum AuthFormState {
 
 interface AuthFlowComponentProps {
   handleAuth: (prevState: any, formData: FormData) => Promise<any>;
-  checkEmailExists: (prevState: any, formData: FormData) => Promise<any>;
   handleRequestResetPassword: (prevState: any, formData: FormData) => Promise<any>;
   handleResetPasswordAction: (prevState: any, formData: FormData) => Promise<any>;
   handleSignUp: (prevState: any, formData: FormData) => Promise<any>;
@@ -97,10 +95,13 @@ export default function AuthFlowComponent({
   const [isRequestResetPasswordConfirmation, setIsRequestResetPasswordConfirmation] = useState(false);
   const [requestResetPasswordEmail] = useState("");
 
-  const [authState, authAction] = useFormState(handleAuth, { message: "", success: false });
-  const [requestResetState, requestResetAction] = useFormState(handleRequestResetPassword, { message: "", success: false });
-  const [resetState, resetAction] = useFormState(handleResetPasswordAction, { message: "", success: false });
-  const [signUpState, signUpAction] = useFormState(handleSignUp, { message: "", success: false });
+  const [authState, authAction] = useActionState(handleAuth, { message: "", success: false });
+  const [requestResetState, requestResetAction] = useActionState(handleRequestResetPassword, {
+    message: "",
+    success: false,
+  });
+  const [resetState, resetAction] = useActionState(handleResetPasswordAction, { message: "", success: false });
+  const [signUpState, signUpAction] = useActionState(handleSignUp, { message: "", success: false });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = React.useState(false);

@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 async function handleAuth(prevState: any, formData: FormData) {
   "use server";
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -27,10 +27,8 @@ async function handleAuth(prevState: any, formData: FormData) {
 export async function checkEmailExists(email: string) {
   "use server";
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.rpc("check_email_exists", { email });
-
-  console.log("Server-side email check result:", { email, data, error });
 
   if (error) {
     console.error("Error checking email:", error);
@@ -43,12 +41,10 @@ export async function checkEmailExists(email: string) {
 async function handleRequestResetPassword(prevState: any, formData: FormData) {
   "use server";
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email") as string;
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password`,
-  });
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {});
 
   if (error) {
     return {
@@ -66,32 +62,37 @@ async function handleRequestResetPassword(prevState: any, formData: FormData) {
 async function handleResetPassword(prevState: any, formData: FormData) {
   "use server";
 
-  const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth");
+  const cookieStore = await cookies();
+  const authCookie = await cookieStore.get("auth");
 
   if (authCookie?.value !== "ALLOWED_TO_RESET_PASSWORD") {
     redirect("/sign-in");
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const password = formData.get("password") as string;
 
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    return { message: error.message };
+    console.log("error ", error);
+    console.log(error.status);
+    if (error.status === 422 && error.code === "same_password") {
+      return { message: "Det nya lösenordet måste vara annorlunda än ditt nuvarande lösenord." };
+    }
+    return { message: "Ett fel uppstod vid återställning av lösenordet. Vänligen försök igen." };
   }
 
   // Delete the auth cookie after successful password reset
   cookieStore.delete("auth");
 
-  redirect("/sign-in?mode=reset-success");
+  return { message: "Lösenordet har återställts.", success: true };
 }
 
 async function handleSignUp(prevState: any, formData: FormData) {
   "use server";
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const firstName = formData.get("firstName") as string;
@@ -120,9 +121,9 @@ export default async function AuthFlow({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const mode = searchParams.mode as string | undefined;
-  const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth");
+  const { mode } = await searchParams;
+  const cookieStore = await cookies();
+  const authCookie = await cookieStore.get("auth");
 
   let initialFormState;
 

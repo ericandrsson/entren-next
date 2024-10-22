@@ -3,8 +3,6 @@ import { type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
-  response.headers.set("x-current-path", request.nextUrl.pathname);
-
   return response;
 }
 
