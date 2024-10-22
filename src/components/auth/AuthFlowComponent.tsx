@@ -103,12 +103,15 @@ export default function AuthFlowComponent({
   const [requestResetPasswordEmail] = useState("");
   const [loginState, setLoginState] = useState({ message: "", success: false });
 
-  const [requestResetState, requestResetAction] = useActionState(handleRequestResetPassword, {
+  const [requestResetState, requestResetAction, isRequestResetPending] = useActionState(handleRequestResetPassword, {
     message: "",
     success: false,
   });
-  const [resetState, resetAction] = useActionState(handleResetPasswordAction, { message: "", success: false });
-  const [signUpState, signUpAction] = useActionState(handleSignUp, { message: "", success: false });
+  const [resetState, resetAction, isResetPending] = useActionState(handleResetPasswordAction, {
+    message: "",
+    success: false,
+  });
+  const [signUpState, signUpAction, isSignUpPending] = useActionState(handleSignUp, { message: "", success: false });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -279,6 +282,7 @@ export default function AuthFlowComponent({
 
   const handleLoginCheck = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData(e.currentTarget);
     const loggedIn = await handleLogin(formData.get("email") as string, formData.get("password") as string);
     if (loggedIn.success) {
@@ -286,6 +290,7 @@ export default function AuthFlowComponent({
     } else {
       setLoginState({ success: false, message: loggedIn.message });
     }
+    setLoading(false);
   };
 
   const renderForm = () => {
@@ -508,7 +513,7 @@ export default function AuthFlowComponent({
                 </p>
               )}
             </div>
-            <LoadingButton type="submit" className="w-full" loading={loading}>
+            <LoadingButton type="submit" className="w-full" loading={isSignUpPending}>
               Skapa konto
             </LoadingButton>
             <Button type="button" variant="outline" className="w-full" onClick={() => setFormState(AuthFormState.SignUp)}>
@@ -533,7 +538,7 @@ export default function AuthFlowComponent({
               />
               {validationErrors.email && <p className="text-sm text-red-500">{validationErrors.email}</p>}
             </div>
-            <LoadingButton type="submit" className="w-full" loading={loading}>
+            <LoadingButton type="submit" className="w-full" loading={isRequestResetPending}>
               Begär återställning av lösenord
             </LoadingButton>
             {requestResetState.message && !requestResetState.success && (
@@ -625,7 +630,7 @@ export default function AuthFlowComponent({
                 <LoadingButton
                   type="submit"
                   className="w-full"
-                  loading={loading}
+                  loading={isResetPending}
                   disabled={!!validationErrors.password?.length || !!validationErrors.confirmPassword?.length}
                 >
                   Återställ lösenord
