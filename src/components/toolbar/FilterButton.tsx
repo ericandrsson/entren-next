@@ -9,11 +9,7 @@ export default function FilterButton() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsFilterOpen(true)}
-        >
+        <Button variant="outline" size="icon" onClick={() => setIsFilterOpen(true)}>
           <Filter className="h-4 w-4" />
         </Button>
       </SheetTrigger>

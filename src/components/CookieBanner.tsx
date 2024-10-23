@@ -48,21 +48,21 @@ export default function CookieConsent({
   return variant != "small" ? (
     <div
       className={cn(
-        "fixed z-[200] bottom-0 right-0 sm:right-4 sm:bottom-4 w-full sm:max-w-md duration-700",
+        "fixed bottom-0 right-0 z-[200] w-full duration-700 sm:bottom-4 sm:right-4 sm:max-w-md",
         !isOpen
-          ? "transition-[opacity,transform] translate-y-8 opacity-0"
-          : "transition-[opacity,transform] translate-y-0 opacity-100",
+          ? "translate-y-8 opacity-0 transition-[opacity,transform]"
+          : "translate-y-0 opacity-100 transition-[opacity,transform]",
         hide && "hidden",
       )}
     >
-      <div className="dark:bg-card bg-background rounded-md m-3 border border-border shadow-lg">
+      <div className="m-3 rounded-md border border-border bg-background shadow-lg dark:bg-card">
         <div className="grid gap-2">
-          <div className="border-b border-border h-14 flex items-center justify-between p-4">
+          <div className="flex h-14 items-center justify-between border-b border-border p-4">
             <h1 className="text-lg font-medium">We use cookies</h1>
             <CookieIcon className="h-[1.2rem] w-[1.2rem]" />
           </div>
           <div className="p-4">
-            <p className="text-sm font-normal text-start">
+            <p className="text-start text-sm font-normal">
               We use cookies to ensure you get the best experience on our website. For more information on how we use
               cookies, please see our cookie policy.
               <br />
@@ -77,7 +77,7 @@ export default function CookieConsent({
               </a>
             </p>
           </div>
-          <div className="flex gap-2 p-4 py-5 border-t border-border dark:bg-background/20">
+          <div className="flex gap-2 border-t border-border p-4 py-5 dark:bg-background/20">
             <Button onClick={accept} className="w-full">
               Accept
             </Button>
@@ -91,29 +91,29 @@ export default function CookieConsent({
   ) : (
     <div
       className={cn(
-        "fixed z-[200] bottom-0 right-0 sm:right-4 sm:bottom-4 w-full sm:max-w-md duration-700",
+        "fixed bottom-0 right-0 z-[200] w-full duration-700 sm:bottom-4 sm:right-4 sm:max-w-md",
         !isOpen
-          ? "transition-[opacity,transform] translate-y-8 opacity-0"
-          : "transition-[opacity,transform] translate-y-0 opacity-100",
+          ? "translate-y-8 opacity-0 transition-[opacity,transform]"
+          : "translate-y-0 opacity-100 transition-[opacity,transform]",
         hide && "hidden",
       )}
     >
-      <div className="m-3 dark:bg-card bg-background border border-border rounded-lg">
+      <div className="m-3 rounded-lg border border-border bg-background dark:bg-card">
         <div className="flex items-center justify-between p-3">
           <h1 className="text-lg font-medium">We use cookies</h1>
           <CookieIcon className="h-[1.2rem] w-[1.2rem]" />
         </div>
-        <div className="p-3 -mt-2">
-          <p className="text-sm text-left text-muted-foreground">
+        <div className="-mt-2 p-3">
+          <p className="text-left text-sm text-muted-foreground">
             We use cookies to ensure you get the best experience on our website. For more information on how we use cookies,
             please see our cookie policy.
           </p>
         </div>
-        <div className="p-3 flex items-center gap-2 mt-2 border-t">
-          <Button onClick={accept} className="w-full h-9 rounded-full">
+        <div className="mt-2 flex items-center gap-2 border-t p-3">
+          <Button onClick={accept} className="h-9 w-full rounded-full">
             accept
           </Button>
-          <Button onClick={decline} className="w-full h-9 rounded-full" variant="outline">
+          <Button onClick={decline} className="h-9 w-full rounded-full" variant="outline">
             decline
           </Button>
         </div>

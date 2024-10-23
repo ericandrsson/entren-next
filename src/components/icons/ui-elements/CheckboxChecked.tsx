@@ -2,34 +2,12 @@ import * as React from "react";
 
 export default function AllAccessibilitiesIcon(props: React.SVGAttributes<{}>) {
   return (
-    <svg
-      width="24px"
-      height="24px"
-      viewBox="0 0 24 24"
-      version="1.1"
-      {...props}
-    >
+    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" {...props}>
       <defs>
         <rect id="path-1" x="0" y="0" width="24" height="24" rx="4" />
-        <filter
-          x="-8.3%"
-          y="-8.3%"
-          width="116.7%"
-          height="116.7%"
-          filterUnits="objectBoundingBox"
-          id="filter-2"
-        >
-          <feGaussianBlur
-            stdDeviation="1.5"
-            in="SourceAlpha"
-            result="shadowBlurInner1"
-          />
-          <feOffset
-            dx="0"
-            dy="1"
-            in="shadowBlurInner1"
-            result="shadowOffsetInner1"
-          />
+        <filter x="-8.3%" y="-8.3%" width="116.7%" height="116.7%" filterUnits="objectBoundingBox" id="filter-2">
+          <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1" />
+          <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1" />
           <feComposite
             in="shadowOffsetInner1"
             in2="SourceAlpha"
@@ -45,33 +23,14 @@ export default function AllAccessibilitiesIcon(props: React.SVGAttributes<{}>) {
           />
         </filter>
       </defs>
-      <g
-        id="Page-1"
-        stroke="none"
-        strokeWidth="1"
-        fill="none"
-        fillRule="evenodd"
-      >
+      <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Filter-Dialog" transform="translate(-213.000000, -530.000000)">
           <g id="Checkboxes" transform="translate(173.000000, 530.000000)">
             <g id="CheckboxChecked" transform="translate(40.000000, 0.000000)">
               <g id="Rectangle-6-Copy">
                 <use fill="#FFFFFF" fillRule="evenodd" xlinkHref="#path-1" />
-                <use
-                  fill="black"
-                  fillOpacity="1"
-                  filter="url(#filter-2)"
-                  xlinkHref="#path-1"
-                />
-                <rect
-                  stroke="#C9D8E3"
-                  strokeWidth="1"
-                  x="0.5"
-                  y="0.5"
-                  width="23"
-                  height="23"
-                  rx="4"
-                />
+                <use fill="black" fillOpacity="1" filter="url(#filter-2)" xlinkHref="#path-1" />
+                <rect stroke="#C9D8E3" strokeWidth="1" x="0.5" y="0.5" width="23" height="23" rx="4" />
               </g>
               <polygon
                 id="Fill"

@@ -1,16 +1,7 @@
 import { Button } from "@/src/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/src/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import { ScrollArea } from "@/src/components/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/src/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/components/ui/tooltip";
 import { logger } from "@/src/libs/logger";
 import { useStore } from "@/src/libs/store";
 import { createClient } from "@/utils/supabase/client";
@@ -61,9 +52,7 @@ export default function PlaceInfoContent({
     setIsLoginPromptOpen,
     isUserAuthenticated,
   } = useStore();
-  const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(
-    new Set(),
-  );
+  const [expandedEntrances, setExpandedEntrances] = useState<Set<number>>(new Set());
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -72,15 +61,13 @@ export default function PlaceInfoContent({
 
   const getImageUrl = useCallback(
     (imagePath: string) => {
-      const { data } = supabase.storage
-        .from("entrance_photos")
-        .getPublicUrl(imagePath, {
-          transform: {
-            width: 300,
-            height: 200,
-            resize: "cover",
-          },
-        });
+      const { data } = supabase.storage.from("entrance_photos").getPublicUrl(imagePath, {
+        transform: {
+          width: 300,
+          height: 200,
+          resize: "cover",
+        },
+      });
       return data?.publicUrl;
     },
     [supabase],
@@ -165,11 +152,11 @@ export default function PlaceInfoContent({
   const getEntranceTypeIcon = (entranceType: string) => {
     switch (entranceType.toLowerCase()) {
       case "huvudentré":
-        return <DoorOpen className="w-6 h-6 text-blue-600" />;
+        return <DoorOpen className="h-6 w-6 text-blue-600" />;
       case "sidoentré":
-        return <DoorClosed className="w-6 h-6 text-green-600" />;
+        return <DoorClosed className="h-6 w-6 text-green-600" />;
       default:
-        return <MapPin className="w-6 h-6 text-gray-600" />;
+        return <MapPin className="h-6 w-6 text-gray-600" />;
     }
   };
 
@@ -180,16 +167,13 @@ export default function PlaceInfoContent({
 
     if (entrances.length === 0) {
       return (
-        <div className="text-center py-6">
-          <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
-          <h2 className="text-xl font-semibold mb-2">
-            Oj då! Den här platsen saknar entréinformation
-          </h2>
-          <p className="text-muted-foreground mb-4">
-            Vill du vara en tillgänglighetshjälte? Lägg till entréinformation
-            och hjälp personer med barnvagnar, rullstolar, eller andra
-            tillgänglighetsbehov att utforska platsen enklare. Det är som att ge
-            platsen en välkomnande high-five för alla besökare!
+        <div className="py-6 text-center">
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
+          <h2 className="mb-2 text-xl font-semibold">Oj då! Den här platsen saknar entréinformation</h2>
+          <p className="mb-4 text-muted-foreground">
+            Vill du vara en tillgänglighetshjälte? Lägg till entréinformation och hjälp personer med barnvagnar, rullstolar,
+            eller andra tillgänglighetsbehov att utforska platsen enklare. Det är som att ge platsen en välkomnande high-five
+            för alla besökare!
           </p>
         </div>
       );
@@ -202,38 +186,28 @@ export default function PlaceInfoContent({
       <>
         {verifiedEntrances.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+            <h3 className="flex items-center text-lg font-semibold">
+              <CheckCircle className="mr-2 h-5 w-5 text-green-600" />
               Verifierade entréer
             </h3>
             <ul className="space-y-4">
               {verifiedEntrances.map((entrance) => (
-                <EntranceItem
-                  key={entrance.entrance_id}
-                  entrance={entrance}
-                  isVerified={true}
-                />
+                <EntranceItem key={entrance.entrance_id} entrance={entrance} isVerified={true} />
               ))}
             </ul>
           </div>
         )}
 
         {pendingEntrances.length > 0 && (
-          <div className="space-y-4 mt-6 bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-yellow-600" />
+          <div className="mt-6 space-y-4 rounded-lg bg-gray-50 p-4">
+            <h3 className="flex items-center text-lg font-semibold">
+              <Clock className="mr-2 h-5 w-5 text-yellow-600" />
               Obekräftade entréer
             </h3>
-            <p className="text-sm text-gray-500 italic mb-2">
-              Endast synligt för dig
-            </p>
+            <p className="mb-2 text-sm italic text-gray-500">Endast synligt för dig</p>
             <ul className="space-y-4">
               {pendingEntrances.map((entrance) => (
-                <EntranceItem
-                  key={`pending-${entrance.entrance_id}`}
-                  entrance={entrance}
-                  isVerified={false}
-                />
+                <EntranceItem key={`pending-${entrance.entrance_id}`} entrance={entrance} isVerified={false} />
               ))}
             </ul>
           </div>
@@ -242,47 +216,29 @@ export default function PlaceInfoContent({
     );
   };
 
-  const EntranceItem = ({
-    entrance,
-    isVerified,
-  }: {
-    entrance: Entrance;
-    isVerified: boolean;
-  }) => {
+  const EntranceItem = ({ entrance, isVerified }: { entrance: Entrance; isVerified: boolean }) => {
     const isExpanded = expandedEntrances.has(entrance.entrance_id!);
 
     return (
-      <li
-        className={`rounded-lg overflow-hidden ${isVerified ? "bg-white" : "bg-yellow-50"}`}
-      >
-        <Collapsible
-          open={isExpanded}
-          onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}
-        >
+      <li className={`overflow-hidden rounded-lg ${isVerified ? "bg-white" : "bg-yellow-50"}`}>
+        <Collapsible open={isExpanded} onOpenChange={() => handleEntranceExpand(entrance.entrance_id!)}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="w-full justify-between p-4">
               <span className="flex items-center">
                 {getEntranceTypeIcon(entrance.entrance_type_name_sv || "")}
                 <span className="ml-2">{entrance.entrance_type_name_sv}</span>
                 {isVerified ? (
-                  <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
+                  <CheckCircle className="ml-2 h-4 w-4 text-green-600" />
                 ) : (
                   <>
-                    <Clock className="w-4 h-4 ml-2 text-yellow-600" />
+                    <Clock className="ml-2 h-4 w-4 text-yellow-600" />
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Eye className="w-4 h-4 ml-2 text-blue-600" />
+                          <Eye className="ml-2 h-4 w-4 text-blue-600" />
                         </TooltipTrigger>
-                        <TooltipContent
-                          side="top"
-                          align="center"
-                          className="max-w-xs"
-                        >
-                          <p>
-                            This entrance is only visible to you until it is
-                            verified.
-                          </p>
+                        <TooltipContent side="top" align="center" className="max-w-xs">
+                          <p>This entrance is only visible to you until it is verified.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -291,42 +247,32 @@ export default function PlaceInfoContent({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className="w-4 h-4 ml-2 text-blue-600" />
+                      <Info className="ml-2 h-4 w-4 text-blue-600" />
                     </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      align="center"
-                      className="max-w-xs"
-                    >
+                    <TooltipContent side="right" align="center" className="max-w-xs">
                       <p>{entrance.entrance_type_description_sv}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </span>
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 ml-2" />
-              ) : (
-                <ChevronDown className="w-4 h-4 ml-2" />
-              )}
+              {isExpanded ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="p-4">
             {!isVerified && (
-              <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 mb-4">
+              <div className="mb-4 border-l-4 border-yellow-600 bg-yellow-100 p-4">
                 <p className="text-sm font-medium text-gray-900">
-                  <Clock className="inline-block w-4 h-4 mr-2" />
+                  <Clock className="mr-2 inline-block h-4 w-4" />
                   Väntar på verifiering
                 </p>
-                <p className="text-sm text-gray-800 mt-1">
+                <p className="mt-1 text-sm text-gray-800">
                   Inskickad{" "}
                   {formatDistanceToNow(new Date(entrance.created_at || ""), {
                     addSuffix: true,
                     locale: sv,
                   })}
                 </p>
-                <p className="text-sm text-gray-800">
-                  Granskning tar normalt 24-48 timmar
-                </p>
+                <p className="text-sm text-gray-800">Granskning tar normalt 24-48 timmar</p>
               </div>
             )}
             <div className="space-y-4">
@@ -334,25 +280,19 @@ export default function PlaceInfoContent({
                 <div key={photo.photo_id} className="relative w-full">
                   <Button
                     variant="ghost"
-                    className="p-0 w-full h-auto"
-                    onClick={() =>
-                      handlePhotoClick(
-                        allPlacePhotos.findIndex(
-                          (p) => p.photo_id === photo.photo_id,
-                        ),
-                      )
-                    }
+                    className="h-auto w-full p-0"
+                    onClick={() => handlePhotoClick(allPlacePhotos.findIndex((p) => p.photo_id === photo.photo_id))}
                   >
                     <Image
                       src={getImageUrl(photo.photo_filename)}
                       alt={photo.description || ""}
                       width={600}
                       height={400}
-                      className="rounded-md object-cover w-full h-auto opacity-50"
+                      className="h-auto w-full rounded-md object-cover opacity-50"
                     />
                   </Button>
                   {!isVerified && (
-                    <div className="absolute bottom-4 right-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full opacity-90 border-2 border-dashed border-yellow-300">
+                    <div className="absolute bottom-4 right-2 rounded-full border-2 border-dashed border-yellow-300 bg-yellow-600 px-2 py-1 text-xs text-white opacity-90">
                       Väntar på granskning
                     </div>
                   )}
@@ -366,9 +306,9 @@ export default function PlaceInfoContent({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <ScrollArea className="flex-grow">
-        <div className="p-4 space-y-6">{renderEntranceSection()}</div>
+        <div className="space-y-6 p-4">{renderEntranceSection()}</div>
       </ScrollArea>
       <AddEntranceDialog
         place={place}
@@ -392,11 +332,7 @@ export default function PlaceInfoContent({
         onClose={handleClosePhotoDialog}
         isOpen={isPhotoDialogOpen}
       />
-      <LoginPromptDialog
-        appName="Entrén"
-        onClose={handleCloseLoginPrompt}
-        isOpen={isLoginPromptOpen}
-      />
+      <LoginPromptDialog appName="Entrén" onClose={handleCloseLoginPrompt} isOpen={isLoginPromptOpen} />
     </div>
   );
 }

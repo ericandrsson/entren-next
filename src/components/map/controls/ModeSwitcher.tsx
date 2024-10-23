@@ -6,35 +6,30 @@ interface ModeSwitcherProps {
   onModeChange: (mode: "view" | "contribute") => void;
 }
 
-const ModeSwitcher: React.FC<ModeSwitcherProps> = ({
-  currentMode,
-  onModeChange,
-}) => {
+const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ currentMode, onModeChange }) => {
   return (
-    <div className="relative w-64 h-12 bg-white rounded-full shadow-inner p-2">
+    <div className="relative h-12 w-64 rounded-full bg-white p-2 shadow-inner">
       <div
-        className={`absolute top-2 left-2 w-[calc(50%-10px)] h-[calc(100%-16px)] bg-blue-500 rounded-full transition-all duration-300 transform ${
-          currentMode === "contribute"
-            ? "translate-x-[calc(100%+4px)] bg-green-500"
-            : ""
+        className={`absolute left-2 top-2 h-[calc(100%-16px)] w-[calc(50%-10px)] transform rounded-full bg-blue-500 transition-all duration-300 ${
+          currentMode === "contribute" ? "translate-x-[calc(100%+4px)] bg-green-500" : ""
         }`}
       ></div>
       <button
         onClick={() => onModeChange("view")}
-        className={`absolute top-2 left-2 w-[calc(50%-8px)] h-[calc(100%-16px)] flex items-center justify-center z-10 ${
+        className={`absolute left-2 top-2 z-10 flex h-[calc(100%-16px)] w-[calc(50%-8px)] items-center justify-center ${
           currentMode === "view" ? "text-white" : "text-gray-700"
         }`}
       >
-        <Eye className="w-4 h-4 mr-2" />
+        <Eye className="mr-2 h-4 w-4" />
         <span className="text-sm font-medium">Utforska</span>
       </button>
       <button
         onClick={() => onModeChange("contribute")}
-        className={`absolute top-2 right-2 w-[calc(50%-10px)] h-[calc(100%-16px)] flex items-center justify-center z-10 ${
+        className={`absolute right-2 top-2 z-10 flex h-[calc(100%-16px)] w-[calc(50%-10px)] items-center justify-center ${
           currentMode === "contribute" ? "text-white" : "text-gray-700"
         }`}
       >
-        <PenTool className="w-4 h-4 mr-2" />
+        <PenTool className="mr-2 h-4 w-4" />
         <span className="text-sm font-medium">Bidra</span>
       </button>
     </div>

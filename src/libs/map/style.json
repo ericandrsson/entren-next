@@ -133,10 +133,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["in", "class", "residential", "suburbs", "neighbourhood"]
-      ]
+      "filter": ["all", ["in", "class", "residential", "suburbs", "neighbourhood"]]
     },
     {
       "id": "landcover_classes",
@@ -174,10 +171,7 @@
         "fill-antialias": false
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["in", "class", "farmland", "wood", "rock", "grass", "wetland", "sand"]
-      ]
+      "filter": ["all", ["in", "class", "farmland", "wood", "rock", "grass", "wetland", "sand"]]
     },
     {
       "id": "landcover_class_outline",
@@ -469,26 +463,10 @@
           "#3c6640",
           "#000"
         ],
-        "line-width": [
-          "match",
-          ["get", "subclass"],
-          "recreation_ground",
-          0.3,
-          0.5
-        ],
+        "line-width": ["match", ["get", "subclass"], "recreation_ground", 0.3, 0.5],
         "line-opacity": 1
       },
-      "filter": [
-        "all",
-        [
-          "in",
-          "subclass",
-          "allotments",
-          "farm",
-          "farmland",
-          "recreation_ground"
-        ]
-      ]
+      "filter": ["all", ["in", "subclass", "allotments", "farm", "farmland", "recreation_ground"]]
     },
     {
       "id": "landcover_ice",
@@ -572,12 +550,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "river"],
-        ["!=", "brunnel", "tunnel"],
-        ["!=", "intermittent", 1]
-      ]
+      "filter": ["all", ["==", "class", "river"], ["!=", "brunnel", "tunnel"], ["!=", "intermittent", 1]]
     },
     {
       "id": "waterway_river_intermittent",
@@ -599,12 +572,7 @@
         "line-dasharray": [3, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "river"],
-        ["!=", "brunnel", "tunnel"],
-        ["==", "intermittent", 1]
-      ]
+      "filter": ["all", ["==", "class", "river"], ["!=", "brunnel", "tunnel"], ["==", "intermittent", 1]]
     },
     {
       "id": "waterway_other",
@@ -626,12 +594,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "class", "river"],
-        ["!=", "brunnel", "tunnel"],
-        ["!=", "intermittent", 1]
-      ]
+      "filter": ["all", ["!=", "class", "river"], ["!=", "brunnel", "tunnel"], ["!=", "intermittent", 1]]
     },
     {
       "id": "waterway_other_intermittent",
@@ -654,12 +617,7 @@
         "line-dasharray": [4, 3]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "class", "river"],
-        ["!=", "brunnel", "tunnel"],
-        ["==", "intermittent", 1]
-      ]
+      "filter": ["all", ["!=", "class", "river"], ["!=", "brunnel", "tunnel"], ["==", "intermittent", 1]]
     },
     {
       "id": "water_intermittent",
@@ -788,15 +746,7 @@
       "paint": {
         "fill-color": "#000000",
         "fill-opacity": 1,
-        "fill-pattern": [
-          "match",
-          ["get", "class"],
-          "military",
-          "military_red_hatch",
-          "cemetery",
-          "grave_yard_generic",
-          ""
-        ]
+        "fill-pattern": ["match", ["get", "class"], "military", "military_red_hatch", "cemetery", "grave_yard_generic", ""]
       },
       "metadata": {},
       "filter": ["all", ["in", "class", "military", "cemetery"]]
@@ -982,12 +932,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway_link"],
-        ["==", "ramp", 1],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway_link"], ["==", "ramp", 1], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_service_track_casing",
@@ -1011,11 +956,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "service", "track"]]
     },
     {
       "id": "tunnel_link_casing",
@@ -1040,12 +981,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "ramp", "1"],
-        ["==", "brunnel", "tunnel"],
-        ["\u003E", "layer", 0]
-      ]
+      "filter": ["all", ["==", "ramp", "1"], ["==", "brunnel", "tunnel"], ["\u003E", "layer", 0]]
     },
     {
       "id": "tunnel_street_casing",
@@ -1075,11 +1011,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "street", "street_limited"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "street", "street_limited"]]
     },
     {
       "id": "tunnel_tertiary_casing",
@@ -1110,11 +1042,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "tertiary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "tertiary"]]
     },
     {
       "id": "tunnel_secondary_casing",
@@ -1145,11 +1073,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "secondary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "secondary"]]
     },
     {
       "id": "tunnel_trunk_casing",
@@ -1210,11 +1134,7 @@
         "line-dasharray": [1, 0]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "trunk_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "trunk_construction"]]
     },
     {
       "id": "tunnel_primary_casing",
@@ -1276,11 +1196,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway_construction"],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway_construction"], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_motorway_casing",
@@ -1309,11 +1225,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_path_casing_casing",
@@ -1338,12 +1250,7 @@
         "line-dasharray": [1, 0.5]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "tunnel"],
-        ["==", "class", "path"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "tunnel"], ["==", "class", "path"]]
     },
     {
       "id": "tunnel_path_casing",
@@ -1368,12 +1275,7 @@
         "line-dasharray": [1, 0]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "tunnel"],
-        ["==", "class", "path"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "tunnel"], ["==", "class", "path"]]
     },
     {
       "id": "tunnel_path_cycleway",
@@ -1494,12 +1396,7 @@
         "line-dasharray": [0.5, 0.25]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "ramp", 1],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "ramp", 1], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_service_track",
@@ -1525,11 +1422,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "service", "track"]]
     },
     {
       "id": "tunnel_service_track_construction",
@@ -1556,11 +1449,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "service_construction", "track_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "service_construction", "track_construction"]]
     },
     {
       "id": "tunnel_link",
@@ -1584,12 +1473,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "ramp", "1"],
-        ["==", "brunnel", "tunnel"],
-        ["\u003E", "layer", 0]
-      ]
+      "filter": ["all", ["==", "ramp", "1"], ["==", "brunnel", "tunnel"], ["\u003E", "layer", 0]]
     },
     {
       "id": "tunnel_minor",
@@ -1638,11 +1522,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "minor_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "minor_construction"]]
     },
     {
       "id": "tunnel_tertiary",
@@ -1670,11 +1550,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "tertiary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "tertiary"]]
     },
     {
       "id": "tunnel_tertiary_construction",
@@ -1703,11 +1579,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "tertiary_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "tertiary_construction"]]
     },
     {
       "id": "tunnel_secondary",
@@ -1739,11 +1611,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "secondary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "secondary"]]
     },
     {
       "id": "tunnel_secondary_construction",
@@ -1776,11 +1644,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "secondary_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "secondary_construction"]]
     },
     {
       "id": "tunnel_primary",
@@ -1849,11 +1713,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "primary_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "primary_construction"]]
     },
     {
       "id": "tunnel_trunk",
@@ -1925,11 +1785,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "tunnel"],
-        ["in", "class", "trunk_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "tunnel"], ["in", "class", "trunk_construction"]]
     },
     {
       "id": "tunnel_motorway",
@@ -1957,11 +1813,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_motorway_construction",
@@ -1990,11 +1842,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway_construction"],
-        ["==", "brunnel", "tunnel"]
-      ]
+      "filter": ["all", ["==", "class", "motorway_construction"], ["==", "brunnel", "tunnel"]]
     },
     {
       "id": "tunnel_major_rail",
@@ -2045,11 +1893,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["in", "brunnel", "tunnel", "tunnel"],
-        ["==", "class", "rail"]
-      ]
+      "filter": ["all", ["in", "brunnel", "tunnel", "tunnel"], ["==", "class", "rail"]]
     },
     {
       "id": "road_area_pier",
@@ -2136,12 +1980,7 @@
         "fill-color": "#dddde8"
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "Polygon"],
-        ["!has", "brunnel"],
-        ["!in", "class", "bridge", "pier"]
-      ]
+      "filter": ["all", ["==", "$type", "Polygon"], ["!has", "brunnel"], ["!in", "class", "bridge", "pier"]]
     },
     {
       "id": "road_service_track_casing",
@@ -2168,11 +2007,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "service", "track"]]
     },
     {
       "id": "road_primary_link_casing",
@@ -2206,12 +2041,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "ramp", 1],
-        ["in", "class", "primary"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "ramp", 1], ["in", "class", "primary"]]
     },
     {
       "id": "road_trunk_link_casing",
@@ -2244,12 +2074,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "ramp", 1],
-        ["in", "class", "trunk"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "ramp", 1], ["in", "class", "trunk"]]
     },
     {
       "id": "road_motorway_link_casing",
@@ -2284,12 +2109,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "motorway"],
-        ["==", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway"], ["==", "ramp", 1]]
     },
     {
       "id": "road_minor_casing",
@@ -2360,12 +2180,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "tertiary"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "tertiary"], ["!=", "ramp", 1]]
     },
     {
       "id": "road_secondary_link_casing",
@@ -2401,12 +2216,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "secondary"],
-        ["==", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "secondary"], ["==", "ramp", 1]]
     },
     {
       "id": "road_secondary_casing",
@@ -2442,12 +2252,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "secondary"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "secondary"], ["!=", "ramp", 1]]
     },
     {
       "id": "road_trunk_casing",
@@ -2561,12 +2366,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "motorway"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway"], ["!=", "ramp", 1]]
     },
     {
       "id": "road_pedestrian_casing",
@@ -2915,12 +2715,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "ramp", 1],
-        ["in", "class", "primary"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "ramp", 1], ["in", "class", "primary"]]
     },
     {
       "id": "road_trunk_link",
@@ -2953,12 +2748,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "ramp", 1],
-        ["in", "class", "trunk"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "ramp", 1], ["in", "class", "trunk"]]
     },
     {
       "id": "road_motorway_link",
@@ -2993,12 +2783,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "motorway"],
-        ["==", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway"], ["==", "ramp", 1]]
     },
     {
       "id": "road_service_track",
@@ -3027,11 +2812,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "service", "track"]]
     },
     {
       "id": "road_service_track_construction",
@@ -3173,11 +2954,7 @@
       "filter": [
         "all",
         ["==", "$type", "LineString"],
-        [
-          "all",
-          ["in", "brunnel", "bridge", "tunnel"],
-          ["in", "class", "minor_construction"]
-        ]
+        ["all", ["in", "brunnel", "bridge", "tunnel"], ["in", "class", "minor_construction"]]
       ]
     },
     {
@@ -3216,11 +2993,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "secondary"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "secondary"]]
     },
     {
       "id": "road_tertiary",
@@ -3257,11 +3030,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "tertiary"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "tertiary"]]
     },
     {
       "id": "road_tertiary_construction",
@@ -3298,11 +3067,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "tertiary_construction"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "tertiary_construction"]]
     },
     {
       "id": "road_secondary_construction",
@@ -3341,11 +3106,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "secondary_construction"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "secondary_construction"]]
     },
     {
       "id": "road_primary_construction",
@@ -3383,12 +3144,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["!=", "ramp", 1],
-        ["in", "class", "primary_construction"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "primary_construction"]]
     },
     {
       "id": "road_primary",
@@ -3426,12 +3182,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["!=", "ramp", 1],
-        ["in", "class", "primary"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "primary"]]
     },
     {
       "id": "road_trunk",
@@ -3469,12 +3220,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["!=", "ramp", 1],
-        ["in", "class", "trunk"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "trunk"]]
     },
     {
       "id": "road_trunk_construction",
@@ -3513,12 +3259,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["!=", "ramp", 1],
-        ["in", "class", "trunk_construction"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "trunk_construction"]]
     },
     {
       "id": "road_motorway",
@@ -3548,12 +3289,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "motorway"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway"], ["!=", "ramp", 1]]
     },
     {
       "id": "road_motorway_construction",
@@ -3585,12 +3321,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "motorway_construction"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway_construction"], ["!=", "ramp", 1]]
     },
     {
       "id": "rail_subway",
@@ -3612,11 +3343,7 @@
         "line-dasharray": [1, 1.2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "transit"],
-        ["==", "subclass", "subway"]
-      ]
+      "filter": ["all", ["==", "class", "transit"], ["==", "subclass", "subway"]]
     },
     {
       "id": "rail_major",
@@ -3644,11 +3371,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "class", "rail"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "class", "rail"]]
     },
     {
       "id": "rail_minor",
@@ -3670,11 +3393,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "subclass", "tram", "light_rail"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "subclass", "tram", "light_rail"]]
     },
     {
       "id": "rail_major_hatching",
@@ -3703,11 +3422,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["==", "class", "rail"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "rail"]]
     },
     {
       "id": "rail_minor_hatching",
@@ -3730,11 +3445,7 @@
         "line-dasharray": [0.2, 4]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!in", "brunnel", "bridge", "tunnel"],
-        ["in", "subclass", "tram", "light_rail"]
-      ]
+      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["in", "subclass", "tram", "light_rail"]]
     },
     {
       "id": "waterway-bridge-case",
@@ -3762,11 +3473,7 @@
           ]
         }
       },
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "bridge"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "bridge"]]
     },
     {
       "id": "waterway-bridge",
@@ -3787,11 +3494,7 @@
           ]
         }
       },
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "bridge"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "bridge"]]
     },
     {
       "id": "bridge_motorway_link_casing",
@@ -3821,12 +3524,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "ramp", 1],
-        ["==", "brunnel", "bridge"]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "ramp", 1], ["==", "brunnel", "bridge"]]
     },
     {
       "id": "bridge_service_track_casing",
@@ -3848,11 +3546,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "service", "track"]]
     },
     {
       "id": "bridge_link_casing",
@@ -3905,11 +3599,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "street", "street_limited"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "street", "street_limited"]]
     },
     {
       "id": "bridge_path_casing_casing",
@@ -3936,12 +3626,7 @@
         "line-dasharray": [1, 0]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "path"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "bridge"], ["in", "class", "path"]]
     },
     {
       "id": "bridge_path_casing",
@@ -3968,12 +3653,7 @@
         "line-dasharray": [1, 0]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "path"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "bridge"], ["in", "class", "path"]]
     },
     {
       "id": "bridge_secondary_casing",
@@ -4001,11 +3681,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "secondary", "tertiary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "secondary", "tertiary"]]
     },
     {
       "id": "bridge_tertiary_casing",
@@ -4027,11 +3703,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "secondary", "tertiary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "secondary", "tertiary"]]
     },
     {
       "id": "bridge_trunk_casing",
@@ -4111,12 +3783,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "brunnel", "bridge"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "brunnel", "bridge"], ["!=", "ramp", 1]]
     },
     {
       "id": "bridge_path_cycleway",
@@ -4235,12 +3902,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "ramp", 1],
-        ["==", "brunnel", "bridge"]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "ramp", 1], ["==", "brunnel", "bridge"]]
     },
     {
       "id": "bridge_service_track",
@@ -4263,11 +3925,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "service", "track"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "service", "track"]]
     },
     {
       "id": "bridge_service_track_construction",
@@ -4291,11 +3949,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "service_construction", "track_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "service_construction", "track_construction"]]
     },
     {
       "id": "bridge_link",
@@ -4367,11 +4021,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "minor_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "minor_construction"]]
     },
     {
       "id": "bridge_tertiary",
@@ -4400,11 +4050,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "tertiary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "tertiary"]]
     },
     {
       "id": "bridge_secondary",
@@ -4434,11 +4080,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "secondary"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "secondary"]]
     },
     {
       "id": "bridge_secondary_construction-copy",
@@ -4461,11 +4103,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "secondary_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "secondary_construction"]]
     },
     {
       "id": "bridge_tertiary_construction",
@@ -4488,11 +4126,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "tertiary_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "tertiary_construction"]]
     },
     {
       "id": "bridge_primary",
@@ -4571,11 +4205,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "brunnel", "bridge"],
-        ["in", "class", "primary_construction", "trunk_construction"]
-      ]
+      "filter": ["all", ["==", "brunnel", "bridge"], ["in", "class", "primary_construction", "trunk_construction"]]
     },
     {
       "id": "bridge_motorway",
@@ -4602,12 +4232,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway"],
-        ["==", "brunnel", "bridge"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["==", "class", "motorway"], ["==", "brunnel", "bridge"], ["!=", "ramp", 1]]
     },
     {
       "id": "bridge_motorway_construction",
@@ -4635,12 +4260,7 @@
         "line-dasharray": [2, 2]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "class", "motorway_construction"],
-        ["==", "brunnel", "bridge"],
-        ["!=", "ramp", 1]
-      ]
+      "filter": ["all", ["==", "class", "motorway_construction"], ["==", "brunnel", "bridge"], ["!=", "ramp", 1]]
     },
     {
       "id": "bridge_major_rail",
@@ -4799,12 +4419,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "maritime", 0],
-        ["==", "disputed", 0]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "maritime", 0], ["==", "disputed", 0]]
     },
     {
       "id": "boundary_2_disputed",
@@ -4831,12 +4446,7 @@
         "line-dasharray": [4, 3]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 1],
-        ["==", "maritime", 0]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 1], ["==", "maritime", 0]]
     },
     {
       "id": "boundary_2_disputed_maritime",
@@ -4863,12 +4473,7 @@
         "line-dasharray": [4, 3]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 1],
-        ["==", "maritime", 1]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 1], ["==", "maritime", 1]]
     },
     {
       "id": "boundary_2_maritime",
@@ -4894,12 +4499,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 0],
-        ["==", "maritime", 1]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 0], ["==", "maritime", 1]]
     },
     {
       "id": "water_way_name",
@@ -5024,17 +4624,7 @@
       "filter": [
         "all",
         ["==", "oneway", 1],
-        [
-          "in",
-          "class",
-          "motorway",
-          "trunk",
-          "primary",
-          "secondary",
-          "tertiary",
-          "minor",
-          "service"
-        ]
+        ["in", "class", "motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service"]
       ]
     },
     {
@@ -5064,17 +4654,7 @@
       "filter": [
         "all",
         ["==", "oneway", -1],
-        [
-          "in",
-          "class",
-          "motorway",
-          "trunk",
-          "primary",
-          "secondary",
-          "tertiary",
-          "minor",
-          "service"
-        ]
+        ["in", "class", "motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service"]
       ]
     },
     {
@@ -5162,19 +4742,7 @@
         }
       },
       "metadata": {},
-      "filter": [
-        "all",
-        [
-          "in",
-          "class",
-          "hamlet",
-          "island",
-          "islet",
-          "neighbourhood",
-          "suburb",
-          "borough"
-        ]
-      ]
+      "filter": ["all", ["in", "class", "hamlet", "island", "islet", "neighbourhood", "suburb", "borough"]]
     },
     {
       "id": "park-national",
@@ -5446,12 +5014,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["\u003E=", "rank", 3],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", ["\u003E=", "rank", 3], ["==", "class", "country"], ["has", "iso_a2"]]
     },
     {
       "id": "country_2",
@@ -5486,12 +5049,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "rank", 2],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", ["==", "rank", 2], ["==", "class", "country"], ["has", "iso_a2"]]
     },
     {
       "id": "country_1",
@@ -5526,12 +5084,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "rank", 1],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", ["==", "rank", 1], ["==", "class", "country"], ["has", "iso_a2"]]
     }
   ]
 }

@@ -6,9 +6,7 @@ interface ImageUploaderProps {
   onImageSelected: (file: File) => void;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({
-  onImageSelected,
-}) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
   const [preview, setPreview] = React.useState<string | ArrayBuffer | null>("");
 
   const onDrop = React.useCallback(
@@ -40,26 +38,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   return (
     <div
       {...getRootProps()}
-      className="flex items-center justify-between border border-input bg-background px-3 py-2 text-sm ring-offset-background rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <div className="flex items-center gap-2">
         <ImagePlus className="h-5 w-5 text-muted-foreground" />
-        <span className="text-muted-foreground">
-          {preview ? "Image selected" : "Upload image"}
-        </span>
+        <span className="text-muted-foreground">{preview ? "Image selected" : "Upload image"}</span>
       </div>
       <input {...getInputProps()} className="sr-only" />
-      {preview && (
-        <img
-          src={preview as string}
-          alt="Preview"
-          className="h-8 w-8 object-cover rounded"
-        />
-      )}
+      {preview && <img src={preview as string} alt="Preview" className="h-8 w-8 rounded object-cover" />}
       {fileRejections.length !== 0 && (
-        <p className="text-xs text-destructive">
-          Please upload a valid image file (png, jpg, jpeg, heic, or heif)
-        </p>
+        <p className="text-xs text-destructive">Please upload a valid image file (png, jpg, jpeg, heic, or heif)</p>
       )}
     </div>
   );

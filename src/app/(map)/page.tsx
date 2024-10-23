@@ -10,16 +10,8 @@ import { requestUserLocation } from "@/src/libs/utils";
 import { useEffect, useRef } from "react";
 
 export default function Page() {
-  const {
-    view,
-    isMobile,
-    setIsMobile,
-    selectedPlace,
-    setSelectedPlace,
-    setView,
-    userLocation,
-    setUserLocation,
-  } = useStore();
+  const { view, isMobile, setIsMobile, selectedPlace, setSelectedPlace, setView, userLocation, setUserLocation } =
+    useStore();
 
   const { toast } = useToast();
 
@@ -90,24 +82,16 @@ export default function Page() {
   }, [toast]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <ActionToolBar />
 
       {/* Main Content Area */}
-      <div className="flex-grow overflow-hidden flex relative">
+      <div className="relative flex flex-grow overflow-hidden">
         {/* List View */}
         <div
-          className={`h-full overflow-hidden transition-all duration-300 ease-in-out
-            ${
-              isMobile
-                ? view === "map"
-                  ? "hidden"
-                  : "w-full"
-                : view === "both"
-                  ? "w-1/5"
-                  : "w-0"
-            } 
-            ${!isMobile && "border-r"}`}
+          className={`h-full overflow-hidden transition-all duration-300 ease-in-out ${
+            isMobile ? (view === "map" ? "hidden" : "w-full") : view === "both" ? "w-1/5" : "w-0"
+          } ${!isMobile && "border-r"}`}
         >
           <div className="h-full overflow-auto p-4">
             <ListView />
@@ -116,23 +100,16 @@ export default function Page() {
 
         {/* Map View */}
         <div
-          className={`h-full transition-all duration-300 ease-in-out
-            ${
-              isMobile
-                ? view === "list"
-                  ? "hidden"
-                  : "w-full"
-                : view === "both"
-                  ? "w-4/5"
-                  : "w-full"
-            }`}
+          className={`h-full transition-all duration-300 ease-in-out ${
+            isMobile ? (view === "list" ? "hidden" : "w-full") : view === "both" ? "w-4/5" : "w-full"
+          }`}
         >
           <MapView />
         </div>
 
         {/* Floating View Toggle Button (Mobile Only) */}
         {isMobile && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 transform">
             <ViewToggleButton />
           </div>
         )}

@@ -1,33 +1,21 @@
 export default function Footer() {
   return (
-    <footer className="w-full bg-background shadow-sm mt-auto z-100">
-      <div className="mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center max-w-7xl">
-        <div className="flex space-x-4 mb-2 sm:mb-0">
-          <a
-            href="/integritet"
-            className="text-sm text-foreground hover:text-footer-link-hover"
-          >
+    <footer className="z-100 mt-auto w-full bg-background shadow-sm">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between px-4 py-4 sm:flex-row">
+        <div className="mb-2 flex space-x-4 sm:mb-0">
+          <a href="/integritet" className="hover:text-footer-link-hover text-sm text-foreground">
             Integritet
           </a>
-          <a
-            href="/cookies"
-            className="text-sm text-foreground hover:text-footer-link-hover"
-          >
+          <a href="/cookies" className="hover:text-footer-link-hover text-sm text-foreground">
             Cookies
           </a>
-          <a
-            href="/villkor"
-            className="text-sm text-foreground hover:text-footer-link-hover"
-          >
+          <a href="/villkor" className="hover:text-footer-link-hover text-sm text-foreground">
             Villkor
           </a>
         </div>
-        <p className="text-sm text-black text-center sm:text-left">
+        <p className="text-center text-sm text-black sm:text-left">
           © 2024 Entrén - en tjänst av{" "}
-          <a
-            href="https://www.fasterforward.se/"
-            className="text-primary hover:text-footer-link-hover"
-          >
+          <a href="https://www.fasterforward.se/" className="hover:text-footer-link-hover text-primary">
             Faster Forward
           </a>
         </p>

@@ -21,7 +21,7 @@ export default function PlaceInfoCard({
   const [entranceCount, setEntranceCount] = useState(entrances.length);
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-500px)]">
+    <Card className="flex h-[calc(100vh-500px)] flex-col">
       <PlaceInfoHeader place={place} />
       <CardContent className="flex-grow overflow-hidden p-0">
         <PlaceInfoContent
@@ -35,11 +35,7 @@ export default function PlaceInfoCard({
         />
       </CardContent>
       <CardFooter>
-        <PlaceInfoFooter
-          place={place}
-          entranceCount={entranceCount}
-          onAddEntrance={onAddEntrance}
-        />
+        <PlaceInfoFooter place={place} entranceCount={entranceCount} onAddEntrance={onAddEntrance} />
       </CardFooter>
     </Card>
   );

@@ -8,13 +8,7 @@ const SvgProblemIcon = (props: React.SVGAttributes<{}>) => (
         stroke="#000"
         strokeWidth={2}
       />
-      <path
-        d="M11.548 8.292v4.083"
-        stroke="#000"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M11.548 8.292v4.083" stroke="#000" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
       <circle fill="#000" cx={11.5} cy={16} r={1} />
     </g>
   </svg>

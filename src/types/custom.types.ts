@@ -2,13 +2,10 @@ import { Database } from "./database.types";
 
 // Core types from the database
 type EntranceTypeDB = Database["public"]["Tables"]["entrance_types"]["Row"];
-type EntityChangeStagingDB =
-  Database["public"]["Tables"]["entity_changes_staging"]["Row"];
-type DetailedEntranceViewDB =
-  Database["public"]["Views"]["entrances_view"]["Row"];
+type EntityChangeStagingDB = Database["public"]["Tables"]["entity_changes_staging"]["Row"];
+type DetailedEntranceViewDB = Database["public"]["Views"]["entrances_view"]["Row"];
 type DetailedPlaceViewDB = Database["public"]["Views"]["places_view"]["Row"];
-type PlaceEntrancePhotoDB =
-  Database["public"]["Tables"]["entrance_photos"]["Row"];
+type PlaceEntrancePhotoDB = Database["public"]["Tables"]["entrance_photos"]["Row"];
 
 // Extended types
 export type EntrancePhoto = {

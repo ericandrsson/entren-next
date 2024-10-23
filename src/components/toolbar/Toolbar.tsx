@@ -7,11 +7,8 @@ import FilterButton from "@/src/components/toolbar/FilterButton";
 export default function SearchBar() {
   return (
     <div className="relative z-10">
-      <div className="bg-white shadow-md p-4 flex items-center space-x-2">
-        <Input
-          placeholder="Sök på en plats, adress eller landmärke"
-          className="flex-grow"
-        />
+      <div className="flex items-center space-x-2 bg-white p-4 shadow-md">
+        <Input placeholder="Sök på en plats, adress eller landmärke" className="flex-grow" />
         <FilterButton />
       </div>
     </div>

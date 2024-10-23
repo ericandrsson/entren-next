@@ -39,34 +39,19 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="mx-auto max-w-md p-4">
       <h1 className="mb-4">Konto</h1>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Email</label>
-        <Input
-          type="email"
-          value={user.email || ""}
-          disabled
-          className="w-full bg-gray-100 cursor-not-allowed"
-        />
+        <label className="mb-1 block text-sm font-medium">Email</label>
+        <Input type="email" value={user.email || ""} disabled className="w-full cursor-not-allowed bg-gray-100" />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Name</label>
-        <Input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full"
-        />
+        <label className="mb-1 block text-sm font-medium">Name</label>
+        <Input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full" />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Avatar URL</label>
-        <Input
-          type="text"
-          value={avatarUrl}
-          onChange={(e) => setAvatarUrl(e.target.value)}
-          className="w-full"
-        />
+        <label className="mb-1 block text-sm font-medium">Avatar URL</label>
+        <Input type="text" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} className="w-full" />
       </div>
       <Button onClick={handleSave} className="mt-4">
         Save Changes

@@ -31,15 +31,13 @@ export default function ListView() {
   return (
     <div className="space-y-4">
       {visiblePlaces.length === 0 ? (
-        <p className="text-center text-gray-500 mt-8">
+        <p className="mt-8 text-center text-gray-500">
           {view === "list"
             ? "Inga platser hittades. Försök med en annan sökterm eller ändra dina filterinställningar."
             : "Inga platser hittades i det aktuella kartområdet. Zooma ut eller flytta kartan för att se fler platser."}
         </p>
       ) : (
-        visiblePlaces.map((place) => (
-          <ListViewCard key={place.place_id} place={place} />
-        ))
+        visiblePlaces.map((place) => <ListViewCard key={place.place_id} place={place} />)
       )}
     </div>
   );

@@ -16,27 +16,19 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Entrén",
-  description:
-    "Entrén is a platform for finding and sharing local events and places.",
+  description: "Entrén is a platform for finding and sharing local events and places.",
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta name="theme-color" content="#f1f3f4" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <main className="w-screen h-screen">
-          <div className="w-screen h-screen overflow-x-hidden sm:overflow-hidden flex flex-col relative">
+        <main className="h-screen w-screen">
+          <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">
             <Header user={null} />
             {children}
           </div>

@@ -46,9 +46,7 @@ export async function registerMapEvents(map: maplibregl.Map) {
       layers: ["placesLayer"],
     });
 
-    const visiblePlaceIds = features
-      .map((feature) => feature.properties?.id)
-      .filter(Boolean);
+    const visiblePlaceIds = features.map((feature) => feature.properties?.id).filter(Boolean);
 
     // If no places are visible, clear the visible places
     if (visiblePlaceIds.length === 0) {

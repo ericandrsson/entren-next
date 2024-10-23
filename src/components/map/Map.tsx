@@ -39,9 +39,7 @@ function Map() {
           }
           return { url };
         },
-        center: userLocation
-          ? [userLocation.longitude, userLocation.latitude]
-          : defaultCenter,
+        center: userLocation ? [userLocation.longitude, userLocation.latitude] : defaultCenter,
         zoom: userLocation ? 12 : defaultZoom,
         minZoom: 4,
         maxZoom: 20,
@@ -111,7 +109,7 @@ function Map() {
     };
   }, [handleResize]);
 
-  return <div ref={mapContainerRef} className="w-full h-full relative"></div>;
+  return <div ref={mapContainerRef} className="relative h-full w-full"></div>;
 }
 
 export default React.memo(Map);

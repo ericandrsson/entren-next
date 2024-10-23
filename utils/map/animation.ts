@@ -21,9 +21,7 @@ export function animateIconSize(
       requestAnimationFrame(step);
     } else {
       // Optionally, scale back to the original size
-      requestAnimationFrame(() =>
-        animateIconSize(map, layerId, finalSize, initialSize, duration),
-      );
+      requestAnimationFrame(() => animateIconSize(map, layerId, finalSize, initialSize, duration));
     }
   };
   requestAnimationFrame(step);
@@ -52,8 +50,7 @@ export function toggleIconSelection(
       const scaleDown = (now: number) => {
         const elapsed = now - scaleDownStart;
         const progress = Math.min(elapsed / duration, 1);
-        const currentSize =
-          selectedSize - progress * (selectedSize - initialSize);
+        const currentSize = selectedSize - progress * (selectedSize - initialSize);
         map.setLayoutProperty(layerId, "icon-size", currentSize);
 
         if (progress < 1) {

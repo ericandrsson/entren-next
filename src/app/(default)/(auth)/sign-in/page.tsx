@@ -161,7 +161,7 @@ export default async function AuthFlow({
   }
 
   return (
-    <div className="sm:grow sm:flex sm:justify-center sm:items-start sm:px-4 lg:px-0 bg-background">
+    <div className="bg-background sm:flex sm:grow sm:items-start sm:justify-center sm:px-4 lg:px-0">
       <AuthFlowComponent
         handleRequestResetPassword={handleRequestResetPassword}
         handleResetPasswordAction={handleResetPassword}

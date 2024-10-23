@@ -12,6 +12,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Separator } from "@/src/components/ui/separator";
 import { Eye, EyeOff, Mail } from "lucide-react";
+import Form from "next/form";
 import { LoadingButton } from "../ui/loading-button";
 
 enum AuthFormState {
@@ -33,12 +34,12 @@ interface AuthFlowComponentProps {
 const Logo = () => <Image src="/images/faster-forward-logo.png" alt="Faster Forward Logo" width={60} height={60} />;
 
 const AuthHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
-  <CardHeader className="space-y-1.5 p-6 relative border-b flex flex-col border-secondary text-center items-center">
-    <div className="inline-flex items-center justify-center p-0 m-0">
+  <CardHeader className="relative flex flex-col items-center space-y-1.5 border-b border-secondary p-6 text-center">
+    <div className="m-0 inline-flex items-center justify-center p-0">
       <Logo />
     </div>
     <h2 className="text-2xl font-semibold">{title}</h2>
-    <p className="text-muted-foreground text-sm">{subtitle}</p>
+    <p className="text-sm text-muted-foreground">{subtitle}</p>
   </CardHeader>
 );
 
@@ -68,9 +69,9 @@ const StatusMessage = ({ message, success }: { message: string; success: boolean
     className={`mt-4 p-4 ${success ? "bg-green-50" : "bg-red-50"} rounded-md border ${success ? "border-green-200" : "border-red-200"} flex items-start`}
   >
     {success ? (
-      <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+      <CheckCircle className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-green-500" />
     ) : (
-      <AlertTriangle className="h-5 w-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+      <AlertTriangle className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
     )}
     <p className={`text-sm ${success ? "text-green-700" : "text-red-700"}`}>{message}</p>
   </div>
@@ -307,12 +308,13 @@ export default function AuthFlowComponent({
 
     if (confirmationMessage) {
       return (
-        <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
-          <div className="flex items-center mb-4">
-            <Mail className="h-6 w-6 text-blue-500 mr-3" />
+        <div className="mt-6 rounded-md border border-blue-200 bg-blue-50 p-6">
+          <div className="mb-4 flex items-center">
+            <Mail className="mr-3 h-6 w-6 text-blue-500" />
+
             <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
           </div>
-          <p className="text-sm mb-4 text-gray-700">{confirmationMessage}</p>
+          <p className="mb-4 text-sm text-gray-700">{confirmationMessage}</p>
           <Button onClick={() => router.push("/sign-in")} className="w-full">
             Fortsätt till inloggning
           </Button>
@@ -327,7 +329,7 @@ export default function AuthFlowComponent({
     switch (formState) {
       case AuthFormState.SignIn:
         return (
-          <form onSubmit={handleLoginCheck} className="space-y-4">
+          <Form action="" onSubmit={handleLoginCheck} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -362,11 +364,11 @@ export default function AuthFlowComponent({
             </LoadingButton>
             {renderGoogleButton("Logga in med Google")}
             {renderAdditionalOptions()}
-          </form>
+          </Form>
         );
       case AuthFormState.SignUp:
         return (
-          <form onSubmit={handleEmailCheck} className="space-y-4">
+          <Form action="" onSubmit={handleEmailCheck} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -388,11 +390,11 @@ export default function AuthFlowComponent({
             {renderAdditionalOptions()}
             <div className="mt-4">
               <Separator className="my-4" />
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-center text-sm text-gray-500">
                 Genom att fortsätta godkänner du Entréns
                 <br />
                 <a
-                  className="font-bold underline text-primary hover:text-primary-dark"
+                  className="hover:text-primary-dark font-bold text-primary underline"
                   target="_blank"
                   href="https://x.ai/legal/enterprise/terms-of-service"
                   rel="noopener noreferrer"
@@ -401,7 +403,7 @@ export default function AuthFlowComponent({
                 </a>{" "}
                 och{" "}
                 <a
-                  className="underline font-bold text-primary hover:text-primary-dark"
+                  className="hover:text-primary-dark font-bold text-primary underline"
                   target="_blank"
                   href="https://x.ai/privacy-policy"
                   rel="noopener noreferrer"
@@ -411,12 +413,12 @@ export default function AuthFlowComponent({
                 .
               </p>
             </div>
-          </form>
+          </Form>
         );
       case AuthFormState.CreateAccount:
       case AuthFormState.FullCreateAccount:
         return (
-          <form action={signUpAction} className="space-y-4">
+          <Form action={signUpAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="firstName" className="block text-sm font-medium">
                 Förnamn
@@ -472,7 +474,7 @@ export default function AuthFlowComponent({
                   {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                 </button>
               </div>
-              <ul className="text-sm text-gray-600 space-y-1 mt-2">
+              <ul className="mt-2 space-y-1 text-sm text-gray-600">
                 <li className={formData.password && formData.password.length >= 8 ? "text-green-500" : ""}>
                   Minst 8 tecken
                 </li>
@@ -519,11 +521,11 @@ export default function AuthFlowComponent({
             <Button type="button" variant="outline" className="w-full" onClick={() => setFormState(AuthFormState.SignUp)}>
               Gå tillbaka
             </Button>
-          </form>
+          </Form>
         );
       case AuthFormState.RequestResetPassword:
         return (
-          <form action={requestResetAction} className="space-y-4">
+          <Form action={requestResetAction} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 E-post
@@ -547,7 +549,7 @@ export default function AuthFlowComponent({
             <Button type="button" variant="outline" className="w-full" onClick={navigateToSignIn}>
               Tillbaka till inloggning
             </Button>
-          </form>
+          </Form>
         );
       case AuthFormState.ResetPassword:
         return (
@@ -560,7 +562,7 @@ export default function AuthFlowComponent({
                 </Button>
               </div>
             ) : (
-              <form action={resetAction} className="space-y-4">
+              <Form action={resetAction} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="password" className="block text-sm font-medium">
                     Nytt lösenord
@@ -586,7 +588,7 @@ export default function AuthFlowComponent({
                       )}
                     </button>
                   </div>
-                  <ul className="text-sm text-gray-600 space-y-1 mt-2">
+                  <ul className="mt-2 space-y-1 text-sm text-gray-600">
                     <li className={!validationErrors.password?.includes("length") ? "text-green-500" : "text-red-500"}>
                       Minst 8 tecken
                     </li>
@@ -636,7 +638,7 @@ export default function AuthFlowComponent({
                   Återställ lösenord
                 </LoadingButton>
                 {resetState.message && !resetState.success && <StatusMessage message={resetState.message} success={false} />}
-              </form>
+              </Form>
             )}
           </>
         );
@@ -653,8 +655,8 @@ export default function AuthFlowComponent({
           <span className="bg-background px-2 text-muted-foreground">Eller</span>
         </div>
       </div>
-      <Button variant="outline" className="w-full mt-4">
-        <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
+      <Button variant="outline" className="mt-4 w-full">
+        <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
             fill="#4285F4"
@@ -708,30 +710,30 @@ export default function AuthFlowComponent({
   );
 
   const VerificationMessage = ({ email }: { email: string }) => (
-    <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
-      <div className="flex items-center mb-4">
-        <Mail className="h-6 w-6 text-blue-500 mr-3" />
+    <div className="mt-6 rounded-md border border-blue-200 bg-blue-50 p-6">
+      <div className="mb-4 flex items-center">
+        <Mail className="mr-3 h-6 w-6 text-blue-500" />
         <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
-      <p className="text-sm mb-4 text-gray-700">
+      <p className="mb-4 text-sm text-gray-700">
         Vi har skickat en verifieringslänk till <strong>{email}</strong>. Klicka på länken i e-postmeddelandet för att
         verifiera ditt konto.
       </p>
-      <p className="text-sm mb-4 text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
+      <p className="mb-4 text-sm text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
     </div>
   );
 
   const RequestResetPasswordConfirmation = ({ email }: { email: string }) => (
-    <div className="mt-6 p-6 bg-blue-50 rounded-md border border-blue-200">
-      <div className="flex items-center mb-4">
-        <Mail className="h-6 w-6 text-blue-500 mr-3" />
+    <div className="mt-6 rounded-md border border-blue-200 bg-blue-50 p-6">
+      <div className="mb-4 flex items-center">
+        <Mail className="mr-3 h-6 w-6 text-blue-500" />
         <h4 className="font-semibold text-blue-700">Kontrollera din e-post</h4>
       </div>
-      <p className="text-sm mb-4 text-gray-700">
+      <p className="mb-4 text-sm text-gray-700">
         Vi har skickat instruktioner för att återställa ditt lösenord till <strong>{email}</strong>. Följ instruktionerna i
         e-postmeddelandet för att återställa ditt lösenord.
       </p>
-      <p className="text-sm mb-4 text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
+      <p className="mb-4 text-sm text-gray-600">Om du inte hittar e-postmeddelandet, vänligen kontrollera din skräppost.</p>
       <Button type="button" variant="outline" className="w-full" onClick={navigateToSignIn}>
         Tillbaka till inloggning
       </Button>
@@ -773,7 +775,7 @@ export default function AuthFlowComponent({
   };
 
   return (
-    <Card className="m-auto bg-card w-screen rounded-none shadow-none sm:rounded-lg sm:shadow-lg sm:shadow-zinc-500/10 sm:max-h-[calc(100vh-112px)] overflow-y-auto sm:max-w-md">
+    <Card className="m-auto w-screen overflow-y-auto rounded-none bg-card shadow-none sm:max-h-[calc(100vh-112px)] sm:max-w-md sm:rounded-lg sm:shadow-lg sm:shadow-zinc-500/10">
       <div>
         <AuthHeader {...getHeaderContent()} />
         <CardContent className="p-6">{renderForm()}</CardContent>

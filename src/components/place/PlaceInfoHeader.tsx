@@ -6,19 +6,16 @@ export default function PlaceInfoHeader({ place }: { place: Place }) {
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case "coffee shop":
-        return <Coffee className="w-5 h-5" />;
+        return <Coffee className="h-5 w-5" />;
       default:
-        return <MapPin className="w-5 h-5" />;
+        return <MapPin className="h-5 w-5" />;
     }
   };
 
   return (
-    <div className="grid grid-cols-[auto,1fr] gap-x-4 w-full p-4">
+    <div className="grid w-full grid-cols-[auto,1fr] gap-x-4 p-4">
       <div className="row-span-2 flex items-center justify-center">
-        <MainCategoryIcon
-          category={place.parent_category_name as any}
-          size="large"
-        />
+        <MainCategoryIcon category={place.parent_category_name as any} size="large" />
       </div>
       <div className="flex-grow">
         <h2 className="text-2xl font-bold">{place.name}</h2>

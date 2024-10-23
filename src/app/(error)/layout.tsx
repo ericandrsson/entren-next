@@ -20,15 +20,10 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Entrén",
-  description:
-    "Entrén is a platform for finding and sharing local events and places.",
+  description: "Entrén is a platform for finding and sharing local events and places.",
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const {
     data: { user },
@@ -37,16 +32,11 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#f1f3f4" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col min-h-screen`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col font-sans`}>
         <Header user={user} />
-        <main className="flex-grow overflow-y-hidden space-y-7">
+        <main className="flex-grow space-y-7 overflow-y-hidden">
           <div className="flex justify-center bg-white">{children}</div>
         </main>
         <Toaster />

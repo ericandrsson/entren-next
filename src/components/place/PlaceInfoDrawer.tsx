@@ -1,11 +1,6 @@
 import { Entrance, EntrancePhoto, Place } from "@/src/types/custom.types";
 import { useState } from "react";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-} from "../ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from "../ui/drawer";
 import PlaceInfoContent from "./PlaceInfoContent";
 import PlaceInfoFooter from "./PlaceInfoFooter";
 import PlaceInfoHeader from "./PlaceInfoHeader";
@@ -31,7 +26,7 @@ export default function PlaceInfoDrawer({
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="flex flex-col max-h-[calc(100vh-4rem)]">
+      <DrawerContent className="flex max-h-[calc(100vh-4rem)] flex-col">
         <DrawerHeader className="px-4 py-2">
           <PlaceInfoHeader place={place} />
         </DrawerHeader>
@@ -47,11 +42,7 @@ export default function PlaceInfoDrawer({
           />
         </div>
         <DrawerFooter className="px-4 py-2">
-          <PlaceInfoFooter
-            place={place}
-            entranceCount={entranceCount}
-            onAddEntrance={onAddEntrance}
-          />
+          <PlaceInfoFooter place={place} entranceCount={entranceCount} onAddEntrance={onAddEntrance} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

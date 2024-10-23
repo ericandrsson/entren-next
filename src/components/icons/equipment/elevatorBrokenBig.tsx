@@ -16,11 +16,7 @@ const SvgElevatorBrokenBig = (props: React.SVGAttributes<{}>) => (
         fill="#000"
         fillRule="nonzero"
       />
-      <path
-        fillOpacity={0.9}
-        fill="#F54B4B"
-        d="M14.335 1.09l3.275 1.968L4.135 25.483.861 23.515z"
-      />
+      <path fillOpacity={0.9} fill="#F54B4B" d="M14.335 1.09l3.275 1.968L4.135 25.483.861 23.515z" />
     </g>
   </svg>
 );

@@ -11,13 +11,8 @@ import PlaceInfoDrawer from "./PlaceInfoDrawer";
 const log = logger.child({ module: "PlaceInfoContainer" });
 
 export default function PlaceInfoContainer({ place }: { place: Place | null }) {
-  const {
-    isMobile,
-    setSelectedPlace,
-    isAddEntranceDialogOpen,
-    setIsAddEntranceDialogOpen,
-    setIsLoginPromptOpen,
-  } = useStore();
+  const { isMobile, setSelectedPlace, isAddEntranceDialogOpen, setIsAddEntranceDialogOpen, setIsLoginPromptOpen } =
+    useStore();
   const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [allPlacePhotos, setAllPlacePhotos] = useState<EntrancePhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,10 +25,7 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
 
     setIsLoading(true);
     log.info("fetching entrances", { placeId: place.place_id });
-    const { data, error } = await supabase
-      .from("entrances_view")
-      .select("*")
-      .eq("place_id", place.place_id);
+    const { data, error } = await supabase.from("entrances_view").select("*").eq("place_id", place.place_id);
 
     if (error) {
       log.error("error fetching entrances", {
@@ -46,19 +38,15 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
 
     const entrancesData = data as Entrance[];
     const filteredEntrances = entrancesData.filter(
-      (entrance) =>
-        entrance.status !== "pending" || entrance.created_by === user?.id,
+      (entrance) => entrance.status !== "pending" || entrance.created_by === user?.id,
     );
 
     setEntrances(filteredEntrances);
-    setAllPlacePhotos(
-      filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]),
-    );
+    setAllPlacePhotos(filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]));
     log.info("entrances fetched and filtered successfully", {
       placeId: place.place_id,
       entranceCount: filteredEntrances.length,
-      photoCount: filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[])
-        .length,
+      photoCount: filteredEntrances.flatMap((e) => e.photos as EntrancePhoto[]).length,
     });
     setIsLoading(false);
   }, [place, supabase, user]);
@@ -103,11 +91,7 @@ export default function PlaceInfoContainer({ place }: { place: Place | null }) {
   return (
     <>
       {isMobile ? (
-        <PlaceInfoDrawer
-          {...sharedProps}
-          isOpen={!!place}
-          onClose={() => setSelectedPlace(null)}
-        />
+        <PlaceInfoDrawer {...sharedProps} isOpen={!!place} onClose={() => setSelectedPlace(null)} />
       ) : (
         <div className="absolute bottom-8 left-8 z-10 w-full max-w-sm">
           <PlaceInfoCard {...sharedProps} />

@@ -18,30 +18,17 @@ const sizeMap = {
   large: "w-8 h-8",
 };
 
-export const Icon = <T extends IconCategory>({
-  category,
-  name,
-  size = "medium",
-  color,
-  ...props
-}: IconProps<T>) => {
+export const Icon = <T extends IconCategory>({ category, name, size = "medium", color, ...props }: IconProps<T>) => {
   const IconComponent = Icons[category][name] as React.ComponentType<any>;
 
   if (typeof IconComponent !== "function") {
-    console.warn(
-      `Icon "${category}.${String(name)}" not found or is not a valid component`,
-    );
+    console.warn(`Icon "${category}.${String(name)}" not found or is not a valid component`);
     return null;
   }
 
   const sizeClass = sizeMap[size];
 
-  return (
-    <IconComponent
-      className={`${sizeClass} ${color ? `text-${color}` : ""}`}
-      {...props}
-    />
-  );
+  return <IconComponent className={`${sizeClass} ${color ? `text-${color}` : ""}`} {...props} />;
 };
 
 export const MainCategoryIcon = ({
@@ -54,12 +41,6 @@ export const MainCategoryIcon = ({
 }) => {
   const iconName = categoryToIconNameMap(category) || "undefined";
   return (
-    <Icon
-      category="mainCategories"
-      name={iconName as IconName<"mainCategories">}
-      size={size}
-      color={color}
-      {...props}
-    />
+    <Icon category="mainCategories" name={iconName as IconName<"mainCategories">} size={size} color={color} {...props} />
   );
 };

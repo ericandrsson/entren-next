@@ -9,17 +9,17 @@ export default function ViewToggleButton() {
     <Button
       variant="default"
       size="lg"
-      className="text-white rounded-full shadow-lg"
+      className="rounded-full text-white shadow-lg"
       onClick={() => setView(view === "list" ? "map" : "list")}
     >
       {view === "list" ? (
         <>
-          <MapPin className="h-4 w-4 mr-2" />
+          <MapPin className="mr-2 h-4 w-4" />
           Visa karta
         </>
       ) : (
         <>
-          <List className="h-4 w-4 mr-2" />
+          <List className="mr-2 h-4 w-4" />
           Visa lista
         </>
       )}

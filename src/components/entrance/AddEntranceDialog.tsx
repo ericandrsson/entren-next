@@ -8,32 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/src/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select";
 import { useToast } from "@/src/hooks/use-toast";
 import { logger } from "@/src/libs/logger";
 import { cn } from "@/src/libs/utils";
-import {
-  EntranceEntitySchema,
-  EntranceType,
-  Place,
-} from "@/src/types/custom.types";
+import { EntranceEntitySchema, EntranceType, Place } from "@/src/types/custom.types";
 import { getGPSCoordinates } from "@/src/utils/imageMetadata";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -70,7 +52,7 @@ interface AddEntranceDialogProps {
 const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
   <div className="space-y-4">
     <h3 className="text-lg font-semibold">Följande bilder...</h3>
-    <ul className="list-disc pl-5 space-y-2">
+    <ul className="list-disc space-y-2 pl-5">
       <li>...ge användbar information om tillgängligheten.</li>
       <li>...togs av mig.</li>
       <li>... visar inga identifierbara personer.</li>
@@ -87,8 +69,7 @@ const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
         htmlFor="terms"
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       >
-        Jag publicerar härmed dessa bilder för allmänheten och avsäger mig
-        copyright (
+        Jag publicerar härmed dessa bilder för allmänheten och avsäger mig copyright (
         <Link
           href="https://creativecommons.org/publicdomain/zero/1.0/"
           target="_blank"
@@ -103,20 +84,13 @@ const ImageGuidelines = ({ onConfirm }: { onConfirm: () => void }) => (
   </div>
 );
 
-export default function AddEntranceDialog({
-  place,
-  isOpen,
-  onClose,
-  onEntranceAdded,
-}: AddEntranceDialogProps) {
+export default function AddEntranceDialog({ place, isOpen, onClose, onEntranceAdded }: AddEntranceDialogProps) {
   log.debug({ place, isOpen }, "AddEntranceDialog rendered");
 
   const [step, setStep] = useState(1);
   const [hasLocationMetadata, setHasLocationMetadata] = useState(false);
   const [entranceTypes, setEntranceTypes] = useState<EntranceType[]>([]);
-  const [entranceCounts, setEntranceCounts] = useState<Record<number, number>>(
-    {},
-  );
+  const [entranceCounts, setEntranceCounts] = useState<Record<number, number>>({});
 
   const [guidelinesConfirmed, setGuidelinesConfirmed] = useState(false);
   const [sameAsPlaceLocation, setSameAsPlaceLocation] = useState(false);
@@ -126,10 +100,7 @@ export default function AddEntranceDialog({
   const fetchEntranceTypes = async () => {
     log.debug("fetching entrance types");
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("entrance_types")
-      .select("*")
-      .order("id", { ascending: true });
+    const { data, error } = await supabase.from("entrance_types").select("*").order("id", { ascending: true });
 
     if (error) {
       log.warn({ error }, "error fetching entrance types");
@@ -214,9 +185,7 @@ export default function AddEntranceDialog({
   const handleEntranceTypeChange = (value: string) => {
     log.debug({ value }, "entrance type changed");
     form.setValue("entranceType", value);
-    const isMainEntrance =
-      entranceTypes.find((t) => t.id.toString() === value)?.name ===
-      "Main Entrance";
+    const isMainEntrance = entranceTypes.find((t) => t.id.toString() === value)?.name === "Main Entrance";
     setSameAsPlaceLocation(isMainEntrance);
     form.setValue("sameAsPlaceLocation", isMainEntrance);
   };
@@ -230,10 +199,7 @@ export default function AddEntranceDialog({
         lat: place.lat.toString(),
         lng: place.long.toString(),
       });
-      log.debug(
-        { lat: place.lat, lng: place.long },
-        "location set to place location",
-      );
+      log.debug({ lat: place.lat, lng: place.long }, "location set to place location");
     }
   };
 
@@ -279,15 +245,13 @@ export default function AddEntranceDialog({
           if (uploadError.message.includes("row-level security policy")) {
             toast({
               title: "Behörighetsproblem",
-              description:
-                "Du har inte behörighet att ladda upp bilder. Kontakta administratören om detta är ett fel.",
+              description: "Du har inte behörighet att ladda upp bilder. Kontakta administratören om detta är ett fel.",
               variant: "destructive",
             });
           } else {
             toast({
               title: "Fel vid uppladdning av bild",
-              description:
-                "Ett problem uppstod när bilden skulle laddas upp. Försök igen senare.",
+              description: "Ett problem uppstod när bilden skulle laddas upp. Försök igen senare.",
               variant: "destructive",
             });
           }
@@ -322,9 +286,7 @@ export default function AddEntranceDialog({
         log.error({ error }, "error adding entrance");
         toast({
           title: "Fel vid sparande av entré",
-          description:
-            "Ett fel uppstod när entrén skulle sparas. Försök igen senare." +
-            error.message,
+          description: "Ett fel uppstod när entrén skulle sparas. Försök igen senare." + error.message,
           variant: "destructive",
         });
         return;
@@ -337,8 +299,7 @@ export default function AddEntranceDialog({
         setStep(1);
         toast({
           title: "Tack för ditt bidrag!",
-          description:
-            "Entrén har sparats och väntar på granskning. Du kan nu lägga till en till.",
+          description: "Entrén har sparats och väntar på granskning. Du kan nu lägga till en till.",
         });
       } else {
         onClose();
@@ -346,30 +307,24 @@ export default function AddEntranceDialog({
           title: "Tack för ditt bidrag! 🎉",
           description: (
             <div className="space-y-2">
-              <p>
-                Din entré har sparats och väntar nu på granskning. Vi uppskattar
-                verkligen din insats!
-              </p>
+              <p>Din entré har sparats och väntar nu på granskning. Vi uppskattar verkligen din insats!</p>
               <ul className="space-y-1">
                 <li className="flex items-start">
                   <span className="mr-2">✅</span>
                   <span>
-                    <strong>Granskning:</strong> Ditt bidrag kommer att
-                    kontrolleras för att säkerställa kvaliteten.
+                    <strong>Granskning:</strong> Ditt bidrag kommer att kontrolleras för att säkerställa kvaliteten.
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="mr-2">⏳</span>
                   <span>
-                    <strong>Synlighet:</strong> Entrén kommer att visas så snart
-                    den har godkänts.
+                    <strong>Synlighet:</strong> Entrén kommer att visas så snart den har godkänts.
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="mr-2">🌟</span>
                   <span>
-                    <strong>Karma-poäng:</strong> Du har tjänat karma-poäng för
-                    ditt bidrag!
+                    <strong>Karma-poäng:</strong> Du har tjänat karma-poäng för ditt bidrag!
                   </span>
                 </li>
               </ul>
@@ -419,8 +374,7 @@ export default function AddEntranceDialog({
           log.debug("no gps coordinates found in photo");
           toast({
             title: "Ingen platsdata",
-            description:
-              "Bilden innehåller ingen platsinformation. Du behöver ange platsen manuellt.",
+            description: "Bilden innehåller ingen platsinformation. Du behöver ange platsen manuellt.",
           });
         }
       } catch (error) {
@@ -428,8 +382,7 @@ export default function AddEntranceDialog({
         log.error({ error }, "error reading image metadata");
         toast({
           title: "Fel vid läsning av bilddata",
-          description:
-            "Kunde inte läsa platsinformation från bilden. Du behöver ange platsen manuellt.",
+          description: "Kunde inte läsa platsinformation från bilden. Du behöver ange platsen manuellt.",
           variant: "destructive",
         });
       }
@@ -444,21 +397,16 @@ export default function AddEntranceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className={cn("w-[95vw] sm:w-[90vw] sm:max-w-[600px] max-h-[90vh]")}
-      >
+      <DialogContent className={cn("max-h-[90vh] w-[95vw] sm:w-[90vw] sm:max-w-[600px]")}>
         <DialogHeader>
           <DialogTitle>Lägg till Entré</DialogTitle>
           <DialogDescription>
-            Hjälp andra att hitta tillgängliga ingångar genom att lägga till
-            entréinformation för {place.name}.
+            Hjälp andra att hitta tillgängliga ingångar genom att lägga till entréinformation för {place.name}.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data) => handleSubmit(data, false))}
-          >
+          <form onSubmit={form.handleSubmit((data) => handleSubmit(data, false))}>
             <div className="grid gap-4 py-4">
               {step === 1 && (
                 <>
@@ -468,10 +416,7 @@ export default function AddEntranceDialog({
                     render={({ field }) => (
                       <FormItem>
                         <Label htmlFor="entrance-type">Välj typ av entré</Label>
-                        <Select
-                          onValueChange={handleEntranceTypeChange}
-                          defaultValue={field.value}
-                        >
+                        <Select onValueChange={handleEntranceTypeChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger id="entrance-type">
                               <SelectValue placeholder="Välj entrétyp" />
@@ -480,20 +425,11 @@ export default function AddEntranceDialog({
                           <SelectContent>
                             {entranceTypes.map((type) => {
                               const count = entranceCounts[type.id] || 0;
-                              const isDisabled =
-                                type.max_per_place !== null &&
-                                count >= type.max_per_place;
+                              const isDisabled = type.max_per_place !== null && count >= type.max_per_place;
 
                               return (
-                                <SelectItem
-                                  key={type.id}
-                                  value={type.id.toString()}
-                                  disabled={isDisabled}
-                                >
-                                  {type.name_sv}{" "}
-                                  {isDisabled
-                                    ? `(Max ${type.max_per_place} nådd)`
-                                    : ""}
+                                <SelectItem key={type.id} value={type.id.toString()} disabled={isDisabled}>
+                                  {type.name_sv} {isDisabled ? `(Max ${type.max_per_place} nådd)` : ""}
                                 </SelectItem>
                               );
                             })}
@@ -509,19 +445,11 @@ export default function AddEntranceDialog({
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                         <FormControl>
-                          <Checkbox
-                            checked={sameAsPlaceLocation}
-                            onCheckedChange={handleSameAsPlaceLocationChange}
-                          />
+                          <Checkbox checked={sameAsPlaceLocation} onCheckedChange={handleSameAsPlaceLocationChange} />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
-                            Entrén har samma plats som {place.name}
-                          </FormLabel>
-                          <FormDescription>
-                            Markera detta om entrén är på samma plats som
-                            huvudbyggnaden.
-                          </FormDescription>
+                          <FormLabel>Entrén har samma plats som {place.name}</FormLabel>
+                          <FormDescription>Markera detta om entrén är på samma plats som huvudbyggnaden.</FormDescription>
                         </div>
                       </FormItem>
                     )}
@@ -533,28 +461,23 @@ export default function AddEntranceDialog({
               {step === 2 && (
                 <div className="grid gap-4">
                   <Label>Lägg till en bild på entrén</Label>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-4">
                       <ImageGuidelines onConfirm={handleGuidelinesConfirm} />
                     </div>
                     <div className="space-y-4">
                       <div
-                        className="flex justify-center items-center h-[200px] bg-muted rounded-md cursor-pointer overflow-hidden"
-                        onClick={() =>
-                          guidelinesConfirmed &&
-                          document.getElementById("photo-upload")?.click()
-                        }
+                        className="flex h-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-muted"
+                        onClick={() => guidelinesConfirmed && document.getElementById("photo-upload")?.click()}
                       >
                         {form.watch("photo") ? (
                           <img
-                            src={URL.createObjectURL(
-                              form.watch("photo") as File,
-                            )}
+                            src={URL.createObjectURL(form.watch("photo") as File)}
                             alt="Entrance"
-                            className="max-h-full w-full object-cover rounded-md"
+                            className="max-h-full w-full rounded-md object-cover"
                           />
                         ) : (
-                          <div className="relative w-full h-full">
+                          <div className="relative h-full w-full">
                             <Image
                               src="/images/entranceImagePlaceholder.jpg"
                               alt="Entrance Placeholder"
@@ -568,10 +491,7 @@ export default function AddEntranceDialog({
                       <div className="flex gap-2">
                         <Button
                           type="button"
-                          onClick={() =>
-                            guidelinesConfirmed &&
-                            document.getElementById("photo-upload")?.click()
-                          }
+                          onClick={() => guidelinesConfirmed && document.getElementById("photo-upload")?.click()}
                           disabled={!guidelinesConfirmed}
                         >
                           <Upload className="mr-2 h-4 w-4" /> Ladda upp bild
@@ -584,11 +504,7 @@ export default function AddEntranceDialog({
                           onChange={handlePhotoUpload}
                           disabled={!guidelinesConfirmed}
                         />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={!guidelinesConfirmed}
-                        >
+                        <Button type="button" variant="outline" disabled={!guidelinesConfirmed}>
                           <Camera className="mr-2 h-4 w-4" /> Ta foto
                         </Button>
                       </div>
@@ -601,11 +517,9 @@ export default function AddEntranceDialog({
               {step === 3 && !sameAsPlaceLocation && !hasLocationMetadata && (
                 <div className="grid gap-2">
                   <Label>Markera platsen för entrén</Label>
-                  <div className="h-[200px] bg-muted flex items-center justify-center rounded-md">
+                  <div className="flex h-[200px] items-center justify-center rounded-md bg-muted">
                     <MapPin className="h-8 w-8 text-muted-foreground" />
-                    <span className="ml-2 text-muted-foreground">
-                      Map Placeholder
-                    </span>
+                    <span className="ml-2 text-muted-foreground">Map Placeholder</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <FormField
@@ -647,50 +561,36 @@ export default function AddEntranceDialog({
               )}
 
               {/* Review step */}
-              {((step === 3 && (sameAsPlaceLocation || hasLocationMetadata)) ||
-                step === 4) && (
+              {((step === 3 && (sameAsPlaceLocation || hasLocationMetadata)) || step === 4) && (
                 <div className="grid gap-6">
                   <h3 className="text-xl font-semibold">Granska information</h3>
 
-                  <div className="grid gap-4 p-4 border rounded-lg bg-muted">
+                  <div className="grid gap-4 rounded-lg border bg-muted p-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                        Typ av entré
-                      </h4>
+                      <h4 className="mb-1 text-sm font-medium text-muted-foreground">Typ av entré</h4>
                       <p className="text-lg font-semibold">
-                        {entranceTypes.find(
-                          (t) => t.id.toString() === form.watch("entranceType"),
-                        )?.name_sv || "Inte vald"}
+                        {entranceTypes.find((t) => t.id.toString() === form.watch("entranceType"))?.name_sv || "Inte vald"}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                        Plats
-                      </h4>
+                      <h4 className="mb-1 text-sm font-medium text-muted-foreground">Plats</h4>
                       {sameAsPlaceLocation ? (
-                        <p className="text-lg font-semibold">
-                          Samma plats som {place.name}
-                        </p>
+                        <p className="text-lg font-semibold">Samma plats som {place.name}</p>
                       ) : (
                         <p className="text-lg font-semibold">
-                          Lat: {form.watch("location.lat")}, Lng:{" "}
-                          {form.watch("location.lng")}
+                          Lat: {form.watch("location.lat")}, Lng: {form.watch("location.lng")}
                         </p>
                       )}
                     </div>
 
                     {form.watch("photo") && (
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                          Bild
-                        </h4>
+                        <h4 className="mb-1 text-sm font-medium text-muted-foreground">Bild</h4>
                         <div className="mt-2 flex justify-center">
-                          <div className="relative w-48 h-64 overflow-hidden rounded-md">
+                          <div className="relative h-64 w-48 overflow-hidden rounded-md">
                             <Image
-                              src={URL.createObjectURL(
-                                form.watch("photo") as File,
-                              )}
+                              src={URL.createObjectURL(form.watch("photo") as File)}
                               alt="Entrance"
                               layout="fill"
                               objectFit="cover"
@@ -703,14 +603,8 @@ export default function AddEntranceDialog({
                   </div>
 
                   <div className="text-sm text-muted-foreground">
-                    <p>
-                      Kontrollera att all information är korrekt innan du
-                      sparar.
-                    </p>
-                    <p>
-                      Du kan gå tillbaka och ändra information om något inte
-                      stämmer.
-                    </p>
+                    <p>Kontrollera att all information är korrekt innan du sparar.</p>
+                    <p>Du kan gå tillbaka och ändra information om något inte stämmer.</p>
                   </div>
                 </div>
               )}
@@ -728,8 +622,7 @@ export default function AddEntranceDialog({
                   onClick={handleNext}
                   disabled={
                     (step === 1 && !form.watch("entranceType")) ||
-                    (step === 2 &&
-                      (!guidelinesConfirmed || !form.watch("photo")))
+                    (step === 2 && (!guidelinesConfirmed || !form.watch("photo")))
                   }
                 >
                   Nästa
@@ -740,9 +633,7 @@ export default function AddEntranceDialog({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() =>
-                      form.handleSubmit((data) => handleSubmit(data, true))()
-                    }
+                    onClick={() => form.handleSubmit((data) => handleSubmit(data, true))()}
                   >
                     Spara och lägg till en till
                   </Button>

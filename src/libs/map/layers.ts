@@ -23,12 +23,7 @@ export function addPlacesLayer(map: maplibregl.Map) {
       "icon-opacity": 1,
       "text-halo-width": 1,
       "text-halo-color": "rgba(255, 255, 255, 0.75)",
-      "text-color": [
-        "case",
-        ["==", ["get", "has_entrances"], false],
-        "red",
-        "#348f50",
-      ],
+      "text-color": ["case", ["==", ["get", "has_entrances"], false], "red", "#348f50"],
       "icon-color": [
         "case",
         ["==", ["get", "has_entrances"], false],

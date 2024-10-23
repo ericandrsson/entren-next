@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" content="#f1f3f4" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans flex flex-col h-full overflow-hidden`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} flex h-full flex-col overflow-hidden font-sans`}>
         <AuthProvider>
           <Header user={user} />
           <main className="flex-grow overflow-hidden">{children}</main>
