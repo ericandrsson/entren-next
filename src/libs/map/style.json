@@ -2328,35 +2328,6 @@
       "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["==", "class", "motorway"], ["!=", "ramp", 1]]
     },
     {
-      "id": "road_pedestrian_casing",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-      "layout": {
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#999999",
-        "line-width": {
-          "stops": [
-            [13, 3],
-            [14, 5],
-            [15, 6],
-            [16, 12],
-            [17, 13],
-            [18, 17]
-          ]
-        }
-      },
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "class", "path"],
-        ["==", "subclass", "pedestrian"],
-        ["!=", "brunel", "tunnel"]
-      ]
-    },
-    {
       "id": "road_pedestrian",
       "type": "line",
       "source": "openmaptiles",
@@ -3093,40 +3064,6 @@
       },
       "metadata": {},
       "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "trunk"]]
-    },
-    {
-      "id": "road_trunk_construction",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-      "minzoom": 7,
-      "layout": {
-        "line-cap": "round",
-        "line-join": "round",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "rgb(230, 230, 230)",
-        "line-width": {
-          "base": 1.2,
-          "stops": [
-            [7, 1],
-            [8, 1.4],
-            [9, 1.8],
-            [10, 1.8],
-            [11, 2.5],
-            [12, 4],
-            [13, 4],
-            [15, 8.6],
-            [16, 16],
-            [17, 19],
-            [18, 25]
-          ]
-        },
-        "line-dasharray": [2, 2]
-      },
-      "metadata": {},
-      "filter": ["all", ["!in", "brunnel", "bridge", "tunnel"], ["!=", "ramp", 1], ["in", "class", "trunk_construction"]]
     },
     {
       "id": "road_motorway",
@@ -3870,32 +3807,6 @@
       "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 1], ["==", "maritime", 1]]
     },
     {
-      "id": "boundary_2_maritime",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "boundary",
-      "minzoom": 4,
-      "layout": {
-        "line-cap": "round",
-        "line-join": "round",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "rgb(230, 230, 230)",
-        "line-width": {
-          "base": 1,
-          "stops": [
-            [3, 0.5],
-            [5, 1.2],
-            [12, 3]
-          ]
-        },
-        "line-opacity": 1
-      },
-      "metadata": {},
-      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 0], ["==", "maritime", 1]]
-    },
-    {
       "id": "water_way_name",
       "type": "symbol",
       "source": "openmaptiles",
@@ -4133,8 +4044,8 @@
         "text-size": {
           "base": 1.2,
           "stops": [
-            [10, 10],
-            [15, 16]
+            [10, 12],
+            [15, 18]
           ]
         },
         "text-field": "{name:latin}\n{name:nonlatin}",
@@ -4142,9 +4053,10 @@
         "text-max-width": 8
       },
       "paint": {
-        "text-color": "rgb(230, 230, 230)",
-        "text-halo-color": "rgb(230, 230, 230)",
-        "text-halo-width": 1.2
+        "text-color": "rgb(50, 50, 50)",
+        "text-halo-color": "rgba(255, 255, 255, 0.8)",
+        "text-halo-width": 1.5,
+        "text-halo-blur": 0.5
       },
       "metadata": {},
       "filter": ["all", ["==", "class", "village"]]
@@ -4160,8 +4072,8 @@
         "text-size": {
           "base": 1.2,
           "stops": [
-            [7, 10],
-            [11, 13]
+            [7, 12],
+            [11, 16]
           ]
         },
         "text-field": "{name:latin}\n{name:nonlatin}",
@@ -4171,9 +4083,10 @@
         "text-max-width": 8
       },
       "paint": {
-        "text-color": "rgb(230, 230, 230)",
-        "text-halo-color": "rgb(230, 230, 230)",
-        "text-halo-width": 1.2
+        "text-color": "rgb(50, 50, 50)",
+        "text-halo-color": "rgba(255, 255, 255, 0.8)",
+        "text-halo-width": 1.5,
+        "text-halo-blur": 0.5
       },
       "metadata": {},
       "filter": ["all", ["==", "class", "town"]]
@@ -4219,8 +4132,8 @@
         "text-size": {
           "base": 1.2,
           "stops": [
-            [4, 12],
-            [15, 18]
+            [4, 14],
+            [15, 20]
           ]
         },
         "icon-image": {
@@ -4239,9 +4152,10 @@
         "icon-allow-overlap": true
       },
       "paint": {
-        "text-color": "rgb(230, 230, 230)",
-        "text-halo-color": "rgb(230, 230, 230)",
-        "text-halo-width": 1
+        "text-color": "rgb(30, 30, 30)",
+        "text-halo-color": "rgba(255, 255, 255, 0.9)",
+        "text-halo-width": 2,
+        "text-halo-blur": 0.5
       },
       "metadata": {},
       "filter": ["all", ["==", "class", "city"], ["!=", "rank", 1]]
@@ -4255,12 +4169,12 @@
       "maxzoom": 15,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Noto Sans Regular"],
+        "text-font": ["Noto Sans Bold"],
         "text-size": {
           "base": 1.2,
           "stops": [
-            [4, 11],
-            [12, 16]
+            [4, 14],
+            [12, 20]
           ]
         },
         "icon-image": {
@@ -4279,9 +4193,10 @@
         "icon-allow-overlap": true
       },
       "paint": {
-        "text-color": "rgb(230, 230, 230)",
-        "text-halo-color": "rgb(230, 230, 230)",
-        "text-halo-width": 1.2
+        "text-color": "rgb(10, 10, 10)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 2.5,
+        "text-halo-blur": 0.5
       },
       "metadata": {},
       "filter": ["all", ["==", "class", "city"], ["in", "capital", 1, 2]]
@@ -4405,6 +4320,29 @@
       },
       "metadata": {},
       "filter": ["all", ["==", "rank", 1], ["==", "class", "country"], ["has", "iso_a2"]]
+    },
+    {
+      "id": "3d-buildings",
+      "source": "openmaptiles",
+      "source-layer": "building",
+      "type": "fill-extrusion",
+      "minzoom": 15,
+      "filter": ["!=", ["get", "hide_3d"], true],
+      "paint": {
+        "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "render_height"],
+          0,
+          "lightgray",
+          200,
+          "royalblue",
+          400,
+          "lightblue"
+        ],
+        "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 15, 0, 16, ["get", "render_height"]],
+        "fill-extrusion-base": ["case", [">=", ["get", "zoom"], 16], ["get", "render_min_height"], 0]
+      }
     }
   ]
 }

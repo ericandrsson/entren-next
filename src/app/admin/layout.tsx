@@ -1,11 +1,9 @@
+import { AdminSidebar } from "@/src/components/AdminSidebar";
 import Header from "@/src/components/header/Header";
-import { Toaster } from "@/src/components/ui/toaster";
-import { AuthProvider } from "@/src/context/AuthProvider";
+import { SidebarProvider } from "@/src/components/ui/sidebar";
 import "@/src/styles/global.css";
-import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import CookieBanner from "../../components/CookieBanner";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -24,25 +22,22 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       <head>
         <meta name="theme-color" content="#f1f3f4" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} flex h-full flex-col overflow-hidden font-sans`}>
-        <AuthProvider>
-          <Header user={user} />
-          <main className="flex-grow overflow-hidden">{children}</main>
-          <Toaster />
-          <CookieBanner />
-        </AuthProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+        <main className="h-screen w-screen">
+          <SidebarProvider>
+            <AdminSidebar />
+            <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">
+              <Header user={null} />
+              {children}
+            </div>
+          </SidebarProvider>
+        </main>
       </body>
     </html>
   );

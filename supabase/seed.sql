@@ -154,6 +154,8 @@ INSERT INTO "public"."users" ("id", "email", "first_name", "last_name") VALUES
 	('00000000-0000-0000-0000-000000000001', 'user@entra.se', NULL, NULL);
 
 
+SELECT public.assign_role('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'admin'::public.app_role);
+
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
 	('entrance_photos', 'entrance_photos', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', true, false, 10485760, '{image/*}', NULL);

@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 import { NextResponse, type NextRequest } from "next/server";
+
+interface CustomJwtPayload extends JwtPayload {
+  user_role?: string;
+}
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -26,6 +31,20 @@ export async function updateSession(request: NextRequest) {
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
+
+  const { data } = await supabase.auth.getSession();
+  let userRole = null;
+  if (data.session) {
+    const jwt = jwtDecode<CustomJwtPayload>(data.session.access_token);
+    userRole = jwt.user_role;
+  }
+
+  // Only admins can access the admin page
+  if (userRole !== "admin" && request.nextUrl.pathname.startsWith("/admin")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
 
   // const {
   //   data: { user },
