@@ -44,4 +44,4 @@ certificates
 /out/
 
 openmaptiles_tiles/
-osm_postgis_setup/
+osm_postgis_setup/.env
