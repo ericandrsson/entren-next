@@ -1,5 +1,18 @@
+import { CustomJwtPayload } from "@/src/types/custom.types";
 import { createServerClient } from "@supabase/ssr";
+import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
+
+export async function getUserRole() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getSession();
+  let userRole = null;
+  if (data.session) {
+    const jwt = jwtDecode<CustomJwtPayload>(data.session.access_token);
+    userRole = jwt.user_role;
+  }
+  return userRole;
+}
 
 export async function createClient() {
   const cookieStore = await cookies();

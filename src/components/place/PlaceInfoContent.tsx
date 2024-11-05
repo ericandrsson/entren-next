@@ -22,7 +22,7 @@ import {
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { Entrance, EntrancePhoto, Place } from "../../types/custom.types";
-import AddEntranceDialog from "../entrance/AddEntranceDialog";
+import AddEntranceDialog from "../entrance/add-entrance-dialog";
 import LoginPromptDialog from "../LoginPromptDialog";
 import PlacePhotoModal from "./PlacePhotoModal";
 

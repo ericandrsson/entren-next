@@ -1,5 +1,7 @@
 import Header from "@/src/components/header/Header";
+import { AuthProvider } from "@/src/context/auth-provider";
 import "@/src/styles/global.css";
+import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
@@ -20,6 +22,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang="en">
       <head>
@@ -28,10 +36,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <main className="h-screen w-screen">
-          <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">
-            <Header user={null} />
-            {children}
-          </div>
+          <AuthProvider>
+            <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">
+              <Header user={user} />
+              {children}
+            </div>
+          </AuthProvider>
         </main>
       </body>
     </html>

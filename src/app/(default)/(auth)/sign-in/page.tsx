@@ -1,6 +1,6 @@
 "use server";
 
-import AuthFlowComponent from "@/src/components/auth/AuthFlowComponent";
+import AuthFlowComponent from "@/src/components/auth/auth-flow";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

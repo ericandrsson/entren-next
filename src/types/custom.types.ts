@@ -1,3 +1,4 @@
+import { JwtPayload } from "jwt-decode";
 import { Database } from "./database.types";
 
 // Core types from the database
@@ -6,6 +7,11 @@ type EntityChangeStagingDB = Database["public"]["Tables"]["entity_changes_stagin
 type DetailedEntranceViewDB = Database["public"]["Views"]["entrances_view"]["Row"];
 type DetailedPlaceViewDB = Database["public"]["Views"]["places_view"]["Row"];
 type PlaceEntrancePhotoDB = Database["public"]["Tables"]["entrance_photos"]["Row"];
+type EntityChangesEventsDB = Database["public"]["Views"]["entity_changes_events_view"]["Row"];
+type UserDB = Database["public"]["Tables"]["users"]["Row"];
+
+
+
 
 // Extended types
 export type EntrancePhoto = {
@@ -67,3 +73,14 @@ export type PhotoEntitySchema = {
 export interface Entrances extends Array<DetailedEntranceViewDB> {
   photos: EntrancePhoto[];
 }
+
+export interface CustomJwtPayload extends JwtPayload {
+  user_role?: string;
+}
+
+export interface EntityChangeEvent extends EntityChangesEventsDB {
+  change_data: PlaceEntitySchema | EntranceEntitySchema;
+}
+
+export type AppRole = Database["public"]["Enums"]["app_role"];
+export type User = UserDB;

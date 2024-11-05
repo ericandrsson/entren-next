@@ -158,7 +158,7 @@ SELECT public.assign_role('e7e479c8-db0c-47d4-82c6-11b35d8795ca', 'admin'::publi
 
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
-	('entrance_photos', 'entrance_photos', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', true, false, 10485760, '{image/*}', NULL);
+	('entren', 'entren', NULL, '2024-10-02 13:07:41.527202+00', '2024-10-02 13:07:41.527202+00', true, false, 10485760, '{image/*}', NULL);
 
 
 

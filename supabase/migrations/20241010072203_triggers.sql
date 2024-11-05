@@ -1,0 +1,7 @@
+CREATE FUNCTION "public"."refresh_places_view"()
+RETURNS TRIGGER AS $$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY public.places_view;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

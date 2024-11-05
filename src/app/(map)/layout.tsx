@@ -1,6 +1,6 @@
 import Header from "@/src/components/header/Header";
 import { Toaster } from "@/src/components/ui/toaster";
-import { AuthProvider } from "@/src/context/AuthProvider";
+import { AuthProvider } from "@/src/context/auth-provider";
 import "@/src/styles/global.css";
 import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
@@ -29,6 +29,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log(user);
 
   return (
     <html lang="en" className="h-full">

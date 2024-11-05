@@ -1,6 +1,3 @@
-import { AdminSidebar } from "@/src/components/AdminSidebar";
-import Header from "@/src/components/header/Header";
-import { SidebarProvider } from "@/src/components/ui/sidebar";
 import "@/src/styles/global.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -30,13 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
         <main className="h-screen w-screen">
-          <SidebarProvider>
-            <AdminSidebar />
-            <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">
-              <Header user={null} />
-              {children}
-            </div>
-          </SidebarProvider>
+          <div className="relative flex h-screen w-screen flex-col overflow-x-hidden sm:overflow-hidden">{children}</div>
         </main>
       </body>
     </html>

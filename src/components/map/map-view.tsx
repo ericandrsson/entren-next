@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import PlaceInfoContainer from "../place/PlaceInfoContainer";
 
-const MapWithNoSSR = dynamic(() => import("@/src/components/map/Map"), {
+const MapWithNoSSR = dynamic(() => import("@/src/components/map/map"), {
   loading: () => <Skeleton className="h-full w-full rounded-lg" />,
   ssr: false,
 });

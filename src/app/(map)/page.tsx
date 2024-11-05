@@ -1,7 +1,7 @@
 "use client";
 
 import ListView from "@/src/components/list/ListView";
-import MapView from "@/src/components/map/MapView";
+import MapView from "@/src/components/map/map-view";
 import ActionToolBar from "@/src/components/toolbar/Toolbar";
 import ViewToggleButton from "@/src/components/ViewToggleButton";
 import { useToast } from "@/src/hooks/use-toast";

@@ -1,5 +1,5 @@
 import CookieBanner from "@/src/components/CookieBanner";
-import Footer from "@/src/components/Footer";
+import Footer from "@/src/components/footer";
 import Header from "@/src/components/header/Header";
 import { Toaster } from "@/src/components/ui/toaster";
 import "@/src/styles/global.css";
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

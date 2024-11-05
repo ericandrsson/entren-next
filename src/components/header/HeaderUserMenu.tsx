@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
-import { useAuth } from "@/src/context/AuthProvider";
+import { useAuth } from "@/src/context/auth-provider";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
@@ -57,7 +57,7 @@ export default function HeaderUserMenu({ initialUser }: { initialUser: User | nu
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href="/auth/account-settings">Mitt konto</Link>
+          <Link href="/account-settings">Mitt konto</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={handleLogout}>Logga ut</DropdownMenuItem>

@@ -40,15 +40,23 @@ export type Database = {
           id?: number
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entity_changes_staging: {
         Row: {
-          __is_retired: boolean | null
           action_type: Database["public"]["Enums"]["entity_changes_action_type"]
           change_data: Json
           entity_type: Database["public"]["Enums"]["entity_type"]
           id: number
+          is_retired: boolean | null
           reviewed_at: string | null
           reviewed_by: string | null
           source: Database["public"]["Enums"]["entity_data_source"]
@@ -57,11 +65,11 @@ export type Database = {
           submitted_by: string | null
         }
         Insert: {
-          __is_retired?: boolean | null
           action_type: Database["public"]["Enums"]["entity_changes_action_type"]
           change_data: Json
           entity_type: Database["public"]["Enums"]["entity_type"]
           id?: number
+          is_retired?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           source: Database["public"]["Enums"]["entity_data_source"]
@@ -70,11 +78,11 @@ export type Database = {
           submitted_by?: string | null
         }
         Update: {
-          __is_retired?: boolean | null
           action_type?: Database["public"]["Enums"]["entity_changes_action_type"]
           change_data?: Json
           entity_type?: Database["public"]["Enums"]["entity_type"]
           id?: number
+          is_retired?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           source?: Database["public"]["Enums"]["entity_data_source"]
@@ -82,7 +90,22 @@ export type Database = {
           submitted_at?: string
           submitted_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_staging_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_changes_staging_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entity_json_schemas: {
         Row: {
@@ -130,7 +153,15 @@ export type Database = {
           override_date?: string | null
           override_id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "entity_overrides_overridden_by_fkey"
+            columns: ["overridden_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entrance_photos: {
         Row: {
@@ -184,6 +215,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "places_view"
             referencedColumns: ["place_id"]
+          },
+          {
+            foreignKeyName: "entrance_photos_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -255,6 +293,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "entrances_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "entrances_place_id_fkey"
             columns: ["place_id"]
@@ -382,6 +427,13 @@ export type Database = {
             referencedRelation: "place_categories"
             referencedColumns: ["category_id"]
           },
+          {
+            foreignKeyName: "places_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       role_permissions: {
@@ -430,7 +482,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -461,6 +521,69 @@ export type Database = {
       }
     }
     Views: {
+      entity_changes_events_view: {
+        Row: {
+          action_type:
+            | Database["public"]["Enums"]["entity_changes_action_type"]
+            | null
+          change_data: Json | null
+          entity_id: string | null
+          entity_type: Database["public"]["Enums"]["entity_type"] | null
+          event_timestamp: string | null
+          id: number | null
+          user_email: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_changes_staging_view: {
+        Row: {
+          action_type:
+            | Database["public"]["Enums"]["entity_changes_action_type"]
+            | null
+          change_data: Json | null
+          entity_type: Database["public"]["Enums"]["entity_type"] | null
+          id: number | null
+          is_retired: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewed_by_email: string | null
+          reviewed_by_name: string | null
+          source: Database["public"]["Enums"]["entity_data_source"] | null
+          status:
+            | Database["public"]["Enums"]["entity_changes_staging_status"]
+            | null
+          submitted_at: string | null
+          submitted_by: string | null
+          submitted_by_email: string | null
+          submitted_by_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_changes_staging_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_changes_staging_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entrances_view: {
         Row: {
           accessibility_info: Json | null
@@ -513,21 +636,13 @@ export type Database = {
         }
         Returns: undefined
       }
-      assign_role:
-        | {
-            Args: {
-              p_user_id: string
-              p_role: Database["public"]["Enums"]["app_role"]
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_id: string
-              role: string
-            }
-            Returns: undefined
-          }
+      assign_role: {
+        Args: {
+          p_user_id: string
+          p_role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: undefined
+      }
       check_email_exists: {
         Args: {
           email: string
@@ -577,32 +692,17 @@ export type Database = {
         }
         Returns: number
       }
-      remove_role:
-        | {
-            Args: {
-              p_user_id: string
-              p_role: Database["public"]["Enums"]["app_role"]
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_id: string
-              role: string
-            }
-            Returns: undefined
-          }
+      remove_role: {
+        Args: {
+          p_user_id: string
+          p_role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: undefined
+      }
       user_has_permission: {
         Args: {
           user_id: string
           required_permission: Database["public"]["Enums"]["app_permission"]
-        }
-        Returns: boolean
-      }
-      user_has_role: {
-        Args: {
-          user_id: string
-          required_role: string
         }
         Returns: boolean
       }

@@ -1,10 +1,10 @@
-import { useAuth } from "@/src/context/AuthProvider";
+import { useAuth } from "@/src/context/auth-provider";
 import { logger } from "@/src/libs/logger";
 import { useStore } from "@/src/libs/store";
 import { Entrance, EntrancePhoto, Place } from "@/src/types/custom.types";
 import { createClient } from "@/utils/supabase/client";
 import { useCallback, useEffect, useState } from "react";
-import AddEntranceDialog from "../entrance/AddEntranceDialog";
+import AddEntranceDialog from "../entrance/add-entrance-dialog";
 import PlaceInfoCard from "./PlaceInfoCard";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
 
